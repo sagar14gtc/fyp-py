@@ -1,0 +1,61 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}All Applications{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">All Applications</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">All Applications</li>
+    </ol>
+
+    {# Add filtering options if needed for admin view #}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-file-alt me-1"></i>
+            All System Applications
+        </div>
+        <div class="card-body">
+            {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Program</th>
+                                <th>University</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Consultant</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.student.get_full_name|default:app.student.username }}</td>
+                                    <td>{{ app.program.name }}</td>
+                                    <td>{{ app.program.university.name }}</td>
+                                    <td><span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span></td>
+                                    <td>{{ app.application_date|date:"Y-m-d" }}</td>
+                                    <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
+                                    <td>
+                                        <a href="{% url 'applications:application_detail' app.application_id %}" class="btn btn-sm btn-outline-info">View Details</a>
+                                        {# Add admin-specific actions if needed #}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                 <!-- Pagination could be added here if needed -->
+            {% else %}
+                <p class="text-center text-muted">No applications found in the system.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

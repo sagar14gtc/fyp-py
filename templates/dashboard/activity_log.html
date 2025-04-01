@@ -1,0 +1,89 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Activity Log{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Activity Log</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Activity Log</li>
+    </ol>
+
+    <div class="row">
+        <!-- Application Status Changes -->
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-exchange-alt me-1"></i>
+                    Recent Application Status Changes
+                </div>
+                <div class="card-body">
+                    {% if application_status_changes %}
+                        <ul class="list-group list-group-flush">
+                            {% for change in application_status_changes %}
+                                <li class="list-group-item">
+                                    Application #{{ change.application.id }} ({{ change.application.program.name }})
+                                    changed to <strong>{{ change.get_status_display }}</strong>
+                                    by {{ change.changed_by.username|default:"System" }}
+                                    <small class="text-muted float-end">{{ change.changed_at|timesince }} ago</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center">No recent status changes.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Registrations & Submissions -->
+        <div class="col-lg-6">
+            <!-- Recent Registrations -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user-plus me-1"></i>
+                    Recent User Registrations
+                </div>
+                <div class="card-body">
+                    {% if recent_registrations %}
+                        <ul class="list-group list-group-flush">
+                            {% for user in recent_registrations %}
+                                <li class="list-group-item">
+                                    {{ user.get_full_name|default:user.username }} ({{ user.get_role_display }}) registered
+                                    <small class="text-muted float-end">{{ user.date_joined|timesince }} ago</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center">No recent registrations.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Submissions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-file-upload me-1"></i>
+                    Recent Application Submissions
+                </div>
+                <div class="card-body">
+                     {% if recent_submissions %}
+                        <ul class="list-group list-group-flush">
+                            {% for app in recent_submissions %}
+                                <li class="list-group-item">
+                                    {{ app.student.get_full_name|default:app.student.username }} submitted application for {{ app.program.name }}
+                                    <small class="text-muted float-end">{{ app.application_date|timesince }} ago</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center">No recent submissions.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

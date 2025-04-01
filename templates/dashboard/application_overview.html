@@ -1,0 +1,109 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Application Overview{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Application Overview</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Applications</li>
+    </ol>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-filter me-1"></i>
+            Filter Applications
+        </div>
+        <div class="card-body">
+            <form method="get" action="{% url 'dashboard:application_overview' %}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            {% for value, display in status_choices %}
+                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="university" class="form-label">University</label>
+                        <select class="form-select" id="university" name="university">
+                            <option value="">All Universities</option>
+                            {% for uni in universities %}
+                                <option value="{{ uni.id }}" {% if current_university == uni.id|stringformat:"s" %}selected{% endif %}>{{ uni.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date|default:'' }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date|default:'' }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        <a href="{% url 'dashboard:application_overview' %}" class="btn btn-secondary w-100 mt-1">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Applications
+        </div>
+        <div class="card-body">
+            {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Program</th>
+                                <th>University</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Consultant</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.student.get_full_name|default:app.student.username }}</td>
+                                    <td>{{ app.program.name }}</td>
+                                    <td>{{ app.program.university.name }}</td>
+                                    <td><span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span></td>
+                                    <td>{{ app.application_date|date:"Y-m-d" }}</td>
+                                    <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
+                                    <td>
+                                        <a href="{% url 'applications:application_detail' app.id %}" class="btn btn-sm btn-outline-info">Details</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% include 'includes/pagination.html' with page_obj=applications %}
+
+            {% else %}
+                <p class="text-center text-muted">No applications found matching your criteria.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Add charts for status_stats, monthly_data, university_data if needed #}
+
+</div>
+{% endblock %}

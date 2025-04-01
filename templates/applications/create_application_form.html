@@ -1,0 +1,119 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load crispy_forms_tags %}
+
+{% block dashboard_title %}Apply to {{ university.name }}{% if program %} - {{ program.name }}{% endif %}{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Apply to {{ university.name }}{% if program %} - {{ program.name }}{% endif %}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:university_search' %}">University Search</a></li>
+        <li class="breadcrumb-item active">Apply</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-university me-1"></i>
+            {{ university.name }} {% if program %}- {{ program.name }} ({{ program.get_degree_type_display }}){% endif %}
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if programs %}
+                {# If programs list is provided (coming from create_application_for_university view), show dropdown #}
+                <div class="mb-3">
+                    <label for="program_select" class="form-label">Select Program <span class="text-danger">*</span></label>
+                    <select class="form-select {% if form.program.errors %}is-invalid{% endif %}" id="program_select" name="program" required>
+                        <option value="">-- Select a Program --</option>
+                        {% for p in programs %}
+                            <option value="{{ p.id }}" {% if request.POST.program == p.id|stringformat:"s" %}selected{% endif %}>
+                                {{ p.name }} ({{ p.get_degree_type_display }}){% if p.start_date %} - Starts {{ p.start_date|date:"M Y" }}{% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.program.errors %} {# Display potential errors if backend validation fails on program #}
+                        <div class="invalid-feedback">
+                            {{ form.program.errors|striptags }}
+                        </div>
+                    {% endif %}
+                     {% if not form.program and messages %} {# Show general message if program selection failed #}
+                        {% for message in messages %}
+                            {% if 'Please select a program' in message.message %}
+                            <div class="text-danger small mt-1">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <hr class="my-4">
+                {% endif %}
+                
+                <h5 class="mb-3">Application Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ form.intake_date|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.gpa_or_percentage|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.study_gap_years|as_crispy_field }}
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <h5 class="mb-3">English Proficiency</h5>
+                 <div class="row g-3">
+                     <div class="col-md-6">
+                        {{ form.ielts_score|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.duolingo_score|as_crispy_field }}
+                    </div>
+                 </div>
+
+                <hr class="my-4">
+                <h5 class="mb-3">Emergency Contact</h5>
+                 <div class="row g-3">
+                     <div class="col-md-6">
+                        {{ form.emergency_contact_name|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.emergency_contact_phone|as_crispy_field }}
+                    </div>
+                     <div class="col-md-12">
+                        {{ form.emergency_contact_relationship|as_crispy_field }}
+                    </div>
+                 </div>
+
+                <hr class="my-4">
+                <h5 class="mb-3">Required Documents</h5>
+                 <div class="row g-3">
+                     <div class="col-md-6">
+                        {{ form.transcript_file|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.certificate_file|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.passport_file|as_crispy_field }}
+                    </div>
+                     <div class="col-md-6">
+                        {{ form.language_test_file|as_crispy_field }}
+                    </div>
+                 </div>
+                 <p class="text-muted mt-2"><small>Other documents like CV, Recommendation Letters, Statement of Purpose can be uploaded after initial submission if required.</small></p>
+
+
+                <hr class="my-4">
+                 {{ form.notes|as_crispy_field }}
+
+                <div class="mt-4 d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

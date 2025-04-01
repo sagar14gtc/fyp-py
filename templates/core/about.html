@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Global Universities{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 5rem 0;
+        margin-bottom: 3rem;
+    }
+    
+    .mission-section {
+        background-color: #f8f9fa;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+    }
+    
+    .value-card {
+        border-radius: 10px;
+        padding: 2rem;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .value-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .value-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .team-card {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .team-card img {
+        height: 300px;
+        object-fit: cover;
+        width: 100%;
+    }
+    
+    .testimonial-section {
+        background-color: #f8f9fa;
+        padding: 4rem 0;
+        margin: 3rem 0;
+    }
+    
+    .testimonial-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .testimonial-card .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">About Global Universities</h1>
+                <p class="lead mb-4">Empowering students to pursue international education and achieve their academic dreams since 2015.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Us Section -->
+<section class="container mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="mb-4">Our Story</h2>
+            <p class="mb-3">Global Universities was founded with a clear vision: to make international education accessible to students from around the world. Our journey began in 2015 when a group of education consultants identified the need for a comprehensive platform that could guide students through the complex process of studying abroad.</p>
+            <p class="mb-3">Over the years, we've grown from a small team of passionate educators to a global network of experts dedicated to helping students find their perfect educational path. We've facilitated thousands of successful applications and watched with pride as our students have gone on to achieve remarkable success in universities across the globe.</p>
+            <p>Today, Global Universities stands as a trusted partner for students, universities, and educational consultants, connecting talent with opportunity and turning academic dreams into reality.</p>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="About Global Universities" class="img-fluid rounded shadow">
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Vision Section -->
+<section class="mission-section">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="mb-4">Our Mission & Vision</h2>
+                <p class="lead">We're dedicated to democratizing access to quality education worldwide and creating a global community of learners.</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <div class="display-4 text-primary mb-3">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3 class="card-title">Our Mission</h3>
+                        <p class="card-text">To empower students with the information, tools, and support they need to access international education opportunities that align with their academic goals, career aspirations, and personal circumstances.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <div class="display-4 text-primary mb-3">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3 class="card-title">Our Vision</h3>
+                        <p class="card-text">To create a world where geographical, financial, and informational barriers no longer limit a student's access to quality education, and where every qualified student can find their perfect academic match.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values Section -->
+<section class="container mb-5">
+    <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4">Our Values</h2>
+            <p class="lead">These core principles guide our approach and define how we work with students, universities, and partners.</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card value-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="icon text-primary">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h4 class="card-title">Student-Centered</h4>
+                    <p class="card-text">We put students' needs, goals, and well-being at the center of everything we do, ensuring personalized support throughout their journey.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card value-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="icon text-primary">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4 class="card-title">Integrity</h4>
+                    <p class="card-text">We operate with honesty, transparency, and ethical standards, providing accurate information and trustworthy guidance.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card value-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="icon text-primary">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h4 class="card-title">Diversity</h4>
+                    <p class="card-text">We celebrate diversity in all its forms and strive to create inclusive environments where all students feel welcome and supported.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card value-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="icon text-primary">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h4 class="card-title">Innovation</h4>
+                    <p class="card-text">We continuously seek new ways to improve our services and leverage technology to enhance the student experience.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card value-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="icon text-primary">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4 class="card-title">Excellence</h4>
+                    <p class="card-text">We strive for excellence in all aspects of our service, setting high standards and continuously working to exceed expectations.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card value-card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="icon text-primary">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h4 class="card-title">Partnership</h4>
+                    <p class="card-text">We build strong, collaborative relationships with universities, consultants, and partners to create a supportive ecosystem for students.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team Section -->
+<section class="container mb-5">
+    <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4">Our Leadership Team</h2>
+            <p class="lead">Meet the passionate individuals who lead Global Universities and drive our mission forward.</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="CEO" class="card-img-top">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title mb-1">John Doe</h4>
+                    <p class="text-muted mb-3">CEO & Founder</p>
+                    <p class="card-text">John has over 15 years of experience in international education and has helped thousands of students achieve their academic dreams.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-primary"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="COO" class="card-img-top">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title mb-1">Jane Smith</h4>
+                    <p class="text-muted mb-3">Chief Operations Officer</p>
+                    <p class="card-text">With a background in university administration, Jane brings invaluable insights into the operations of our global platform.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-primary"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="CTO" class="card-img-top">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title mb-1">Michael Johnson</h4>
+                    <p class="text-muted mb-3">Chief Technology Officer</p>
+                    <p class="card-text">Michael leads our tech team in developing innovative solutions that make the application process seamless and efficient.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-primary"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonial-section">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="mb-4">What Our Students Say</h2>
+                <p class="lead">Don't just take our word for it. Hear from students who've successfully navigated their international education journey with us.</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for testimonial in testimonials %}
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if testimonial.avatar %}
+                                <img src="{{ testimonial.avatar.url }}" class="avatar" alt="{{ testimonial.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/70x70" class="avatar" alt="{{ testimonial.name }}">
+                            {% endif %}
+                            <div>
+                                <h5 class="mb-0">{{ testimonial.name }}</h5>
+                                <p class="text-muted mb-0">{{ testimonial.role }}</p>
+                            </div>
+                        </div>
+                        <p class="mb-3">{{ testimonial.content }}</p>
+                        <div class="text-warning">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No testimonials available at the moment.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="container mb-5">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card bg-primary text-white p-5 text-center">
+                <h2 class="mb-4">Ready to Begin Your International Education Journey?</h2>
+                <p class="lead mb-4">Join thousands of students who have found their perfect university match with Global Universities.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'universities:university_list' %}" class="btn btn-light btn-lg">Explore Universities</a>
+                    {% else %}
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">Register Now</a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

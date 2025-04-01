@@ -1,0 +1,66 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}My Applications{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">My Applications</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">My Applications</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-file-alt me-1"></i>
+            Your Applications
+        </div>
+        <div class="card-body">
+            {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Program</th>
+                                <th>University</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Consultant</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.program.name }}</td>
+                                    <td>{{ app.program.university.name }}</td>
+                                    <td><span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span></td>
+                                    <td>{{ app.application_date|date:"Y-m-d" }}</td>
+                                    <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
+                                    <td>
+                                        <a href="{% url 'applications:application_detail' app.application_id %}" class="btn btn-sm btn-outline-info">View Details</a>
+                                        {% if app.status == 'draft' %}
+                                            <a href="{% url 'applications:edit_application' app.application_id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                            <a href="{% url 'applications:manage_documents' app.application_id %}" class="btn btn-sm btn-outline-secondary">Manage Docs</a>
+                                        {% endif %}
+                                        {% if app.status != 'accepted' and app.status != 'cancelled' and app.status != 'enrollment_confirmed' %}
+                                             <a href="{% url 'applications:cancel_application' app.application_id %}" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                 <!-- Pagination could be added here if needed -->
+            {% else %}
+                <p class="text-center text-muted">You have not submitted any applications yet.</p>
+                <div class="text-center">
+                     <a href="{% url 'dashboard:university_search' %}" class="btn btn-primary">Search for Programs</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

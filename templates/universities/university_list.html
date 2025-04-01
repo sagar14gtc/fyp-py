@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Universities List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Universities</h1>
+    <hr>
+
+    {% if universities %}
+        <ul class="list-group">
+            {% for university in universities %}
+                <li class="list-group-item">
+                    <a href="#">{{ university.name }}</a> <!-- Add link to detail view later if needed -->
+                    <p class="mb-1"><small>{{ university.location }}</small></p>
+                    <!-- Add more university details as needed -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No universities found.</p>
+    {% endif %}
+
+    <!-- Add pagination controls if needed -->
+
+</div>
+{% endblock %}

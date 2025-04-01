@@ -1,0 +1,161 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Student Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Welcome, {{ request.user.get_full_name|default:request.user.username }}!</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Student Dashboard</li>
+    </ol>
+
+    <!-- Statistics Cards -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    Total Applications
+                    <span class="badge bg-light text-primary ms-2">{{ application_stats.total }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    Pending Applications
+                    <span class="badge bg-light text-warning ms-2">{{ application_stats.pending }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    Accepted Applications
+                    <span class="badge bg-light text-success ms-2">{{ application_stats.accepted }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">
+                    Rejected Applications
+                    <span class="badge bg-light text-danger ms-2">{{ application_stats.rejected }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Applications -->
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-file-alt me-1"></i>
+                    Recent Applications
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                        <ul class="list-group list-group-flush">
+                            {% for app in applications %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="#">{{ app.program.name }}</a> at {{ app.program.university.name }}
+                                        <small class="d-block text-muted">Applied on: {{ app.application_date|date:"Y-m-d" }}</small>
+                                    </div>
+                                    <span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No recent applications found.</p>
+                    {% endif %}
+                    <div class="text-end mt-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All Applications</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Appointments & Messages -->
+        <div class="col-xl-6">
+            <!-- Upcoming Appointments -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    Upcoming Appointments
+                </div>
+                <div class="card-body">
+                     {% if appointments %}
+                        <ul class="list-group list-group-flush">
+                            {% for appt in appointments %}
+                                <li class="list-group-item">
+                                    Appointment with {{ appt.consultant.get_full_name|default:appt.consultant.username }}
+                                    <span class="badge bg-info float-end">{{ appt.date|date:"Y-m-d" }} at {{ appt.start_time|time:"H:i" }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No upcoming appointments.</p>
+                    {% endif %}
+                     <div class="text-end mt-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All Appointments</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+             <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-envelope me-1"></i>
+                    Messages
+                </div>
+                <div class="card-body text-center">
+                    {% if unread_messages_count > 0 %}
+                        <p>You have <span class="fw-bold">{{ unread_messages_count }}</span> unread message(s).</p>
+                        <a href="#" class="btn btn-primary">Go to Inbox</a>
+                    {% else %}
+                        <p class="text-muted">No unread messages.</p>
+                        <a href="#" class="btn btn-outline-primary">Go to Inbox</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Recommended Universities -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-university me-1"></i>
+                    Recommended Universities
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for uni in recommended_universities %}
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100">
+                                    {% if uni.logo %}
+                                        <img src="{{ uni.logo.url }}" class="card-img-top" alt="{{ uni.name }} Logo" style="max-height: 150px; object-fit: contain; padding: 10px;">
+                                    {% else %}
+                                         <div class="text-center py-5 bg-light"><i class="fas fa-university fa-3x text-muted"></i></div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ uni.name }}</h5>
+                                        <p class="card-text"><small>{{ uni.city }}, {{ uni.country }}</small></p>
+                                        <a href="#" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No recommendations available at the moment.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

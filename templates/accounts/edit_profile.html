@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - Global Universities{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h2 class="fw-bold">Edit Profile</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+                    </ol>
+                </nav>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3 text-center">
+                                <div class="avatar-upload mb-3">
+                                    {% if profile.avatar %}
+                                        <img id="preview-avatar" src="{{ profile.avatar.url }}" class="rounded-circle img-fluid avatar-lg mb-3" alt="Profile Avatar">
+                                    {% else %}
+                                        <div id="avatar-placeholder" class="avatar-placeholder rounded-circle bg-primary text-white mb-3">
+                                            {{ user.first_name|first }}{{ user.last_name|first }}
+                                        </div>
+                                        <img id="preview-avatar" src="" class="rounded-circle img-fluid avatar-lg mb-3 d-none" alt="Profile Avatar">
+                                    {% endif %}
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">Profile Picture</label>
+                                        {{ profile_form.avatar }}
+                                        {% if profile_form.avatar.errors %}
+                                            <div class="text-danger">
+                                                {% for error in profile_form.avatar.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9">
+                                <h4 class="mb-3">Personal Information</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                        {{ user_form.first_name }}
+                                        {% if user_form.first_name.errors %}
+                                            <div class="text-danger">
+                                                {% for error in user_form.first_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                        {{ user_form.last_name }}
+                                        {% if user_form.last_name.errors %}
+                                            <div class="text-danger">
+                                                {% for error in user_form.last_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ user_form.email.id_for_label }}" class="form-label">Email</label>
+                                        {{ user_form.email }}
+                                        {% if user_form.email.errors %}
+                                            <div class="text-danger">
+                                                {% for error in user_form.email.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ user_form.username.id_for_label }}" class="form-label">Username</label>
+                                        {{ user_form.username }}
+                                        {% if user_form.username.errors %}
+                                            <div class="text-danger">
+                                                {% for error in user_form.username.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ profile_form.phone.id_for_label }}" class="form-label">Phone Number</label>
+                                        {{ profile_form.phone }}
+                                        {% if profile_form.phone.errors %}
+                                            <div class="text-danger">
+                                                {% for error in profile_form.phone.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ profile_form.country.id_for_label }}" class="form-label">Country</label>
+                                        {{ profile_form.country }}
+                                        {% if profile_form.country.errors %}
+                                            <div class="text-danger">
+                                                {% for error in profile_form.country.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- Student Specific Fields -->
+                        {% if profile.role == 'student' %}
+                        <div class="student-fields">
+                            <h4 class="mb-3">Student Information</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ student_form.education_level.id_for_label }}" class="form-label">Education Level</label>
+                                    {{ student_form.education_level }}
+                                    {% if student_form.education_level.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.education_level.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ student_form.field_of_study.id_for_label }}" class="form-label">Field of Study</label>
+                                    {{ student_form.field_of_study }}
+                                    {% if student_form.field_of_study.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.field_of_study.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <h5 class="mb-3">Test Scores</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ student_form.ielts_score.id_for_label }}" class="form-label">IELTS Score</label>
+                                    {{ student_form.ielts_score }}
+                                    {% if student_form.ielts_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.ielts_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ student_form.toefl_score.id_for_label }}" class="form-label">TOEFL Score</label>
+                                    {{ student_form.toefl_score }}
+                                    {% if student_form.toefl_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.toefl_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ student_form.sat_score.id_for_label }}" class="form-label">SAT Score</label>
+                                    {{ student_form.sat_score }}
+                                    {% if student_form.sat_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.sat_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ student_form.gre_score.id_for_label }}" class="form-label">GRE Score</label>
+                                    {{ student_form.gre_score }}
+                                    {% if student_form.gre_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.gre_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ student_form.gmat_score.id_for_label }}" class="form-label">GMAT Score</label>
+                                    {{ student_form.gmat_score }}
+                                    {% if student_form.gmat_score.errors %}
+                                        <div class="text-danger">
+                                            {% for error in student_form.gmat_score.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ student_form.preferred_countries.id_for_label }}" class="form-label">Preferred Countries</label>
+                                {{ student_form.preferred_countries }}
+                                <div class="form-text">Separate countries with commas</div>
+                                {% if student_form.preferred_countries.errors %}
+                                    <div class="text-danger">
+                                        {% for error in student_form.preferred_countries.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Consultant Specific Fields -->
+                        {% if profile.role == 'consultant' %}
+                        <div class="consultant-fields">
+                            <h4 class="mb-3">Consultant Information</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ consultant_form.specialization.id_for_label }}" class="form-label">Specialization</label>
+                                    {{ consultant_form.specialization }}
+                                    {% if consultant_form.specialization.errors %}
+                                        <div class="text-danger">
+                                            {% for error in consultant_form.specialization.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ consultant_form.years_of_experience.id_for_label }}" class="form-label">Years of Experience</label>
+                                    {{ consultant_form.years_of_experience }}
+                                    {% if consultant_form.years_of_experience.errors %}
+                                        <div class="text-danger">
+                                            {% for error in consultant_form.years_of_experience.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ consultant_form.bio.id_for_label }}" class="form-label">Bio</label>
+                                {{ consultant_form.bio }}
+                                {% if consultant_form.bio.errors %}
+                                    <div class="text-danger">
+                                        {% for error in consultant_form.bio.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ consultant_form.expertise.id_for_label }}" class="form-label">Areas of Expertise</label>
+                                {{ consultant_form.expertise }}
+                                <div class="form-text">Separate expertise areas with commas (e.g., USA, Engineering, Scholarships)</div>
+                                {% if consultant_form.expertise.errors %}
+                                    <div class="text-danger">
+                                        {% for error in consultant_form.expertise.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-lg {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto;
+}
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const avatarInput = document.getElementById('{{ profile_form.avatar.id_for_label }}');
+        const previewAvatar = document.getElementById('preview-avatar');
+        const placeholderAvatar = document.getElementById('avatar-placeholder');
+        
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewAvatar.src = e.target.result;
+                        previewAvatar.classList.remove('d-none');
+                        if (placeholderAvatar) {
+                            placeholderAvatar.classList.add('d-none');
+                        }
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

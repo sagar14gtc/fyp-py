@@ -1,0 +1,211 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block dashboard_title %}{{ page_title }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ page_title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'applications:application_list' %}">Applications</a></li>
+        <li class="breadcrumb-item active">Details</li>
+    </ol>
+
+    <div class="row">
+        <!-- Left Column - Application Details -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Application Information (ID: {{ application.application_id }})
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">University:</dt>
+                        <dd class="col-sm-8">{{ university.name }}</dd>
+
+                        <dt class="col-sm-4">Program:</dt>
+                        <dd class="col-sm-8">{{ program.name }} ({{ program.get_degree_type_display }})</dd>
+
+                        <dt class="col-sm-4">Student:</dt>
+                        <dd class="col-sm-8">{{ application.student.get_full_name|default:application.student.username }}</dd>
+
+                        <dt class="col-sm-4">Consultant:</dt>
+                        <dd class="col-sm-8">{{ application.consultant.get_full_name|default:"Not Assigned" }}</dd>
+
+                        <dt class="col-sm-4">Status:</dt>
+                        <dd class="col-sm-8"><span class="badge bg-primary">{{ application.get_status_display }}</span></dd>
+
+                        <dt class="col-sm-4">Application Date:</dt>
+                        <dd class="col-sm-8">{{ application.application_date|date:"Y-m-d H:i" }}</dd>
+
+                        <dt class="col-sm-4">Intake Date:</dt>
+                        <dd class="col-sm-8">{{ application.intake_date|date:"Y-m-d" }}</dd>
+
+                        <dt class="col-sm-4">GPA / Percentage:</dt>
+                        <dd class="col-sm-8">{{ application.gpa_or_percentage|default:"N/A" }}</dd>
+
+                        <dt class="col-sm-4">Study Gap (Years):</dt>
+                        <dd class="col-sm-8">{{ application.study_gap_years|default:"N/A" }}</dd>
+
+                        <dt class="col-sm-4">IELTS Score:</dt>
+                        <dd class="col-sm-8">{{ application.ielts_score|default:"N/A" }}</dd>
+
+                        <dt class="col-sm-4">Duolingo Score:</dt>
+                        <dd class="col-sm-8">{{ application.duolingo_score|default:"N/A" }}</dd>
+                    </dl>
+                    
+                    {% if application.notes %}
+                        <h6>General Notes:</h6>
+                        <p>{{ application.notes|linebreaksbr }}</p>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="mt-3">
+                        {% if request.user == application.student and application.status == application.DRAFT %}
+                            <a href="{% url 'applications:edit_application' application.application_id %}" class="btn btn-secondary btn-sm"><i class="fas fa-edit me-1"></i> Edit Application</a>
+                        {% endif %}
+                        {% if request.user == application.student or request.user.is_staff %}
+                             {% if application.status != application.CANCELED and application.status != application.ACCEPTED and application.status != application.ENROLLMENT_CONFIRMED %}
+                                <a href="{% url 'applications:cancel_application' application.application_id %}" class="btn btn-danger btn-sm"><i class="fas fa-times me-1"></i> Cancel Application</a>
+                             {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-folder-open me-1"></i>
+                    Documents
+                    {% if request.user == application.student %}
+                        <a href="{% url 'applications:manage_documents' application.application_id %}" class="btn btn-sm btn-outline-primary float-end"><i class="fas fa-upload me-1"></i> Manage Documents</a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if documents %}
+                        <ul class="list-group list-group-flush">
+                            {% for doc in documents %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas {% if doc.file %}fa-file-alt{% else %}fa-file{% endif %} me-2"></i>
+                                        {{ doc.get_document_type_display }} {% if doc.required %}<span class="text-danger">*</span>{% endif %}
+                                        {% if doc.file %}
+                                            <small><a href="{{ doc.file.url }}" target="_blank"> (View)</a></small>
+                                        {% endif %}
+                                    </div>
+                                    <span class="badge 
+                                        {% if doc.status == doc.APPROVED %}bg-success
+                                        {% elif doc.status == doc.REJECTED %}bg-danger
+                                        {% elif doc.status == doc.PENDING_REVIEW %}bg-warning text-dark
+                                        {% else %}bg-secondary
+                                        {% endif %}">
+                                        {{ doc.get_status_display }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No documents associated with this application yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-comments me-1"></i>
+                    Application Notes
+                </div>
+                <div class="card-body">
+                    {% if notes %}
+                        <ul class="list-unstyled">
+                            {% for note in notes %}
+                                <li class="mb-3 border-bottom pb-2">
+                                    <p class="mb-1">{{ note.note|linebreaksbr }}</p>
+                                    <small class="text-muted">By {{ note.user.get_full_name|default:note.user.username }} on {{ note.created_at|date:"Y-m-d H:i" }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No notes added yet.</p>
+                    {% endif %}
+                    
+                    {% if request.user.is_staff or request.user == application.consultant %}
+                        <hr>
+                        <h5>Add Note</h5>
+                        <form method="post" action="{% url 'applications:add_note' application.application_id %}">
+                            {% csrf_token %}
+                            {{ note_form|crispy }} {# Assuming a note_form is passed or create one #}
+                             <div class="mb-3">
+                                <label for="id_note" class="form-label">New Note</label>
+                                <textarea name="note" cols="40" rows="3" class="form-control" required id="id_note"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Add Note</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Status History & Actions -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-history me-1"></i>
+                    Status History
+                </div>
+                <div class="card-body">
+                    {% if status_history %}
+                        <ul class="list-unstyled">
+                            {% for status_entry in status_history %}
+                                <li class="mb-2 pb-2 border-bottom">
+                                    <span class="badge bg-info">{{ status_entry.get_status_display }}</span>
+                                    <small class="text-muted d-block">
+                                        By {{ status_entry.changed_by.get_full_name|default:status_entry.changed_by.username }} on {{ status_entry.changed_at|date:"Y-m-d H:i" }}
+                                    </small>
+                                    {% if status_entry.notes %}
+                                        <small class="d-block mt-1"><em>Note: {{ status_entry.notes }}</em></small>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No status history recorded yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if request.user.is_staff or request.user == application.consultant %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-edit me-1"></i>
+                    Update Status
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'applications:update_status' application.application_id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_status" class="form-label">New Status</label>
+                            <select name="status" class="form-select" required id="id_status">
+                                {% for value, display in application.STATUS_CHOICES %}
+                                    <option value="{{ value }}" {% if value == application.status %}selected{% endif %}>{{ display }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Notes (Optional)</label>
+                            <textarea name="notes" cols="40" rows="3" class="form-control" id="id_notes"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

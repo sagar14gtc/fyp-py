@@ -1,0 +1,580 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db.models import Count, Sum, Q, F, Case, When, Value, IntegerField
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.contrib import messages
+
+from accounts.models import CustomUser
+from applications.models import Application, Document, ApplicationStatus
+from universities.models import University, Program
+from messaging.models import Appointment, Conversation, Message
+from notifications.models import Notification
+from django.db.models.functions import TruncMonth, TruncDay
+from django.utils.dateparse import parse_date # For parsing date input
+
+@login_required
+def dashboard(request):
+    """Main dashboard view customized based on user role."""
+    user = request.user
+    
+    if user.role == 'student':
+        return student_dashboard(request)
+    elif user.role == 'consultant':
+        return consultant_dashboard(request)
+    elif user.is_staff:
+        return admin_dashboard(request)
+    else:
+        # Default dashboard
+        return render(request, 'dashboard/dashboard.html', {'page_title': 'Dashboard'})
+
+def student_dashboard(request):
+    """Dashboard view for students."""
+    user = request.user
+    
+    # Get all student's applications first (unsliced)
+    all_applications = Application.objects.filter(student=user)
+    
+    # Get application statistics from the full queryset
+    application_stats = {
+        'total': all_applications.count(),
+        'pending': all_applications.filter(status__in=[
+            Application.DRAFT, Application.SUBMITTED, Application.PROCESSING,
+            Application.DOCUMENTS_REQUIRED, Application.UNDER_REVIEW
+        ]).count(),
+        'accepted': all_applications.filter(status=Application.ACCEPTED).count(),
+        'rejected': all_applications.filter(status=Application.REJECTED).count(),
+    }
+
+    # Now get the 5 most recent applications for display
+    recent_applications = all_applications.order_by('-application_date')[:5]
+    
+    # Get upcoming appointments
+    appointments = Appointment.objects.filter(
+        student=user,
+        date__gte=timezone.now().date(),
+        status__in=[Appointment.PENDING, Appointment.CONFIRMED]
+    ).order_by('date', 'start_time')[:3]
+    
+    # Get unread messages
+    unread_messages_count = Message.objects.filter(
+        conversation__participants=user,
+        is_read=False
+    ).exclude(sender=user).count()
+    
+    # Get recommended universities (example logic - can be customized)
+    recommended_universities = University.objects.filter(is_featured=True)[:4]
+    
+    context = {
+        'applications': recent_applications, # Pass the sliced list for display
+        'application_stats': application_stats,
+        'appointments': appointments,
+        'unread_messages_count': unread_messages_count,
+        'recommended_universities': recommended_universities,
+        'page_title': 'Student Dashboard'
+    }
+    
+    return render(request, 'dashboard/student_dashboard.html', context)
+
+def consultant_dashboard(request):
+    """Dashboard view for consultants."""
+    user = request.user
+    
+    # Get applications assigned to this consultant
+    applications = Application.objects.filter(consultant=user).order_by('-application_date')[:5]
+    
+    # Get applications that need attention (recently submitted or with new documents)
+    applications_needing_attention = Application.objects.filter(
+        Q(consultant=user) & 
+        (Q(status=Application.SUBMITTED) | 
+         Q(documents__status=Document.PENDING_REVIEW))
+    ).distinct()[:5]
+    
+    # Get upcoming appointments
+    appointments = Appointment.objects.filter(
+        consultant=user,
+        date__gte=timezone.now().date(),
+        status__in=[Appointment.PENDING, Appointment.CONFIRMED]
+    ).order_by('date', 'start_time')[:3]
+    
+    # Get application statistics
+    application_stats = {
+        'total': Application.objects.filter(consultant=user).count(),
+        'pending_review': Application.objects.filter(
+            consultant=user, 
+            status__in=[Application.SUBMITTED, Application.PROCESSING, Application.DOCUMENTS_REQUIRED]
+        ).count(),
+        'accepted_this_month': Application.objects.filter(
+            consultant=user,
+            status=Application.ACCEPTED,
+            status_history__changed_at__month=timezone.now().month,
+            status_history__changed_at__year=timezone.now().year,
+        ).distinct().count(),
+    }
+    
+    # Get recent student activity
+    recent_activity = Application.objects.filter(
+        consultant=user
+    ).order_by('-last_updated')[:5] # Corrected field name
+
+    context = {
+        'applications': applications,
+        'applications_needing_attention': applications_needing_attention,
+        'appointments': appointments,
+        'application_stats': application_stats,
+        'recent_activity': recent_activity,
+        'page_title': 'Consultant Dashboard'
+    }
+    
+    return render(request, 'dashboard/consultant_dashboard.html', context)
+
+def admin_dashboard(request):
+    """Dashboard view for admin users."""
+    # Overview statistics
+    total_students = CustomUser.objects.filter(role='student').count()
+    total_consultants = CustomUser.objects.filter(role='consultant').count()
+    total_applications = Application.objects.count()
+    total_universities = University.objects.count()
+    
+    # Application statistics
+    application_status_stats = Application.objects.values('status').annotate(count=Count('id'))
+    
+    # Get new applications this month
+    this_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    new_applications_this_month = Application.objects.filter(application_date__gte=this_month).count()
+    
+    # Get new users this month
+    new_users_this_month = CustomUser.objects.filter(date_joined__gte=this_month).count()
+    
+    # Recent activity
+    recent_applications = Application.objects.order_by('-application_date')[:5]
+    recent_users = CustomUser.objects.order_by('-date_joined')[:5]
+    
+    context = {
+        'total_students': total_students,
+        'total_consultants': total_consultants,
+        'total_applications': total_applications,
+        'total_universities': total_universities,
+        'application_status_stats': application_status_stats,
+        'new_applications_this_month': new_applications_this_month,
+        'new_users_this_month': new_users_this_month,
+        'recent_applications': recent_applications,
+        'recent_users': recent_users,
+        'page_title': 'Admin Dashboard'
+    }
+    
+    return render(request, 'dashboard/admin_dashboard.html', context)
+
+@login_required
+def student_list(request):
+    """View to list all students. Only accessible to staff and consultants."""
+    user = request.user
+    
+    if not (user.is_staff or user.role == 'consultant'):
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    students = CustomUser.objects.filter(role='student')
+    
+    # Filter by search query if provided
+    search_query = request.GET.get('q')
+    if search_query:
+        students = students.filter(
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+    
+    # Paginate results
+    paginator = Paginator(students.order_by('-date_joined'), 20)  # 20 students per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'students': page_obj,
+        'search_query': search_query,
+        'page_title': 'Student Directory'
+    }
+    
+    return render(request, 'dashboard/student_list.html', context)
+
+@login_required
+def student_detail(request, user_id):
+    """View details of a specific student."""
+    user = request.user
+    
+    if not (user.is_staff or user.role == 'consultant'):
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    student = get_object_or_404(CustomUser, id=user_id, role='student')
+    
+    # Get student's applications
+    applications = Application.objects.filter(student=student).order_by('-application_date')
+    
+    # Get student's appointments
+    appointments = Appointment.objects.filter(student=student).order_by('-date')
+    
+    context = {
+        'student': student,
+        'applications': applications,
+        'appointments': appointments,
+        'page_title': f'Student: {student.get_full_name() or student.username}'
+    }
+    
+    return render(request, 'dashboard/student_detail.html', context)
+
+@login_required
+def consultant_list(request):
+    """View to list all consultants. Only accessible to staff."""
+    user = request.user
+    
+    if not user.is_staff:
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    consultants = CustomUser.objects.filter(role='consultant')
+    
+    # Filter by search query if provided
+    search_query = request.GET.get('q')
+    if search_query:
+        consultants = consultants.filter(
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+    
+    # Paginate results
+    paginator = Paginator(consultants.order_by('-date_joined'), 20)  # 20 consultants per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'consultants': page_obj,
+        'search_query': search_query,
+        'page_title': 'Consultant Directory'
+    }
+    
+    return render(request, 'dashboard/consultant_list.html', context)
+
+@login_required
+def consultant_detail(request, user_id):
+    """View details of a specific consultant."""
+    user = request.user
+    
+    if not user.is_staff:
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    consultant = get_object_or_404(CustomUser, id=user_id, role='consultant')
+    
+    # Get consultant's assigned applications
+    applications = Application.objects.filter(consultant=consultant).order_by('-application_date')
+    
+    # Get consultant's appointments
+    appointments = Appointment.objects.filter(consultant=consultant).order_by('-date')
+    
+    # Get application statistics
+    application_stats = {
+        'total': applications.count(),
+        'accepted': applications.filter(status=Application.ACCEPTED).count(),
+        'rejected': applications.filter(status=Application.REJECTED).count(),
+        'in_progress': applications.exclude(
+            status__in=[Application.ACCEPTED, Application.REJECTED, Application.CANCELED, Application.ENROLLMENT_CONFIRMED]
+        ).count(),
+    }
+    
+    context = {
+        'consultant': consultant,
+        'applications': applications,
+        'appointments': appointments,
+        'application_stats': application_stats,
+        'page_title': f'Consultant: {consultant.get_full_name() or consultant.username}'
+    }
+    
+    return render(request, 'dashboard/consultant_detail.html', context)
+
+@login_required
+def application_overview(request):
+    """View overall application statistics. Only accessible to staff and consultants."""
+    user = request.user
+    
+    if not (user.is_staff or user.role == 'consultant'):
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    # Base queryset, filtered for consultants
+    applications = Application.objects.all()
+    if user.role == 'consultant':
+        applications = applications.filter(consultant=user)
+    
+    # Filter by status if provided
+    status_filter = request.GET.get('status')
+    if status_filter and status_filter in [choice[0] for choice in Application.STATUS_CHOICES]:
+        applications = applications.filter(status=status_filter)
+    
+    # Filter by university if provided
+    university_filter = request.GET.get('university')
+    if university_filter:
+        applications = applications.filter(program__university_id=university_filter)
+    
+    # Filter by date range if provided
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    if start_date:
+        applications = applications.filter(application_date__gte=start_date)
+    if end_date:
+        applications = applications.filter(application_date__lte=end_date)
+    
+    # Get application statistics
+    status_stats = applications.values('status').annotate(count=Count('id'))
+    
+    # Get monthly application data for chart
+    monthly_data = applications.annotate(
+        month=TruncMonth('application_date')
+    ).values('month').annotate(count=Count('id')).order_by('month')
+    
+    # Get university data for chart
+    university_data = applications.values(
+        'program__university__name'
+    ).annotate(count=Count('id')).order_by('-count')[:10]
+    
+    # Paginate applications for display
+    paginator = Paginator(applications.order_by('-application_date'), 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Get universities for filter
+    universities = University.objects.all()
+    
+    context = {
+        'applications': page_obj,
+        'status_stats': status_stats,
+        'monthly_data': monthly_data,
+        'university_data': university_data,
+        'universities': universities,
+        'status_choices': Application.STATUS_CHOICES,
+        'current_status': status_filter,
+        'current_university': university_filter,
+        'start_date': start_date,
+        'end_date': end_date,
+        'page_title': 'Application Overview'
+    }
+    
+    return render(request, 'dashboard/application_overview.html', context)
+
+@login_required
+def analytics(request):
+    """View analytics dashboard. Only accessible to staff."""
+    user = request.user
+    
+    if not user.is_staff:
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    # Date range filtering
+    start_date = request.GET.get('start_date', (timezone.now() - timezone.timedelta(days=30)).strftime('%Y-%m-%d'))
+    end_date = request.GET.get('end_date', timezone.now().strftime('%Y-%m-%d'))
+    
+    # Application statistics
+    applications = Application.objects.filter(
+        application_date__gte=start_date,
+        application_date__lte=end_date
+    )
+    
+    # User registration statistics
+    new_users = CustomUser.objects.filter(
+        date_joined__gte=start_date,
+        date_joined__lte=end_date
+    )
+    
+    # Application status distribution
+    status_distribution = applications.values('status').annotate(count=Count('id'))
+    
+    # Daily application trends
+    daily_trends = applications.annotate(
+        day=TruncDay('application_date')
+    ).values('day').annotate(count=Count('id')).order_by('day')
+    
+    # Top universities by application count
+    top_universities = applications.values(
+        'program__university__name'
+    ).annotate(count=Count('id')).order_by('-count')[:10]
+    
+    # Top programs by application count
+    top_programs = applications.values(
+        'program__name',
+        'program__university__name'
+    ).annotate(count=Count('id')).order_by('-count')[:10]
+    
+    # User registration trend
+    user_registration_trend = new_users.annotate(
+        day=TruncDay('date_joined')
+    ).values('day').annotate(count=Count('id')).order_by('day')
+    
+    # Acceptance rate by university
+    acceptance_rate = applications.values(
+        'program__university__name'
+    ).annotate(
+        total=Count('id'),
+        accepted=Count(Case(When(status=Application.ACCEPTED, then=1), output_field=IntegerField()))
+    ).annotate(
+        rate=F('accepted') * 100.0 / F('total')
+    ).order_by('-total')[:10]
+    
+    context = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'applications_count': applications.count(),
+        'new_users_count': new_users.count(),
+        'status_distribution': status_distribution,
+        'daily_trends': daily_trends,
+        'top_universities': top_universities,
+        'top_programs': top_programs,
+        'user_registration_trend': user_registration_trend,
+        'acceptance_rate': acceptance_rate,
+        'page_title': 'Analytics Dashboard'
+    }
+    
+    return render(request, 'dashboard/analytics.html', context)
+
+@login_required
+def notifications(request):
+    """View user notifications."""
+    user = request.user
+    
+    # Get unread notifications
+    unread_notifications = Notification.objects.filter(
+        recipient=user,
+        unread=True
+    ).order_by('-timestamp')
+    
+    # Get read notifications
+    read_notifications = Notification.objects.filter(
+        recipient=user,
+        unread=False
+    ).order_by('-timestamp')[:20]  # Limit to recent 20 read notifications
+    
+    context = {
+        'unread_notifications': unread_notifications,
+        'read_notifications': read_notifications,
+        'page_title': 'Notifications'
+    }
+    
+    return render(request, 'dashboard/notifications.html', context)
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Mark a notification as read."""
+    notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+    notification.unread = False
+    notification.save()
+    
+    if request.is_ajax():
+        return JsonResponse({'success': True})
+    
+    return redirect('dashboard:notifications')
+
+@login_required
+def activity_log(request):
+    """View activity log. Only accessible to staff."""
+    user = request.user
+    
+    if not user.is_staff:
+        messages.error(request, "You don't have permission to view this page.")
+        return redirect('dashboard:dashboard') # Use namespaced URL
+    
+    # Get application status changes
+    application_status_changes = ApplicationStatus.objects.all().order_by('-changed_at')[:50]
+    
+    # Get recent user registrations
+    recent_registrations = CustomUser.objects.order_by('-date_joined')[:20]
+    
+    # Get recent application submissions
+    recent_submissions = Application.objects.exclude(
+        status=Application.DRAFT
+    ).order_by('-application_date')[:20]
+    
+    context = {
+        'application_status_changes': application_status_changes,
+        'recent_registrations': recent_registrations,
+        'recent_submissions': recent_submissions,
+        'page_title': 'Activity Log'
+    }
+    
+    return render(request, 'dashboard/activity_log.html', context)
+
+
+from django.db.models import Prefetch # Import Prefetch
+
+@login_required
+def university_search(request):
+    """View for searching universities and their programs."""
+    
+    # Get filter parameters from GET request
+    uni_name = request.GET.get('uni_name', '')
+    country_name = request.GET.get('country_name', '')
+    program_name = request.GET.get('program_name', '') # Using program name as subject proxy
+    degree_type = request.GET.get('degree_type', '')
+    intake_after = request.GET.get('intake_after', '')
+
+    # Start with all universities, prefetching all programs initially
+    universities_qs = University.objects.select_related('city', 'country').prefetch_related(
+        Prefetch('programs', queryset=Program.objects.all().order_by('name'), to_attr='all_programs')
+    ).distinct() # Use distinct if filtering on related models causes duplicates
+
+    # Filter Universities based on direct University fields
+    if uni_name:
+        universities_qs = universities_qs.filter(name__icontains=uni_name)
+    if country_name:
+        # Assuming country_name is the name, not ID. Adjust if it's ID.
+        universities_qs = universities_qs.filter(country__name__icontains=country_name) 
+
+    # Prepare program filters separately
+    program_filters = Q()
+    if program_name:
+        program_filters &= Q(name__icontains=program_name)
+    if degree_type:
+        program_filters &= Q(degree_type=degree_type)
+    if intake_after:
+        intake_date = parse_date(intake_after)
+        if intake_date:
+            program_filters &= Q(start_date__gte=intake_date)
+        else:
+             messages.warning(request, "Invalid intake date format. Please use YYYY-MM-DD.")
+
+    # If there are program filters, we need to filter universities based on whether they HAVE matching programs
+    if program_filters:
+         universities_qs = universities_qs.filter(programs__in=Program.objects.filter(program_filters)).distinct()
+
+    # Now, iterate through the filtered universities and attach *only* the matching programs
+    # This requires another loop but ensures we only show relevant programs per university
+    results = []
+    for uni in universities_qs:
+        matching_programs = [p for p in uni.all_programs if program_filters.check(p, Q.check)] if program_filters else uni.all_programs
+        
+        # Only include the university if it has matching programs (when program filters are active)
+        if matching_programs or not program_filters:
+            uni.filtered_programs = matching_programs # Attach the filtered list
+            results.append(uni)
+
+    # Paginate the final list of universities
+    paginator = Paginator(results, 10) # 10 universities per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'universities': page_obj, # Pass paginated universities
+        'page_title': 'University Search',
+        'degree_types': Program.DEGREE_TYPES, # Pass choices for dropdown
+        # Pass filter values back to template to repopulate form
+        'uni_name': uni_name,
+        'country_name': country_name,
+        'program_name': program_name,
+        'degree_type': degree_type,
+        'intake_after': intake_after,
+    }
+    return render(request, 'dashboard/university_search.html', context)

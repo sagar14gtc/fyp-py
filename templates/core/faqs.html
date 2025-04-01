@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Frequently Asked Questions - Global Universities{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold mb-3">Frequently Asked Questions</h1>
+            <p class="lead mb-4">Find answers to the most common questions about our services, application process, and international education.</p>
+        </div>
+    </div>
+    
+    {% if categories %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap justify-content-center mb-4">
+                <div class="me-2 mb-2">
+                    <a href="#all" class="btn btn-outline-primary active category-btn" data-category="all">All</a>
+                </div>
+                {% for category in categories %}
+                    {% if category %}
+                    <div class="me-2 mb-2">
+                        <a href="#{{ category|slugify }}" class="btn btn-outline-primary category-btn" data-category="{{ category|slugify }}">{{ category }}</a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="accordion" id="faqAccordion">
+                {% for faq in faqs %}
+                    <div class="accordion-item faq-item" data-category="{% if faq.category %}{{ faq.category|slugify }}{% else %}uncategorized{% endif %}">
+                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                                {{ faq.question }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                {{ faq.answer|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-info">No FAQs available at the moment.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-8 mx-auto text-center">
+            <div class="card bg-light p-4">
+                <h3>Still have questions?</h3>
+                <p class="mb-4">If you couldn't find the answer to your question, please feel free to contact us directly.</p>
+                <a href="{% url 'core:contact' %}" class="btn btn-primary">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all buttons
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                
+                // Show/hide FAQ items based on category
+                faqItems.forEach(item => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %} 

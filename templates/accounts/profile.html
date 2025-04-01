@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Global Universities{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Profile Sidebar -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center p-4">
+                    <div class="avatar-wrapper mb-3">
+                        {% if profile.avatar %}
+                            <img src="{{ profile.avatar.url }}" alt="{{ user.get_full_name }}" class="rounded-circle avatar-lg">
+                        {% else %}
+                            <div class="avatar-placeholder rounded-circle bg-primary text-white">
+                                {{ user.first_name|first }}{{ user.last_name|first }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ user.get_full_name }}</h4>
+                    <p class="text-muted mb-2">@{{ user.username }}</p>
+                    <span class="badge bg-primary mb-3">{{ profile.get_role_display }}</span>
+                    
+                    <div class="d-grid">
+                        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'dashboard:dashboard' %}" class="list-group-item list-group-item-action"> {# Corrected URL name #}
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                    <a href="{% url 'applications:application_list' %}" class="list-group-item list-group-item-action"> {# Corrected URL name #}
+                        <i class="bi bi-file-earmark-text me-2"></i> My Applications
+                    </a>
+                    <a href="{% url 'messaging:conversation_list' %}" class="list-group-item list-group-item-action"> {# Corrected URL name #}
+                        <i class="bi bi-envelope me-2"></i> Messages
+                        {% if unread_count > 0 %}
+                            <span class="badge bg-danger float-end">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'accounts:password_change' %}" class="list-group-item list-group-item-action"> {# Corrected URL name #}
+                        <i class="bi bi-shield-lock me-2"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Content -->
+        <div class="col-lg-9">
+            <!-- Personal Information Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Full Name</label>
+                            <div>{{ user.get_full_name }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Email</label>
+                            <div>{{ user.email }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Phone</label>
+                            <div>{{ profile.phone|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Country</label>
+                            <div>{{ profile.country|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Date Joined</label>
+                            <div>{{ user.date_joined|date:"F d, Y" }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Last Login</label>
+                            <div>{{ user.last_login|date:"F d, Y H:i"|default:"Never" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Student Information - Only show if user is a student -->
+            {% if profile.role == 'student' %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Student Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Education Level</label>
+                            <div>{{ profile.student.get_education_level_display|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Field of Study</label>
+                            <div>{{ profile.student.field_of_study|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Test Scores</label>
+                            <div>
+                                {% if profile.student.ielts_score %}IELTS: {{ profile.student.ielts_score }}{% endif %}
+                                {% if profile.student.toefl_score %}| TOEFL: {{ profile.student.toefl_score }}{% endif %}
+                                {% if profile.student.sat_score %}| SAT: {{ profile.student.sat_score }}{% endif %}
+                                {% if profile.student.gre_score %}| GRE: {{ profile.student.gre_score }}{% endif %}
+                                {% if profile.student.gmat_score %}| GMAT: {{ profile.student.gmat_score }}{% endif %}
+                                {% if not profile.student.ielts_score and not profile.student.toefl_score and not profile.student.sat_score and not profile.student.gre_score and not profile.student.gmat_score %}
+                                    Not provided
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Preferred Countries</label>
+                            <div>
+                                {% if profile.student.preferred_countries %}
+                                    {{ profile.student.preferred_countries }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Application Statistics -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Application Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="py-3">
+                                <h3 class="fw-bold text-primary">{{ application_stats.total|default:"0" }}</h3>
+                                <p class="text-muted mb-0">Total Applications</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="py-3">
+                                <h3 class="fw-bold text-success">{{ application_stats.accepted|default:"0" }}</h3>
+                                <p class="text-muted mb-0">Accepted</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="py-3">
+                                <h3 class="fw-bold text-warning">{{ application_stats.pending|default:"0" }}</h3>
+                                <p class="text-muted mb-0">Pending</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="py-3">
+                                <h3 class="fw-bold text-danger">{{ application_stats.rejected|default:"0" }}</h3>
+                                <p class="text-muted mb-0">Rejected</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a href="{% url 'applications:application_list' %}" class="btn btn-primary btn-sm">View All Applications</a> {# Corrected URL name #}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Consultant Information - Only show if user is a consultant -->
+            {% if profile.role == 'consultant' %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Consultant Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Specialization</label>
+                            <div>{{ profile.consultant.specialization|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted">Experience (Years)</label>
+                            <div>{{ profile.consultant.years_of_experience|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label text-muted">Bio</label>
+                            <div>{{ profile.consultant.bio|default:"Not provided" }}</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted">Expertise</label>
+                            <div>
+                                {% if profile.consultant.expertise %}
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for expertise in profile.consultant.expertise_list %}
+                                            <span class="badge bg-light text-dark border">{{ expertise }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assigned Students -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Assigned Students</h5>
+                </div>
+                <div class="card-body">
+                    {% if assigned_students %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Applications</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in assigned_students %}
+                                    <tr>
+                                        <td>{{ student.user.get_full_name }}</td>
+                                        <td>{{ student.applications_count }}</td>
+                                        <td>
+                                            {% if student.is_active %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {# Link to the student detail view in the dashboard app #}
+                                            <a href="{% url 'dashboard:student_detail' student.user.id %}" class="btn btn-sm btn-outline-primary">
+                                                View Applications
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">No students assigned yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-lg {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+.avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto;
+}
+</style>
+{% endblock %}

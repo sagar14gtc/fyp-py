@@ -1,0 +1,100 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Appointments{% endblock %}
+
+{% block dashboard_actions %}
+    <a href="{% url 'messaging:create_appointment' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Schedule New Appointment
+    </a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">My Appointments</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Appointments</li>
+    </ol>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-filter me-1"></i>
+            Filter Appointments
+        </div>
+        <div class="card-body">
+            <form method="get" action="{% url 'messaging:appointment_list' %}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            {% for value, display in status_choices %}
+                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" value="{{ request.GET.date|default:'' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        <a href="{% url 'messaging:appointment_list' %}" class="btn btn-secondary w-100 mt-1">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointments Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-calendar-alt me-1"></i>
+            Appointments
+        </div>
+        <div class="card-body">
+            {% if appointments %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                {% if user.role != 'student' %}<th>Student</th>{% endif %}
+                                {% if user.role != 'consultant' %}<th>Consultant</th>{% endif %}
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt.title }}</td>
+                                    {% if user.role != 'student' %}<td>{{ appt.student.get_full_name|default:appt.student.username }}</td>{% endif %}
+                                    {% if user.role != 'consultant' %}<td>{{ appt.consultant.get_full_name|default:appt.consultant.username }}</td>{% endif %}
+                                    <td>{{ appt.date|date:"Y-m-d" }}</td>
+                                    <td>{{ appt.start_time|time:"H:i" }} - {{ appt.end_time|time:"H:i" }}</td>
+                                    <td><span class="badge bg-{{ appt.status|lower }}">{{ appt.get_status_display }}</span></td>
+                                    <td>
+                                        <a href="{% url 'messaging:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-info">Details</a>
+                                        {% if appt.status != 'completed' and appt.status != 'cancelled' %}
+                                            <a href="{% url 'messaging:update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                            <a href="{% url 'messaging:cancel_appointment' appt.id %}" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                 <!-- Pagination could be added here if needed -->
+            {% else %}
+                <p class="text-center text-muted">No appointments found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
