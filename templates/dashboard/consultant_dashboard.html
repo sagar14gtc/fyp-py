@@ -1,0 +1,106 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Consultant Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Consultant Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+    <div class="row">
+        <!-- Student Management -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <i class="fas fa-users fa-2x mb-2"></i><br>
+                    Manage Students
+                    <p class="small">View and manage student details.</p>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'dashboard:student_list' %}">View Details</a> {# Existing view, might need refinement for consultant context #}
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Management -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <i class="fas fa-file-alt fa-2x mb-2"></i><br>
+                    Review Applications
+                    <p class="small">View applications submitted by your students.</p>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'dashboard:consultant_application_list' %}">View Applications</a> {# New URL needed #}
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- University Management -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <i class="fas fa-university fa-2x mb-2"></i><br>
+                    Manage Universities
+                    <p class="small">Add or edit university information.</p>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'dashboard:consultant_university_list' %}">View/Add Universities</a> {# New URL needed #}
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check fa-2x mb-2"></i><br>
+                    Appointments
+                    <p class="small">View your scheduled appointments.</p>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'messaging:appointment_list' %}">View Appointments</a> {# Existing URL #}
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <i class="fas fa-comments fa-2x mb-2"></i><br>
+                    Messages
+                    <p class="small">Read and reply to messages.</p>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'messaging:conversation_list' %}">View Messages</a> {# Existing URL #}
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Send Notifications -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">
+                    <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
+                    Send Notifications
+                    <p class="small">Notify students about updates or news.</p>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'dashboard:consultant_send_notification' %}">Send Notification</a> {# New URL needed #}
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Placeholder for other dashboard elements -->
+    <p>Welcome to your dashboard, {{ request.user.get_full_name|default:request.user.username }}!</p>
+</div>
+{% endblock %}

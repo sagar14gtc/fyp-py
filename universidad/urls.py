@@ -28,7 +28,7 @@ urlpatterns = [
     path('universities/', include('universities.urls')),
     path('applications/', include('applications.urls')),
     path('messaging/', include('messaging.urls')),
-    path('dashboard/', include('dashboard.urls')),
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')), # Added namespace
     path('notifications/', include(notifications.urls, namespace='notifications')),
 ]
 

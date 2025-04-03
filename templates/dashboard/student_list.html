@@ -1,0 +1,47 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}Student List{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Student List</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Student List</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Students Assigned to You
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Applications</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %} {# Assuming a context variable 'students' will be passed #}
+                    <tr>
+                        <td>{{ student.get_full_name|default:student.username }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.applications.count }}</td> {# Example: show application count #}
+                        <td>
+                            <a href="#" class="btn btn-sm btn-info">View Details</a> {# Placeholder link #}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

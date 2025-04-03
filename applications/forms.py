@@ -55,12 +55,8 @@ class ApplicationCreateFromSearchForm(forms.ModelForm):
             'emergency_contact_name',
             'emergency_contact_phone',
             'emergency_contact_relationship',
-            'notes',
-            # Add document fields here
-            'transcript_file', 
-            'certificate_file', 
-            'passport_file', 
-            'language_test_file'
+            'notes'
+            # Document fields are handled by the form class itself, not the model Meta
         ]
         widgets = {
             'intake_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),

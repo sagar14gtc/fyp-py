@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from universities import views as universities_views # Import universities views
 
 app_name = 'dashboard'
 
@@ -14,5 +15,15 @@ urlpatterns = [
     path('notifications/', views.notifications, name='notifications'),
     path('notifications/<int:notification_id>/mark-read/', views.mark_notification_read, name='mark_notification_read'),
     path('activities/', views.activity_log, name='activity_log'),
-    path('search-universities/', views.university_search, name='university_search'), # New URL for search
+    path('search-universities/', views.university_search, name='university_search'), # University search (potentially for all users)
+
+    # Consultant Specific URLs
+    path('consultant/applications/', views.consultant_application_list, name='consultant_application_list'),
+    # --- Use the view from universities app ---
+    path('consultant/universities/', universities_views.consultant_university_list, name='consultant_university_list'),
+    path('consultant/universities/add/', universities_views.consultant_add_university, name='consultant_add_university'), # Assuming this is also in universities.views
+    path('consultant/universities/<int:uni_id>/edit/', universities_views.consultant_edit_university, name='consultant_edit_university'), # Assuming this is also in universities.views
+    # Add URLs for university detail, program management if needed within consultant dashboard
+    path('consultant/notifications/send/', views.consultant_send_notification, name='consultant_send_notification'),
+    path('recommend/', views.recommend_universities, name='recommend_universities'),
 ]

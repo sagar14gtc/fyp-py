@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Universities</title>
+</head>
+<body>
+    <h1>Recommended Universities</h1>
+    <ul>
+        {% for university in recommendations %}
+            <li>{{ university }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'dashboard:recommend_universities' %}">Back</a>
+</body>
+</html>

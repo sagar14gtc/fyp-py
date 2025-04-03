@@ -1,0 +1,134 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Assigned Applications{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Assigned Applications</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Assigned Applications</li>
+    </ol>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-filter me-1"></i>
+            Filter Applications
+        </div>
+        <div class="card-body">
+            <form method="get" action="{% url 'dashboard:consultant_application_list' %}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="student_search" class="form-label">Student Name/Email</label>
+                        <input type="text" name="student" id="student_search" class="form-control" value="{{ student_search|default:'' }}" placeholder="Search student...">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="status_filter" class="form-label">Status</label>
+                        <select name="status" id="status_filter" class="form-select">
+                            <option value="">All Statuses</option>
+                            {% for value, display in status_choices %}
+                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{% url 'dashboard:consultant_application_list' %}" class="btn btn-secondary">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Applications Assigned to You
+        </div>
+        <div class="card-body">
+            {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Program</th>
+                                <th>University</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'dashboard:student_detail' app.student.id %}">{{ app.student.get_full_name|default:app.student.username }}</a>
+                                    </td>
+                                    <td>{{ app.program.name }}</td>
+                                    <td>{{ app.program.university.name }}</td>
+                                    <td><span class="badge bg-{{ app.status }}">{{ app.get_status_display }}</span></td>
+                                    <td>{{ app.application_date|date:"Y-m-d" }}</td>
+                                    <td>
+                                        <a href="{% url 'applications:application_detail' app.application_id %}" class="btn btn-sm btn-outline-info">View Details</a>
+                                        {# Add buttons for consultant actions like update status if needed #}
+                                        {# <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#updateStatusModal-{{ app.application_id }}">Update Status</button> #}
+                                    </td>
+                                </tr>
+                                {# Include modal for status update if implementing #}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% include 'includes/pagination.html' with page_obj=applications %}
+
+            {% else %}
+                <p class="text-center text-muted">No applications found matching your criteria.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# Example Modal Structure (place outside card, repeat for each app if needed) #}
+{# {% for app in applications %}
+<div class="modal fade" id="updateStatusModal-{{ app.application_id }}" tabindex="-1" aria-labelledby="updateStatusModalLabel-{{ app.application_id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'applications:update_status' app.application_id %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateStatusModalLabel-{{ app.application_id }}">Update Status for {{ app.student.username }} - {{ app.program.name }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label for="status-{{ app.application_id }}" class="form-label">New Status</label>
+                  <select class="form-select" id="status-{{ app.application_id }}" name="status" required>
+                      {% for value, display in status_choices %}
+                          {% if value != app.status %}
+                              <option value="{{ value }}">{{ display }}</option>
+                          {% endif %}
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="mb-3">
+                  <label for="notes-{{ app.application_id }}" class="form-label">Notes (Optional)</label>
+                  <textarea class="form-control" id="notes-{{ app.application_id }}" name="notes" rows="3"></textarea>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %} #}
+
+{% endblock %}

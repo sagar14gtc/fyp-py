@@ -1,0 +1,75 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+    {% block dashboard_title %}{{ page_title|default:"Appointment Details" }}{% endblock %}
+
+    {% block dashboard_content %}
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">{{ appointment.title }}</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'messaging:appointment_list' %}">Appointments</a></li>
+            <li class="breadcrumb-item active">Details</li>
+        </ol>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-calendar-check me-1"></i>
+                Appointment Details
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Title</dt>
+                    <dd class="col-sm-9">{{ appointment.title }}</dd>
+
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9">{{ appointment.description|linebreaksbr|default:"N/A" }}</dd>
+
+                    <dt class="col-sm-3">Date</dt>
+                    <dd class="col-sm-9">{{ appointment.date|date:"Y-m-d" }}</dd>
+
+                    <dt class="col-sm-3">Time</dt>
+                    <dd class="col-sm-9">{{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}</dd>
+
+                    <dt class="col-sm-3">Status</dt>
+                    <dd class="col-sm-9"><span class="badge bg-{{ appointment.status }}">{{ appointment.get_status_display }}</span></dd>
+
+                    {% if request.user.role == 'consultant' or request.user.is_staff %}
+                        <dt class="col-sm-3">Student</dt>
+                        <dd class="col-sm-9">{{ appointment.student.get_full_name|default:appointment.student.username }}</dd>
+                    {% endif %}
+
+                    {% if request.user.role == 'student' or request.user.is_staff %}
+                        <dt class="col-sm-3">Consultant</dt>
+                        <dd class="col-sm-9">{{ appointment.consultant.get_full_name|default:appointment.consultant.username }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-3">Meeting Link</dt>
+                    <dd class="col-sm-9">
+                        {% if appointment.meeting_link %}
+                            <a href="{{ appointment.meeting_link }}" target="_blank">{{ appointment.meeting_link }}</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">Created At</dt>
+                    <dd class="col-sm-9">{{ appointment.created_at|date:"Y-m-d H:i" }}</dd>
+
+                    <dt class="col-sm-3">Last Updated</dt>
+                    <dd class="col-sm-9">{{ appointment.updated_at|date:"Y-m-d H:i" }}</dd>
+                </dl>
+            </div>
+            <div class="card-footer">
+                {% if appointment.status != 'completed' and appointment.status != 'cancelled' %}
+                    {% if request.user == appointment.student or request.user == appointment.consultant or request.user.is_staff %}
+                        {# Add Update/Cancel buttons if applicable #}
+                        {# <a href="{% url 'messaging:update_appointment' appointment.id %}" class="btn btn-warning">Update</a> #}
+                        {# <a href="{% url 'messaging:cancel_appointment' appointment.id %}" class="btn btn-danger">Cancel</a> #}
+                        {# Note: Update/Cancel views/URLs might need implementation #}
+                    {% endif %}
+                {% endif %}
+                <a href="{% url 'messaging:appointment_list' %}" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -1,0 +1,69 @@
+{% extends "dashboard/base_dashboard.html" %}
+    {% load static %}
+
+    {% block dashboard_title %}{{ page_title|default:"Conversation" }}{% endblock %}
+
+    {% block dashboard_content %}
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">{{ conversation.title|default:"Conversation" }}</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'messaging:conversation_list' %}">Messages</a></li>
+            <li class="breadcrumb-item active">{{ conversation.title|default:"Conversation" }}</li>
+        </ol>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-comments me-1"></i>
+                Chat History
+                {% if other_participants %}
+                    <span class="small text-muted">with {% for p in other_participants %}{{ p.get_full_name|default:p.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+                {% endif %}
+            </div>
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;" id="chat-log">
+                {% for message in messages %}
+                    <div class="d-flex flex-row {% if message.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %} mb-3">
+                        <div>
+                            <p class="small p-2 {% if message.sender == request.user %}me-3 text-white bg-primary rounded-3{% else %}ms-3 bg-light rounded-3{% endif %}">
+                                {{ message.content }}
+                            </p>
+                            {% for attachment in message.attachments.all %}
+                                <p class="small {% if message.sender == request.user %}me-3{% else %}ms-3{% endif %}">
+                                    <a href="{{ attachment.file.url }}" target="_blank"><i class="fas fa-paperclip"></i> {{ attachment.name }}</a>
+                                </p>
+                            {% endfor %}
+                            <p class="small {% if message.sender == request.user %}me-3 text-muted text-end{% else %}ms-3 text-muted{% endif %}">
+                                {% if message.sender != request.user %}{{ message.sender.get_full_name|default:message.sender.username }} - {% endif %}
+                                {{ message.created_at|date:"M d, Y H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-muted">No messages yet.</p>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <form method="post" action="{% url 'messaging:send_message' conversation.id %}" enctype="multipart/form-data" id="message-form">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        {{ message_form.content }}
+                        {{ attachment_form.attachments }}
+                        <button class="btn btn-primary" type="submit" id="button-send">Send</button>
+                    </div>
+                    {% if message_form.content.errors %}
+                        <div class="text-danger small mt-1">{{ message_form.content.errors }}</div>
+                    {% endif %}
+                     {% if attachment_form.attachments.errors %}
+                        <div class="text-danger small mt-1">{{ attachment_form.attachments.errors }}</div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# Basic script to scroll to bottom - enhance as needed #}
+    <script>
+        const chatLog = document.getElementById('chat-log');
+        chatLog.scrollTop = chatLog.scrollHeight;
+    </script>
+    {% endblock %}
