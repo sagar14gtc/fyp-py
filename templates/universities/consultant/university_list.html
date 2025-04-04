@@ -18,12 +18,12 @@
             Search Universities
         </div>
         <div class="card-body">
-            <form method="get" action="{% url 'universities:consultant_university_list' %}">
+            <form method="get" action="{% url 'dashboard:consultant_university_list' %}">
                 <div class="input-group">
                     <input type="text" name="q" class="form-control" placeholder="Search by name, country, city..." value="{{ search_query|default:'' }}">
                     <button class="btn btn-primary" type="submit">Search</button>
                     {% if search_query %}
-                        <a href="{% url 'universities:consultant_university_list' %}" class="btn btn-secondary">Clear</a>
+                        <a href="{% url 'dashboard:consultant_university_list' %}" class="btn btn-secondary">Clear</a>
                     {% endif %}
                 </div>
             </form>
@@ -35,7 +35,7 @@
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
             Universities
-            <a href="{% url 'universities:consultant_add_university' %}" class="btn btn-sm btn-success float-end">
+            <a href="{% url 'dashboard:consultant_add_university' %}" class="btn btn-sm btn-success float-end">
                 <i class="fas fa-plus me-1"></i> Add New University
             </a>
         </div>
@@ -68,10 +68,10 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a href="{% url 'universities:consultant_edit_university' uni.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <a href="{% url 'dashboard:consultant_edit_university' uni.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
                                         {# Add view/delete buttons if needed #}
                                         {# <a href="{% url 'universities:university_detail' uni.slug %}" class="btn btn-sm btn-outline-info">View Public</a> #}
-                                        {# <form method="post" action="{% url 'universities:consultant_delete_university' uni.id %}" style="display: inline;" onsubmit="return confirm('Are you sure?');"> #}
+                                        {# <form method="post" action="{% url 'dashboard:consultant_delete_university' uni.id %}" style="display: inline;" onsubmit="return confirm('Are you sure?');"> #}
                                             {# {% csrf_token %} #}
                                             {# <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button> #}
                                         {# </form> #}
@@ -88,7 +88,7 @@
             {% else %}
                 <p class="text-center text-muted">No universities found matching your criteria.</p>
                  <div class="text-center">
-                     <a href="{% url 'universities:consultant_add_university' %}" class="btn btn-primary">Add the First University</a>
+                     <a href="{% url 'dashboard:consultant_add_university' %}" class="btn btn-primary">Add the First University</a>
                 </div>
             {% endif %}
         </div>

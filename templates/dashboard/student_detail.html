@@ -1,0 +1,120 @@
+{% extends "dashboard/base_dashboard.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ page_title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:student_list' %}">Student List</a></li>
+        <li class="breadcrumb-item active">{{ student.get_full_name|default:student.username }}</li>
+    </ol>
+
+    <div class="row">
+        <!-- Student Information Card -->
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user me-1"></i>
+                    Student Information
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ student.get_full_name|default:"N/A" }}</p>
+                    <p><strong>Username:</strong> {{ student.username }}</p>
+                    <p><strong>Email:</strong> {{ student.email }}</p>
+                    <p><strong>Phone:</strong> {{ student.phone|default:"N/A" }}</p>
+                    <p><strong>Country:</strong> {{ student.country|default:"N/A" }}</p>
+                    <p><strong>Joined:</strong> {{ student.date_joined|date:"Y-m-d" }}</p>
+                    {% if student.student_profile %}
+                        <hr>
+                        <p><strong>Education Level:</strong> {{ student.student_profile.education_level|default:"N/A" }}</p>
+                        <p><strong>Desired Degree:</strong> {{ student.student_profile.desired_degree|default:"N/A" }}</p>
+                        <p><strong>Desired Major:</strong> {{ student.student_profile.desired_major|default:"N/A" }}</p>
+                        <p><strong>GPA:</strong> {{ student.student_profile.gpa|default:"N/A" }}</p>
+                    {% endif %}
+                    {# Add link to edit profile if applicable #}
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Card -->
+        <div class="col-xl-8 col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-file-alt me-1"></i>
+                    Applications {% if request.user.role == 'consultant' %}Managed by You{% endif %}
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>University</th>
+                                    <th>Program</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.program.university.name }}</td>
+                                    <td>{{ app.program.name }}</td>
+                                    <td><span class="badge bg-secondary">{{ app.get_status_display }}</span></td>
+                                    <td>{{ app.application_date|date:"Y-m-d" }}</td>
+                                    <td>
+                                        <a href="{% url 'applications:application_detail' app.id %}" class="btn btn-sm btn-outline-info">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No applications found for this student {% if request.user.role == 'consultant' %}managed by you{% endif %}.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Appointments Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-calendar-check me-1"></i>
+                    Appointments {% if request.user.role == 'consultant' %}with You{% endif %}
+                </div>
+                <div class="card-body">
+                     {% if appointments %}
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Consultant</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt.date|date:"Y-m-d" }}</td>
+                                    <td>{{ appt.start_time|time:"H:i" }} - {{ appt.end_time|time:"H:i" }}</td>
+                                    <td>{{ appt.consultant.get_full_name|default:appt.consultant.username }}</td>
+                                     <td><span class="badge bg-info">{{ appt.get_status_display }}</span></td>
+                                    <td>
+                                        <a href="{% url 'messaging:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-info">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No appointments found for this student {% if request.user.role == 'consultant' %}with you{% endif %}.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

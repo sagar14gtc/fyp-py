@@ -31,7 +31,7 @@
                         <td>{{ student.email }}</td>
                         <td>{{ student.applications.count }}</td> {# Example: show application count #}
                         <td>
-                            <a href="#" class="btn btn-sm btn-info">View Details</a> {# Placeholder link #}
+                            <a href="{% url 'dashboard:student_detail' student.id %}" class="btn btn-sm btn-info">View Details</a>
                         </td>
                     </tr>
                     {% empty %}

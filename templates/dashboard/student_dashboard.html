@@ -47,8 +47,22 @@
     </div>
 
     <div class="row">
+        <!-- Recommend by AI -->
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-robot me-1"></i>
+                    Recommend by AI
+                </div>
+                <div class="card-body text-center">
+                    <p>Get personalized university recommendations based on your profile.</p>
+                    <a href="{% url 'dashboard:recommend_universities' %}" class="btn btn-info text-white">Get Recommendations</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Recent Applications -->
-        <div class="col-xl-6">
+        <div class="col-xl-4">
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-file-alt me-1"></i>
@@ -78,7 +92,7 @@
         </div>
 
         <!-- Upcoming Appointments & Messages -->
-        <div class="col-xl-6">
+        <div class="col-xl-4">
             <!-- Upcoming Appointments -->
             <div class="card mb-4">
                 <div class="card-header">

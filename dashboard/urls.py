@@ -24,6 +24,5 @@ urlpatterns = [
     path('consultant/universities/add/', universities_views.consultant_add_university, name='consultant_add_university'), # Assuming this is also in universities.views
     path('consultant/universities/<int:uni_id>/edit/', universities_views.consultant_edit_university, name='consultant_edit_university'), # Assuming this is also in universities.views
     # Add URLs for university detail, program management if needed within consultant dashboard
-    path('consultant/notifications/send/', views.consultant_send_notification, name='consultant_send_notification'),
     path('recommend/', views.recommend_universities, name='recommend_universities'),
 ]

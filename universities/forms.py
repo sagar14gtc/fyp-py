@@ -20,7 +20,7 @@ class UniversityForm(forms.ModelForm):
         model = University
         fields = [
             'name', 'description', 'website', 'country', 'city',
-            'address', 'ranking', 'logo', 'banner', 'is_featured'
+            'address', 'ranking', 'logo', 'banner_image', 'fee_usd', 'intake_details', 'is_featured'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -29,7 +29,9 @@ class UniversityForm(forms.ModelForm):
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'ranking': forms.NumberInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'banner': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'banner_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'fee_usd': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'intake_details': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'is_featured': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 

@@ -19,6 +19,13 @@ class UniversityAdmin(admin.ModelAdmin):
     list_filter = ('country', 'is_featured')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
+    # Add the new fields to the list display
+    list_display = ('name', 'country', 'city', 'ranking', 'fee_usd', 'is_featured')
+    # Add the new fields to the form fields for editing
+    fields = ('name', 'slug', 'logo', 'banner_image', 'description', 'established_year',
+              'website', 'email', 'phone', 'address', 'city', 'country', 'ranking',
+              'acceptance_rate', 'student_population', 'international_students',
+              'fee_usd', 'intake_details', 'is_featured')
     inlines = [FacultyInline]
 
 class ProgramRequirementInline(admin.TabularInline):

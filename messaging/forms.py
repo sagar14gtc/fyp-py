@@ -20,11 +20,13 @@ class MessageForm(forms.ModelForm):
 
 class AttachmentForm(forms.Form):
     """Form for uploading message attachments."""
-    
+
     attachments = forms.FileField(
-        widget=forms.FileInput(attrs={
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
             'class': 'form-control',
             'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png,.txt'
+            # Removed 'multiple': True
         })
     )
 
@@ -97,4 +99,4 @@ class AppointmentForm(forms.ModelForm):
         if date and date < timezone.now().date():
             raise ValidationError("Cannot schedule appointments in the past.")
         
-        return cleaned_data 
+        return cleaned_data

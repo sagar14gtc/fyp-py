@@ -224,8 +224,8 @@ def student_detail(request, user_id):
         'appointments': appointments,
         'page_title': f'Student: {student.get_full_name() or student.username}'
     }
-    # Consider a different template for consultants if needed
-    return render(request, 'dashboard/student_detail.html', context) # Using shared template for now
+    # Revert to the original path, assuming DIRS setting finds it
+    return render(request, 'dashboard/student_detail.html', context)
 
 @login_required
 def consultant_list(request):
@@ -627,15 +627,6 @@ def consultant_application_list(request):
     }
     # Need to create this template: templates/dashboard/consultant/application_list.html
     return render(request, 'dashboard/consultant/application_list.html', context)
-
-# Note: Notification sending view will be moved to notifications/views.py
-# Placeholder function here for now, will be removed later.
-@user_passes_test(is_consultant, login_url=reverse_lazy('accounts:login'))
-def consultant_send_notification(request):
-    # This logic should move to notifications/views.py
-    messages.info(request, "Send notification view needs implementation in notifications app.")
-    return redirect('dashboard:dashboard')
-
 
 # --- Recommendation System View ---
 # Load the model once when the app starts (more efficient)

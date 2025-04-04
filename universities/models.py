@@ -39,6 +39,8 @@ class University(models.Model):
     acceptance_rate = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     student_population = models.PositiveIntegerField(blank=True, null=True)
     international_students = models.PositiveIntegerField(blank=True, null=True)
+    fee_usd = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, help_text="Approximate annual fee in USD")
+    intake_details = models.TextField(blank=True, null=True, help_text="Information about application intakes (e.g., Fall, Spring, Rolling)")
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
