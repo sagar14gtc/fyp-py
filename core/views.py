@@ -6,7 +6,7 @@ from universities.models import University, Program, Country # Import Country mo
 from django.db.models import Count
 
 def home(request):
-    featured_universities = University.objects.filter(is_featured=True).order_by('-ranking')[:6]
+    featured_universities = University.objects.filter(is_featured=True).order_by('-ranking') # Removed slice [:6]
     testimonials = Testimonial.objects.filter(is_featured=True).order_by('-created_at')[:3]
     university_count = University.objects.count()
     program_count = Program.objects.count()

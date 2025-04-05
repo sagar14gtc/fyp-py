@@ -174,7 +174,7 @@ def send_message(request, conversation_id):
                 conversation.updated_at = timezone.now()
                 conversation.save()
 
-                if request.is_ajax():
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                     return JsonResponse({
                         'success': True,
                         'message_id': message.id,
@@ -186,11 +186,11 @@ def send_message(request, conversation_id):
 
                 messages.success(request, "Message sent successfully!")
             else:
-                if request.is_ajax():
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                     return JsonResponse({'success': False, 'error': 'Message cannot be empty'})
                 messages.error(request, "Message cannot be empty.")
         else:
-            if request.is_ajax():
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors})
             messages.error(request, "There was an error sending your message.")
 
@@ -221,7 +221,7 @@ def chatbot(request):
                 response=response
             )
 
-            if request.is_ajax():
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({
                     'success': True,
                     'query': chat_query.query,
@@ -232,7 +232,7 @@ def chatbot(request):
             messages.success(request, "Query sent to chatbot.")
             return redirect('messaging:chatbot')
         else:
-            if request.is_ajax():
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors})
             messages.error(request, "There was an error with your query.")
     else:

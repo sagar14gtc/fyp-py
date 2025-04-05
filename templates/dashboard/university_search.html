@@ -42,6 +42,10 @@
                         </select>
                     </div>
                     <div class="col-md-6 col-lg-3">
+                        <label for="max_fee_usd" class="form-label">Max Annual Fee (USD)</label>
+                        <input type="number" class="form-control" id="max_fee_usd" name="max_fee_usd" min="0" step="any" value="{{ max_fee_usd|default:'' }}">
+                    </div>
+                    <div class="col-md-6 col-lg-3">
                         <label for="intake_after" class="form-label">Intake After</label>
                         <input type="date" class="form-control" id="intake_after" name="intake_after" value="{{ intake_after|default:'' }}">
                     </div>

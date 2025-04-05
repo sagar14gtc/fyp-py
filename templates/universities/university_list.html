@@ -11,8 +11,12 @@
         <ul class="list-group">
             {% for university in universities %}
                 <li class="list-group-item">
-                    <a href="#">{{ university.name }}</a> <!-- Add link to detail view later if needed -->
-                    <p class="mb-1"><small>{{ university.location }}</small></p>
+                    {% if university.website %}
+                        <a href="{{ university.website }}" target="_blank" rel="noopener noreferrer">{{ university.name }}</a>
+                    {% else %}
+                        {{ university.name }} <!-- Display name as text if no website URL -->
+                    {% endif %}
+                    <p class="mb-1"><small>{{ university.city.name }}, {{ university.country.name }}</small></p> <!-- Assuming city and country are available -->
                     <!-- Add more university details as needed -->
                 </li>
             {% endfor %}

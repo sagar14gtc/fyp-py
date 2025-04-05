@@ -102,6 +102,7 @@ def program_detail(request, uni_slug, prog_slug):
     }
     return render(request, 'universities/program_detail.html', context)
 
+@login_required # Add this decorator
 def search_universities(request):
     """View to search for universities by name, country, or program."""
     query = request.GET.get('q', '')
@@ -254,7 +255,7 @@ def consultant_edit_university(request, uni_id):
         if form.is_valid():
             form.save()
             messages.success(request, f"University '{university.name}' updated successfully.")
-            return redirect('universities:consultant_university_list')
+            return redirect('dashboard:consultant_university_list') # Corrected namespace
         else:
             messages.error(request, "Please correct the errors below.")
     else:

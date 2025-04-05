@@ -137,17 +137,17 @@
         </div>
     </div>
 
-     <!-- Recommended Universities -->
+     <!-- Featured Universities -->
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-university me-1"></i>
-                    Recommended Universities
+                    Featured Universities
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        {% for uni in recommended_universities %}
+                        {% for uni in featured_universities %}
                             <div class="col-md-3 mb-3">
                                 <div class="card h-100">
                                     {% if uni.logo %}
@@ -157,13 +157,17 @@
                                     {% endif %}
                                     <div class="card-body">
                                         <h5 class="card-title">{{ uni.name }}</h5>
-                                        <p class="card-text"><small>{{ uni.city }}, {{ uni.country }}</small></p>
-                                        <a href="#" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                        <p class="card-text"><small>{{ uni.city.name }}, {{ uni.country.name }}</small></p> {# Assuming city and country objects are available #}
+                                        {% if uni.website %}
+                                            <a href="{{ uni.website }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">Visit Website</a>
+                                        {% else %}
+                                            <span class="text-muted">No website</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         {% empty %}
-                            <p class="text-muted">No recommendations available at the moment.</p>
+                            <p class="text-muted">No featured universities available at the moment.</p>
                         {% endfor %}
                     </div>
                 </div>

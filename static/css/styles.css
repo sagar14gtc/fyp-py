@@ -1,0 +1,259 @@
+/* static/css/styles.css */
+
+/* --- Fonts --- */
+body {
+    font-family: 'Inter', sans-serif;
+    color: #333; /* Darker default text */
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600; /* Slightly bolder headings */
+}
+
+/* --- Base & Layout --- */
+.bg-light {
+    background-color: #f8f9fa !important; /* Ensure light background is consistent */
+}
+
+.bg-teal {
+    background-color: #20c997; /* Define a teal color */
+}
+
+.text-teal {
+    color: #20c997 !important;
+}
+
+.text-white-90 { color: rgba(255, 255, 255, 0.9); }
+.text-white-80 { color: rgba(255, 255, 255, 0.8); }
+.text-white-70 { color: rgba(255, 255, 255, 0.7); }
+
+.backdrop-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.bg-white-10 { background-color: rgba(255, 255, 255, 0.1); }
+.border-white-10 { border-color: rgba(255, 255, 255, 0.1) !important; }
+
+/* --- Navbar --- */
+/* Styles for the navbar in base.html */
+/* .navbar { ... } */
+/* .navbar-brand span { ... } */
+/* .nav-link { ... } */
+/* .nav-link:hover, .nav-link.active { ... } */
+
+/* --- Hero Section --- */
+/* Override existing .hero-section with image background from home.html */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    min-height: 500px; /* Keep min-height */
+    display: flex; /* Add flex properties */
+    align-items: center; /* Add flex properties */
+    color: white; /* Add color */
+    position: relative; /* Ensure position relative for shapes */
+    overflow: hidden; /* Ensure overflow hidden */
+    /* Removed margin-top/bottom */
+}
+
+.hero-section .display-4 {
+    font-weight: 700;
+}
+
+.hero-section .lead {
+    font-size: 1.15rem;
+}
+
+.stats-item { /* Style for potential stats items if added back */
+    padding: 1rem 0;
+}
+
+.feature-icon { /* Style for potential feature icons if added back */
+    flex-shrink: 0;
+}
+
+.bg-primary-soft { /* Style for potential soft backgrounds if added back */
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+/* Decorative shapes (optional) */
+.hero-shape-1, .hero-shape-2 {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+}
+.hero-shape-1 { width: 200px; height: 200px; bottom: -50px; left: -50px; }
+.hero-shape-2 { width: 150px; height: 150px; top: 50px; right: -40px; }
+
+/* --- University Cards --- */
+.university-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 2rem; /* Keep margin from home.html style */
+}
+
+.university-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.university-overlay { /* Style for potential overlay if added back */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* Add specific height for university card images from home.html style */
+.university-card .card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
+
+/* --- Country Cards --- */
+.country-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.country-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.country-img {
+    height: 250px;
+    object-fit: cover;
+}
+
+.country-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+    height: 60%;
+}
+
+/* --- Testimonials --- */
+/* Override existing .testimonial-card from home.html style */
+.testimonial-card {
+    background-color: #f8f9fa; /* Use light background */
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem; /* Keep margin for spacing between cards */
+    border: none; /* Remove default card border if any */
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); /* Add subtle shadow */
+}
+
+.testimonial-card .avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* --- Footer --- */
+.footer-link {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #fff;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #adb5bd;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.social-icon:hover {
+    background-color: var(--bs-primary);
+    color: #fff;
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    /* Add subtle shadow or gradient if desired */
+}
+
+.btn-outline-light:hover {
+    color: #333; /* Darker text on hover for light outline */
+}
+
+.btn-outline-white {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+}
+.btn-outline-white:hover {
+    background-color: #fff;
+    color: var(--bs-teal); /* Use the teal color defined above */
+}
+
+/* --- Animations (Optional) --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 767.98px) {
+    .hero-section .display-4 {
+        font-size: 2.5rem;
+    }
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+}
+
+/* --- Styles moved from core/home.html --- */
+
+.stats-counter {
+    background-color: #f8f9fa; /* Same as .bg-light */
+    padding: 3rem 0;
+    /* Removed margin-bottom */
+}
+
+.counter-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--bs-primary); /* Use Bootstrap primary color */
+}
+
+.cta-section {
+    background-color: var(--bs-primary); /* Use Bootstrap primary color */
+    color: white;
+    padding: 4rem 0;
+    /* Removed margin */
+}
+
+.search-box {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 2rem;
+    color: #333; /* Ensure text is readable */
+}
+.search-box h4 {
+    color: #333; /* Ensure heading is readable */
+}

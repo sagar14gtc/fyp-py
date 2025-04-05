@@ -1,12 +1,32 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
 from django.db.models import Count, Q
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm, StudentProfileForm, ConsultantProfileForm
 from .models import CustomUser, StudentProfile, ConsultantProfile
 from applications.models import Application # Import Application model
 from messaging.models import Message # Import Message model
+
+
+class CustomLoginView(LoginView):
+    """
+    Custom login view to redirect users based on their role.
+    Admins are redirected to the Django admin site.
+    Other users are redirected to their profile page.
+    """
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_authenticated:
+            if user.role == CustomUser.ADMIN:
+                return reverse_lazy('admin:index') # Redirect admins to /admin/
+            # Redirect other authenticated users (students, consultants) to their profile
+            return reverse_lazy('accounts:profile') 
+        # Fallback if somehow user is not authenticated (shouldn't happen here)
+        return super().get_success_url()
+
 
 def register(request):
     if request.method == 'POST':

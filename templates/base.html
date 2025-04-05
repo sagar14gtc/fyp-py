@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +10,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -71,7 +73,9 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="py-5">
+    <main> {# Removed py-5 class #}
+        {% block main_container %}
+        {# Container for messages, moved outside the main content block #}
         <div class="container">
             {% if messages %}
                 {% for message in messages %}
@@ -81,9 +85,13 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            
-            {% block content %}{% endblock %}
         </div>
+
+        {# Content block is now outside the container, allowing full-width sections #}
+        {% block content %}
+        {# Default content can go here if needed, or leave empty #}
+        {% endblock %}
+        {% endblock main_container %}
     </main>
 
     <!-- Footer -->
@@ -134,4 +142,4 @@
     <!-- Custom JS -->
     {% block extra_js %}{% endblock %}
 </body>
-</html> 
+</html>

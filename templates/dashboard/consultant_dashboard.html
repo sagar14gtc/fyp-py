@@ -1,16 +1,67 @@
 {% extends "dashboard/base_dashboard.html" %}
 
-{% block title %}Consultant Dashboard{% endblock %}
+{% block title %}Consultant Dashboard - Overview{% endblock %}
 
-{% block content %}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Consultant Dashboard</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
+{% block dashboard_title %}Consultant Overview{% endblock %} {# Use the title block from base_dashboard #}
+
+{% block dashboard_content %} {# Use the correct block #}
+    {# Display Overview Stats #}
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Assigned Students</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assigned_students_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Applications</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pending_applications_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-signature fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Upcoming Appointments</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ upcoming_appointments_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Quick Action Links (Existing Cards) #}
+    <h2 class="h4 mb-3">Quick Actions</h2>
     <div class="row">
         <!-- Student Management -->
-        <div class="col-xl-4 col-md-6">
+        <div class="col-xl-4 col-md-6 mb-4"> {# Added mb-4 for spacing #}
             <div class="card bg-primary text-white mb-4">
                 <div class="card-body">
                     <i class="fas fa-users fa-2x mb-2"></i><br>
@@ -84,7 +135,8 @@
             </div>
         </div>
 
-        <!-- Send Notifications -->
+        <!-- Send Notifications (Feature not yet implemented) -->
+        <!--
         <div class="col-xl-4 col-md-6">
             <div class="card bg-danger text-white mb-4">
                 <div class="card-body">
@@ -93,14 +145,11 @@
                     <p class="small">Notify students about updates or news.</p>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'dashboard:consultant_send_notification' %}">Send Notification</a> {# New URL needed #}
+                    <a class="small text-white stretched-link" href="#">Send Notification</a> {# {% url 'dashboard:consultant_send_notification' %} - New URL needed #}
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
-
+        -->
     </div>
-    <!-- Placeholder for other dashboard elements -->
-    <p>Welcome to your dashboard, {{ request.user.get_full_name|default:request.user.username }}!</p>
-</div>
-{% endblock %}
+{% endblock dashboard_content %}

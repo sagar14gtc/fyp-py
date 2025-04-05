@@ -3,79 +3,13 @@
 {% block title %}Global Universities - Your Gateway to International Education{% endblock %}
 
 {% block extra_css %}
-<style>
-    .hero-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-        background-size: cover;
-        background-position: center;
-        min-height: 500px;
-        display: flex;
-        align-items: center;
-        color: white;
-        margin-top: -3rem;
-        margin-bottom: 3rem;
-    }
-    
-    .stats-counter {
-        background-color: #f8f9fa;
-        padding: 3rem 0;
-        margin-bottom: 3rem;
-    }
-    
-    .counter-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #0d6efd;
-    }
-    
-    .university-card {
-        transition: transform 0.3s ease;
-        margin-bottom: 2rem;
-    }
-    
-    .university-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .university-card .card-img-top {
-        height: 180px;
-        object-fit: cover;
-    }
-    
-    .cta-section {
-        background-color: #0d6efd;
-        color: white;
-        padding: 4rem 0;
-        margin: 3rem 0;
-    }
-    
-    .testimonial-card {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .testimonial-card .avatar {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-right: 1rem;
-    }
-    
-    .search-box {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
-        padding: 2rem;
-    }
-</style>
+{# Styles moved to static/css/styles.css #}
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section">
-    <div class="container py-5">
+<section class="hero-section"> {# Removed py-5 padding here #}
+    <div class="container py-5"> {# Added py-5 padding here #}
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold mb-4">Find Your Perfect University</h1>
@@ -107,16 +41,23 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="btn btn-primary w-100">Search</button>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100">Login to Search</a>
+                        {% endif %}
                     </form>
                 </div>
             </div>
         </div>
+        <!-- Decorative shapes -->
+        <div class="hero-shape-1 d-none d-lg-block"></div>
+        <div class="hero-shape-2 d-none d-lg-block"></div>
     </div>
 </section>
 
 <!-- Stats Counter -->
-<section class="stats-counter">
+<section class="stats-counter py-5"> {# Added py-5 for spacing #}
     <div class="container">
         <div class="row text-center">
             <div class="col-md-4">
@@ -136,7 +77,7 @@
 </section>
 
 <!-- Featured Universities -->
-<section class="container mb-5">
+<section class="container py-5"> {# Added py-5 for spacing #}
     <h2 class="text-center mb-4">Featured Universities</h2>
     <div class="row">
         {% for university in featured_universities %}
@@ -173,8 +114,8 @@
 </section>
 
 <!-- CTA Section -->
-<section class="cta-section">
-    <div class="container text-center">
+<section class="cta-section text-center"> {# Moved text-center here #}
+    <div class="container"> {# Removed text-center from here #}
         <h2 class="mb-4">Ready to Begin Your International Education Journey?</h2>
         <p class="lead mb-4">Get personalized guidance from our experienced consultants and find the perfect university for your academic goals.</p>
         <div class="d-flex justify-content-center gap-3">
@@ -189,7 +130,7 @@
 </section>
 
 <!-- Testimonials -->
-<section class="container mb-5">
+<section class="container py-5"> {# Added py-5 for spacing #}
     <h2 class="text-center mb-4">What Our Students Say</h2>
     <div class="row">
         {% for testimonial in testimonials %}
@@ -227,7 +168,7 @@
 </section>
 
 <!-- Services Section -->
-<section class="container mb-5">
+<section class="container py-5"> {# Added py-5 for spacing #}
     <h2 class="text-center mb-4">Our Services</h2>
     <div class="row">
         <div class="col-md-4 mb-4">

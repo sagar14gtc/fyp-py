@@ -77,15 +77,15 @@ def student_dashboard(request):
         is_read=False
     ).exclude(sender=user).count()
 
-    # Get recommended universities (example logic - can be customized)
-    recommended_universities = University.objects.filter(is_featured=True)[:4]
+    # Get featured universities
+    featured_universities = University.objects.filter(is_featured=True) # Removed slice [:4]
 
     context = {
         'applications': recent_applications, # Pass the sliced list for display
         'application_stats': application_stats,
         'appointments': appointments,
         'unread_messages_count': unread_messages_count,
-        'recommended_universities': recommended_universities,
+        'featured_universities': featured_universities, # Renamed variable and context key
         'page_title': 'Student Dashboard'
     }
 
@@ -521,6 +521,7 @@ def university_search(request):
     program_name = request.GET.get('program_name', '') # Using program name as subject proxy
     degree_type = request.GET.get('degree_type', '')
     intake_after = request.GET.get('intake_after', '')
+    max_fee_usd_str = request.GET.get('max_fee_usd', '') # Get fee as string
 
     # Start with all universities, prefetching all programs initially
     universities_qs = University.objects.select_related('city', 'country').prefetch_related(
@@ -533,6 +534,23 @@ def university_search(request):
     if country_name:
         # Assuming country_name is the name, not ID. Adjust if it's ID.
         universities_qs = universities_qs.filter(country__name__icontains=country_name)
+
+    # Filter by Max Fee (University level)
+    max_fee_value = None
+    if max_fee_usd_str:
+        try:
+            from decimal import Decimal, InvalidOperation
+            max_fee_value = Decimal(max_fee_usd_str)
+            if max_fee_value >= 0:
+                 # Apply filter only if fee is valid and non-negative
+                 # This implicitly handles fee_usd being NULL as NULL <= value is false
+                 universities_qs = universities_qs.filter(fee_usd__lte=max_fee_value)
+            else:
+                messages.warning(request, "Maximum fee must be a non-negative number.")
+                max_fee_value = None # Reset if negative
+        except InvalidOperation:
+            messages.warning(request, "Invalid maximum fee format. Please enter a number.")
+            max_fee_value = None # Reset if invalid format
 
     # Prepare program filters separately
     program_filters = Q()
@@ -586,6 +604,7 @@ def university_search(request):
         'program_name': program_name,
         'degree_type': degree_type,
         'intake_after': intake_after,
+        'max_fee_usd': max_fee_usd_str, # Pass the original string back to preserve input
     }
     return render(request, 'dashboard/university_search.html', context)
 
@@ -650,9 +669,9 @@ def recommend_universities(request):
             # Get predictions
             predictions = RECOMMENDATION_MODEL.predict(input_data)
 
-            # Render results
+            # Render results with raw predictions
             return render(request, 'dashboard/recommendations.html', {
-                'recommendations': predictions
+                'recommendations': predictions # Pass the raw predictions list
             })
     else:
         form = RecommendationForm()

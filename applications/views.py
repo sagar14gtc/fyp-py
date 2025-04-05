@@ -293,9 +293,10 @@ def manage_documents(request, application_id):
     context = {
         'application': application,
         'documents': documents,
-        'page_title': 'Manage Documents'
+        'page_title': 'Manage Documents' # Keep title specific if needed
     }
-    return render(request, 'applications/manage_documents.html', context)
+    # Render the existing application detail template which shows documents
+    return render(request, 'applications/application_detail.html', context)
 
 @login_required
 def upload_document(request, application_id, document_type):

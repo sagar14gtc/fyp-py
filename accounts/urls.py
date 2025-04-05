@@ -2,11 +2,13 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from .forms import CustomAuthenticationForm
+from .views import CustomLoginView # Import the custom view
 
 app_name = 'accounts'
 
 urlpatterns = [
-    path('login/', auth_views.LoginView.as_view(
+    # Use the custom login view
+    path('login/', CustomLoginView.as_view(
         template_name='accounts/login.html',
         authentication_form=CustomAuthenticationForm
     ), name='login'),
@@ -39,4 +41,4 @@ urlpatterns = [
     path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='accounts/password_reset_complete.html'
     ), name='password_reset_complete'),
-] 
+]

@@ -57,8 +57,8 @@
 </style>
 {% endblock %}
 
-{% block content %}
-<div class="row">
+{% block main_container %} {# Override the container from base.html #}
+<div class="row g-0"> {# Use g-0 to remove gutters and make it full width #}
     <div class="col-md-3 col-lg-2 dashboard-sidebar">
         <h5 class="text-muted px-3 mb-3">Dashboard</h5>
         <ul class="nav flex-column">
@@ -134,4 +134,8 @@
         {% block dashboard_content %}{% endblock %}
     </div>
 </div>
+{% endblock main_container %}
+
+{% block content %}
+{# Content block is now empty as the structure moved to main_container #}
 {% endblock %}
