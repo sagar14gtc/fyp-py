@@ -77,7 +77,20 @@
                                     {% if user.role != 'consultant' %}<td>{{ appt.consultant.get_full_name|default:appt.consultant.username }}</td>{% endif %}
                                     <td>{{ appt.date|date:"Y-m-d" }}</td>
                                     <td>{{ appt.start_time|time:"H:i" }} - {{ appt.end_time|time:"H:i" }}</td>
-                                    <td><span class="badge bg-{{ appt.status|lower }}">{{ appt.get_status_display }}</span></td>
+                                    <td>
+                                        {# Use specific classes for better visibility #}
+                                        {% if appt.status == 'confirmed' %}
+                                            <span class="badge bg-success">{{ appt.get_status_display }}</span>
+                                        {% elif appt.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">{{ appt.get_status_display }}</span>
+                                        {% elif appt.status == 'cancelled' %}
+                                            <span class="badge bg-danger">{{ appt.get_status_display }}</span>
+                                        {% elif appt.status == 'completed' %}
+                                            <span class="badge bg-secondary">{{ appt.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ appt.get_status_display }}</span> {# Fallback changed to secondary #}
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <a href="{% url 'messaging:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-info">Details</a>
                                         {% if appt.status != 'completed' and appt.status != 'cancelled' %}

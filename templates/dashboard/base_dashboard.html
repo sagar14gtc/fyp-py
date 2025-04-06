@@ -64,24 +64,33 @@
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:dashboard' %}">
-                    <i class="fas fa-tachometer-alt"></i> Overview
-                </a>
-            </li>
-            <li class="nav-item"> {# Added University Search Link #}
+                     <i class="fas fa-tachometer-alt"></i> Overview
+                 </a>
+             </li>
+            {% if user.role != 'consultant' %} {# Show Search Universities to Students and Staff/Admin #}
+            <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'university_search' %}active{% endif %}" href="{% url 'dashboard:university_search' %}">
                     <i class="fas fa-search"></i> Search Universities
                 </a>
             </li>
-            {% if user.role == 'admin' or user.role == 'consultant' %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}" href="{% url 'dashboard:student_list' %}">
-                    <i class="fas fa-user-graduate"></i> Students
-                </a>
-            </li>
             {% endif %}
-            {% if user.role == 'admin' %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'consultant_list' %}active{% endif %}" href="{% url 'dashboard:consultant_list' %}">
+             {% if user.role == 'admin' or user.role == 'consultant' %}
+             <li class="nav-item">
+                 <a class="nav-link {% if request.resolver_match.url_name == 'student_list' %}active{% endif %}" href="{% url 'dashboard:student_list' %}">
+                      <i class="fas fa-user-graduate"></i> Students
+                  </a>
+              </li>
+             {% endif %}
+             {% if user.is_staff %} {# Show Manage Universities only to Staff/Admin #}
+             <li class="nav-item">
+                 <a class="nav-link {% if request.resolver_match.app_name == 'universities' and 'consultant' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'universities:consultant_university_list' %}">
+                     <i class="fas fa-university"></i> Manage Universities
+                 </a>
+             </li>
+             {% endif %}
+             {% if user.role == 'admin' %}
+             <li class="nav-item">
+                 <a class="nav-link {% if request.resolver_match.url_name == 'consultant_list' %}active{% endif %}" href="{% url 'dashboard:consultant_list' %}">
                     <i class="fas fa-user-tie"></i> Consultants
                 </a>
             </li>

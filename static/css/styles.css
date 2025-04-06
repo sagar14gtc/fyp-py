@@ -1,259 +1,633 @@
-/* static/css/styles.css */
+/* static/css/styles.css - Modern Refresh */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
 
-/* --- Fonts --- */
+:root {
+    /* Modern Color Palette */
+    --primary-color: #4F46E5; /* Indigo */
+    --primary-hover: #4338CA;
+    --secondary-color: #6B7280; /* Gray */
+    --accent-color: #10B981; /* Emerald */
+    --accent-hover: #059669;
+    --background-light: #F9FAFB; /* Very light gray */
+    --background-white: #FFFFFF;
+    --text-dark: #1F2937; /* Dark Gray */
+    --text-medium: #4B5563;
+    --text-light: #9CA3AF;
+    --border-color: #E5E7EB; /* Light Gray Border */
+    --danger-color: #EF4444;
+    --warning-color: #F59E0B;
+    --success-color: #10B981;
+    --info-color: #3B82F6;
+
+    /* Bootstrap Overrides (Optional but recommended for consistency) */
+    --bs-primary: var(--primary-color);
+    --bs-secondary: var(--secondary-color);
+    --bs-success: var(--success-color);
+    --bs-info: var(--info-color);
+    --bs-warning: var(--warning-color);
+    --bs-danger: var(--danger-color);
+    --bs-light: var(--background-light);
+    --bs-dark: var(--text-dark);
+    --bs-body-color: var(--text-medium);
+    --bs-body-bg: var(--background-white);
+    --bs-border-color: var(--border-color);
+    --bs-border-radius: 0.5rem; /* Slightly larger default radius */
+    --bs-box-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --bs-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --bs-box-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* --- Base & Typography --- */
 body {
     font-family: 'Inter', sans-serif;
-    color: #333; /* Darker default text */
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
     line-height: 1.6;
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
-    font-weight: 600; /* Slightly bolder headings */
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
 }
 
-/* --- Base & Layout --- */
-.bg-light {
-    background-color: #f8f9fa !important; /* Ensure light background is consistent */
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+    margin-bottom: 1rem;
 }
 
-.bg-teal {
-    background-color: #20c997; /* Define a teal color */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
-.text-teal {
-    color: #20c997 !important;
+a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
 }
 
-.text-white-90 { color: rgba(255, 255, 255, 0.9); }
-.text-white-80 { color: rgba(255, 255, 255, 0.8); }
-.text-white-70 { color: rgba(255, 255, 255, 0.7); }
-
-.backdrop-blur {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+/* --- Layout & Utilities --- */
+main {
+    /* padding-top: 2rem; /* Removed to eliminate gap below navbar on homepage */
+    padding-bottom: 3rem;
 }
 
-.bg-white-10 { background-color: rgba(255, 255, 255, 0.1); }
-.border-white-10 { border-color: rgba(255, 255, 255, 0.1) !important; }
-
-/* --- Navbar --- */
-/* Styles for the navbar in base.html */
-/* .navbar { ... } */
-/* .navbar-brand span { ... } */
-/* .nav-link { ... } */
-/* .nav-link:hover, .nav-link.active { ... } */
-
-/* --- Hero Section --- */
-/* Override existing .hero-section with image background from home.html */
-.hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-    background-size: cover;
-    background-position: center;
-    min-height: 500px; /* Keep min-height */
-    display: flex; /* Add flex properties */
-    align-items: center; /* Add flex properties */
-    color: white; /* Add color */
-    position: relative; /* Ensure position relative for shapes */
-    overflow: hidden; /* Ensure overflow hidden */
-    /* Removed margin-top/bottom */
+.container, .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-.hero-section .display-4 {
+.section-padding {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+.bg-primary-soft {
+    background-color: rgba(var(--bs-primary-rgb), 0.08);
+}
+.bg-accent-soft {
+    background-color: rgba(var(--accent-color), 0.1);
+}
+
+ /* --- Navbar --- */
+ .navbar {
+     background-color: var(--primary-color); /* Changed to primary blue */
+     box-shadow: var(--bs-box-shadow-sm);
+     padding-top: 0.75rem;
+     padding-bottom: 0.75rem;
+     /* border-bottom: 1px solid var(--border-color); Removed border */
+     margin-bottom: 0 !important; /* Remove any bottom margin */
+ }
+ 
+ .navbar-brand {
+     font-family: 'Poppins', sans-serif;
+     font-weight: 700;
+     font-size: 1.5rem;
+     color: var(--background-white) !important; /* White for contrast */
+ }
+ 
+ .navbar .nav-link {
+     color: rgba(255, 255, 255, 0.8); /* Lighter text for contrast */
+     font-weight: 500;
+     padding: 0.5rem 1rem;
+     border-radius: var(--bs-border-radius);
+     transition: background-color 0.2s ease, color 0.2s ease;
+ }
+ 
+ .navbar .nav-link:hover {
+     color: var(--background-white); /* White on hover */
+     background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+     text-decoration: none;
+ }
+ 
+ .navbar .nav-link.active {
+     color: var(--background-white); /* White for active link */
+     font-weight: 600;
+     background-color: transparent; /* Remove default active background */
+ }
+ 
+ .navbar-toggler {
+     border-color: rgba(255, 255, 255, 0.2); /* Lighter border for toggler */
+ }
+ .navbar-toggler-icon {
+      /* Use SVG with white stroke */
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar .dropdown-menu {
+    border-radius: var(--bs-border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--bs-box-shadow);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.navbar .dropdown-item {
+    color: var(--text-medium);
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+}
+
+.navbar .dropdown-item:active {
+     background-color: var(--primary-color);
+     color: var(--background-white);
+}
+
+.navbar .dropdown-divider {
+    border-top: 1px solid var(--border-color);
+    margin: 0.5rem 0;
+}
+
+/* --- Buttons --- */
+.btn {
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--bs-border-radius);
+    transition: all 0.2s ease-in-out;
+    border: 1px solid transparent;
+    box-shadow: var(--bs-box-shadow-sm);
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--bs-box-shadow);
+}
+.btn:focus {
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.25);
+}
+.btn:active {
+    transform: translateY(0);
+    box-shadow: var(--bs-box-shadow-sm);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--background-white);
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: var(--background-white);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--background-white);
+}
+.btn-secondary:hover {
+    background-color: #5a626b; /* Slightly darker gray */
+    border-color: #5a626b;
+    color: var(--background-white);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: var(--background-white);
+}
+
+.btn-outline-secondary {
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+.btn-outline-secondary:hover {
+    background-color: var(--secondary-color);
+    color: var(--background-white);
+}
+
+.btn-light {
+    background-color: var(--background-light);
+    border-color: var(--border-color);
+    color: var(--text-dark);
+}
+.btn-light:hover {
+    background-color: #e2e6ea; /* Slightly darker light */
+    border-color: #dae0e5;
+    color: var(--text-dark);
+}
+
+.btn-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    box-shadow: none;
+}
+.btn-link:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- Forms --- */
+.form-control, .form-select {
+    border-radius: var(--bs-border-radius);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--background-white);
+    color: var(--text-medium);
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.2);
+    outline: 0;
+}
+.form-control::placeholder {
+    color: var(--text-light);
+    opacity: 1;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    border-radius: 0.25em;
+    border: 1px solid var(--border-color);
+}
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.form-check-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.2);
+    outline: 0;
+}
+
+/* --- Cards --- */
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--bs-border-radius);
+    box-shadow: var(--bs-box-shadow-sm);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: var(--background-white);
+    overflow: hidden; /* Ensure content respects border radius */
+}
+.card:hover {
+    box-shadow: var(--bs-box-shadow-lg);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    background-color: var(--background-light);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    margin-bottom: 0.75rem;
+    color: var(--text-dark);
+}
+
+.card-subtitle {
+    color: var(--text-medium);
+}
+
+.card-text {
+    color: var(--text-medium);
+}
+
+.card-link {
+    font-weight: 600;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* --- Alerts --- */
+.alert {
+    border-radius: var(--bs-border-radius);
+    border-width: 1px;
+    border-style: solid;
+    padding: 1rem 1.25rem;
+    box-shadow: var(--bs-box-shadow-sm);
+}
+.alert-heading {
     font-weight: 700;
 }
+.alert .btn-close {
+    filter: invert(40%) sepia(10%) saturate(200%) hue-rotate(175deg) brightness(90%) contrast(80%); /* Adjust close button color */
+}
+.alert-primary { background-color: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+.alert-secondary { background-color: #f3f4f6; border-color: #d1d5db; color: #374151; }
+.alert-success { background-color: #ecfdf5; border-color: #a7f3d0; color: #047857; }
+.alert-danger { background-color: #fee2e2; border-color: #fecaca; color: #991b1b; }
+.alert-warning { background-color: #fffbeb; border-color: #fde68a; color: #92400e; }
+.alert-info { background-color: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.alert-light { background-color: #f9fafb; border-color: #f3f4f6; color: #1f2937; }
+.alert-dark { background-color: #e5e7eb; border-color: #d1d5db; color: #111827; }
 
+
+/* --- Footer --- */
+footer.bg-dark {
+    background-color: var(--text-dark) !important;
+    color: var(--text-light);
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+footer h5 {
+    color: var(--background-white);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+footer p, footer address p {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+footer a {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+footer a:hover {
+    color: var(--background-white);
+    text-decoration: underline;
+}
+footer .list-unstyled li {
+    margin-bottom: 0.5rem;
+}
+footer hr {
+    border-top: 1px solid var(--secondary-color);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+footer .social-icons a {
+    color: var(--text-light);
+    font-size: 1.25rem;
+    transition: color 0.2s ease;
+}
+footer .social-icons a:hover {
+    color: var(--primary-color);
+}
+
+/* --- Specific Section Styling (Refinements) --- */
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    color: var(--background-white);
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.hero-section .display-4 {
+    font-weight: 700;
+    color: var(--background-white);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
 .hero-section .lead {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hero-section .btn {
+    margin-top: 1rem;
 }
 
-.stats-item { /* Style for potential stats items if added back */
-    padding: 1rem 0;
-}
-
-.feature-icon { /* Style for potential feature icons if added back */
-    flex-shrink: 0;
-}
-
-.bg-primary-soft { /* Style for potential soft backgrounds if added back */
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-}
-
-/* Decorative shapes (optional) */
-.hero-shape-1, .hero-shape-2 {
-    position: absolute;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    z-index: 0;
-}
-.hero-shape-1 { width: 200px; height: 200px; bottom: -50px; left: -50px; }
-.hero-shape-2 { width: 150px; height: 150px; top: 50px; right: -40px; }
-
-/* --- University Cards --- */
-.university-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 2rem; /* Keep margin from home.html style */
-}
-
-.university-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.university-overlay { /* Style for potential overlay if added back */
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
-}
-
-/* Add specific height for university card images from home.html style */
+/* University Cards */
 .university-card .card-img-top {
-    height: 180px;
+    height: 200px; /* Slightly taller */
     object-fit: cover;
 }
+.university-card .card-body {
+    padding: 1.25rem;
+}
+.university-card .badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+}
 
-/* --- Country Cards --- */
+/* Country Cards */
 .country-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--bs-border-radius);
 }
-
-.country-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+.country-card:hover .country-img {
+    transform: scale(1.05);
 }
-
 .country-img {
-    height: 250px;
+    height: 280px;
     object-fit: cover;
+    transition: transform 0.4s ease;
 }
-
 .country-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
-    height: 60%;
+    padding: 1.5rem;
+    color: var(--background-white);
+    transition: opacity 0.3s ease;
+}
+.country-card:hover .country-overlay {
+    /* Optional: slightly change overlay on hover */
+}
+.country-overlay h5 {
+    color: var(--background-white);
+    margin-bottom: 0.25rem;
 }
 
-/* --- Testimonials --- */
-/* Override existing .testimonial-card from home.html style */
+/* Testimonials */
 .testimonial-card {
-    background-color: #f8f9fa; /* Use light background */
-    border-radius: 10px;
+    background-color: var(--background-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--bs-border-radius);
     padding: 2rem;
-    margin-bottom: 2rem; /* Keep margin for spacing between cards */
-    border: none; /* Remove default card border if any */
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); /* Add subtle shadow */
+    margin-bottom: 1.5rem;
+    box-shadow: none; /* Remove default shadow if card class adds it */
+    transition: box-shadow 0.3s ease;
 }
-
+.testimonial-card:hover {
+    box-shadow: var(--bs-box-shadow);
+}
 .testimonial-card .avatar {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     object-fit: cover;
     margin-right: 1rem;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
+    border: 2px solid var(--background-white);
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+.testimonial-card blockquote {
+    font-style: italic;
+    color: var(--text-medium);
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 1rem;
+}
+.testimonial-card .author {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.testimonial-card .role {
+    font-size: 0.9rem;
+    color: var(--text-light);
 }
 
-/* --- Footer --- */
-.footer-link {
-    color: #adb5bd;
-    text-decoration: none;
-    transition: color 0.2s ease;
+/* Stats Counter */
+.stats-counter {
+    background-color: var(--background-light);
+    padding: 4rem 0;
 }
-
-.footer-link:hover {
-    color: #fff;
+.counter-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block; /* Ensure it takes full width */
+    margin-bottom: 0.25rem;
 }
-
-.social-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #adb5bd;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    text-decoration: none;
-}
-
-.social-icon:hover {
-    background-color: var(--bs-primary);
-    color: #fff;
-}
-
-/* --- Buttons --- */
-.btn {
-    padding: 0.6rem 1.2rem;
+.counter-label {
+    font-size: 1rem;
+    color: var(--text-medium);
     font-weight: 500;
-    transition: all 0.3s ease;
 }
 
-.btn-primary {
-    /* Add subtle shadow or gradient if desired */
+/* CTA Section */
+.cta-section {
+    background-color: var(--primary-color);
+    color: var(--background-white);
+    padding: 4rem 0;
+    text-align: center;
+}
+.cta-section h2 {
+    color: var(--background-white);
+    margin-bottom: 1rem;
+}
+.cta-section p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.cta-section .btn-light {
+    background-color: var(--background-white);
+    color: var(--primary-color);
+    border-color: var(--background-white);
+}
+.cta-section .btn-light:hover {
+    background-color: #f8f9fa; /* Slightly off-white */
+    color: var(--primary-hover);
 }
 
-.btn-outline-light:hover {
-    color: #333; /* Darker text on hover for light outline */
+
+/* Search Box */
+.search-box {
+    background-color: var(--background-white);
+    border-radius: var(--bs-border-radius);
+    padding: 2.5rem;
+    box-shadow: var(--bs-box-shadow-lg);
+    margin-top: -50px; /* Pull it up over the section below */
+    position: relative; /* Needed for margin-top pull-up */
+    z-index: 10;
+}
+.search-box h4 {
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
 }
 
-.btn-outline-white {
-    border-color: rgba(255, 255, 255, 0.5);
-    color: #fff;
-}
-.btn-outline-white:hover {
-    background-color: #fff;
-    color: var(--bs-teal); /* Use the teal color defined above */
+/* --- Responsive Adjustments --- */
+@media (max-width: 767.98px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.5rem; }
+
+    .hero-section {
+        min-height: 350px;
+        padding: 3rem 0;
+    }
+    .hero-section .display-4 {
+        font-size: 2.25rem;
+    }
+    .hero-section .lead {
+        font-size: 1.1rem;
+    }
+
+    .search-box {
+        margin-top: 0;
+        padding: 1.5rem;
+    }
+
+    .navbar-nav {
+        margin-top: 0.5rem;
+    }
 }
 
-/* --- Animations (Optional) --- */
+/* --- Animations (Subtle) --- */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.8s ease-out forwards;
+/* Apply fade in to major sections for a subtle effect on load */
+/* Use sparingly if performance is a concern */
+/*
+.hero-section, .section-padding, footer {
+    animation: fadeIn 0.6s ease-out forwards;
 }
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 767.98px) {
-    .hero-section .display-4 {
-        font-size: 2.5rem;
-    }
-    .hero-section .lead {
-        font-size: 1rem;
-    }
-}
-
-/* --- Styles moved from core/home.html --- */
-
-.stats-counter {
-    background-color: #f8f9fa; /* Same as .bg-light */
-    padding: 3rem 0;
-    /* Removed margin-bottom */
-}
-
-.counter-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: var(--bs-primary); /* Use Bootstrap primary color */
-}
-
-.cta-section {
-    background-color: var(--bs-primary); /* Use Bootstrap primary color */
-    color: white;
-    padding: 4rem 0;
-    /* Removed margin */
-}
-
-.search-box {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 2rem;
-    color: #333; /* Ensure text is readable */
-}
-.search-box h4 {
-    color: #333; /* Ensure heading is readable */
-}
+*/

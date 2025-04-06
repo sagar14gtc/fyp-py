@@ -95,7 +95,8 @@ def student_dashboard(request):
 def consultant_dashboard(request):
     """Dashboard view for consultants."""
     user = request.user
-    # Maybe add some quick stats specific to the consultant
+
+    # Quick stats
     assigned_students_count = CustomUser.objects.filter(role='student', applications__consultant=user).distinct().count()
     pending_applications_count = Application.objects.filter(consultant=user, status__in=[Application.SUBMITTED, Application.PROCESSING, Application.DOCUMENTS_REQUIRED]).count()
     upcoming_appointments_count = Appointment.objects.filter(
@@ -155,20 +156,19 @@ def student_list(request):
     """View to list all students. Accessible to staff and consultants."""
     user = request.user
 
-    if not (user.is_staff or user.role == 'consultant'):
+    if not (user.is_staff or user.role == 'consultant'): # Correct indentation
         messages.error(request, "You don't have permission to view this page.")
         return redirect('dashboard:dashboard') # Use namespaced URL
 
-    students_qs = CustomUser.objects.filter(role='student')
+    students_qs = CustomUser.objects.filter(role='student') # Correct indentation
 
-    # If consultant, maybe only show students assigned to them?
-    # Or show all but highlight assigned ones? For now, show all.
-    # if user.role == 'consultant':
-    #     students = students.filter(applications__consultant=user).distinct()
+    # If consultant, only show students assigned to them
+    if user.role == 'consultant': # Correct indentation
+        students_qs = students_qs.filter(applications__consultant=user).distinct()
 
     # Filter by search query if provided
-    search_query = request.GET.get('q')
-    if search_query:
+    search_query = request.GET.get('q') # Correct indentation
+    if search_query: # Correct indentation
         students_qs = students_qs.filter(
             Q(username__icontains=search_query) |
             Q(email__icontains=search_query) |

@@ -77,7 +77,18 @@
                                         <a href="#">{{ app.program.name }}</a> at {{ app.program.university.name }}
                                         <small class="d-block text-muted">Applied on: {{ app.application_date|date:"Y-m-d" }}</small>
                                     </div>
-                                    <span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span>
+                                    {# Use specific classes for application status visibility #}
+                                    {% if app.status == 'accepted' or app.status == 'conditionally_accepted' or app.status == 'enrollment_confirmed' or app.status == 'visa_approved' %}
+                                        <span class="badge bg-success">{{ app.get_status_display }}</span>
+                                    {% elif app.status == 'rejected' or app.status == 'cancelled' or app.status == 'visa_rejected' %}
+                                        <span class="badge bg-danger">{{ app.get_status_display }}</span>
+                                    {% elif app.status == 'submitted' or app.status == 'processing' or app.status == 'under_review' or app.status == 'documents_required' or app.status == 'visa_applied' %}
+                                        <span class="badge bg-info">{{ app.get_status_display }}</span>
+                                    {% elif app.status == 'waitlisted' or app.status == 'deferred' %}
+                                        <span class="badge bg-warning text-dark">{{ app.get_status_display }}</span>
+                                    {% else %} {# Draft and others #}
+                                        <span class="badge bg-secondary">{{ app.get_status_display }}</span>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>
