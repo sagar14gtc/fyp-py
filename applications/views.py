@@ -16,7 +16,7 @@ from accounts.models import CustomUser
 def application_list(request):
     """View to list all applications for current user."""
     user = request.user
-    
+
     if user.role == 'student':
         applications = Application.objects.filter(student=user).order_by('-application_date')
         template = 'applications/student/application_list.html'
@@ -28,7 +28,7 @@ def application_list(request):
         template = 'applications/admin/application_list.html'
     else:
         return redirect('accounts:profile')
-    
+
     context = {
         'applications': applications,
         'page_title': 'My Applications'
@@ -39,22 +39,22 @@ def application_list(request):
 def create_application(request, program_id):
     """View to create a new application for a program."""
     program = get_object_or_404(Program, id=program_id)
-    
+
     if request.user.role != 'student':
         messages.error(request, "Only students can submit applications.")
         return redirect('universities:program_detail', uni_slug=program.university.slug, prog_slug=program.slug)
-    
+
     # Check if user already has an application for this program
     existing_application = Application.objects.filter(
         student=request.user,
         program=program,
         status__in=[s[0] for s in Application.STATUS_CHOICES if s[0] != Application.CANCELED]
     ).first()
-    
+
     if existing_application:
         messages.warning(request, f"You already have an application for this program ({existing_application.get_status_display()}).")
         return redirect('applications:application_detail', application_id=existing_application.application_id)
-    
+
     if request.method == 'POST':
         form = ApplicationForm(request.POST)
         if form.is_valid():
@@ -62,7 +62,7 @@ def create_application(request, program_id):
             application.student = request.user
             application.program = program
             application.save()
-            
+
             # Create initial status history
             ApplicationStatus.objects.create(
                 application=application,
@@ -70,7 +70,7 @@ def create_application(request, program_id):
                 changed_by=request.user,
                 notes="Application created"
             )
-            
+
             # Create required document placeholders
             for doc_type, doc_name in Document.DOCUMENT_TYPES:
                 Document.objects.create(
@@ -79,12 +79,12 @@ def create_application(request, program_id):
                     name=f"{doc_name} for {program.name}",
                     required=(doc_type in [Document.TRANSCRIPT, Document.CV, Document.PASSPORT])
                 )
-            
+
             messages.success(request, "Application created successfully. You can now upload your documents.")
             return redirect('applications:application_detail', application_id=application.application_id)
     else:
         form = ApplicationForm(initial={'intake_date': program.start_date})
-    
+
     context = {
         'form': form,
         'program': program,
@@ -97,15 +97,15 @@ def create_application(request, program_id):
 def application_detail(request, application_id):
     """View to see details of a specific application."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Check permission
     if not can_view_application(request.user, application):
         raise PermissionDenied("You don't have permission to view this application.")
-    
+
     documents = application.documents.all()
     notes = application.application_notes.all()
     status_history = application.status_history.all()
-    
+
     context = {
         'application': application,
         'program': application.program,
@@ -115,22 +115,22 @@ def application_detail(request, application_id):
         'status_history': status_history,
         'page_title': f'Application for {application.program.name}'
     }
-    
+
     # Use a single template for all roles
-    template = 'applications/application_detail.html' 
-    
+    template = 'applications/application_detail.html'
+
     return render(request, template, context)
 
 @login_required
 def edit_application(request, application_id):
     """View to edit an application."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Only allow editing if application is in draft state and user is the student
     if application.status != Application.DRAFT or application.student != request.user:
         messages.error(request, "You cannot edit this application.")
         return redirect('applications:application_detail', application_id=application.application_id)
-    
+
     if request.method == 'POST':
         form = ApplicationForm(request.POST, instance=application)
         if form.is_valid():
@@ -139,7 +139,7 @@ def edit_application(request, application_id):
             return redirect('applications:application_detail', application_id=application.application_id)
     else:
         form = ApplicationForm(instance=application)
-    
+
     context = {
         'form': form,
         'application': application,
@@ -153,21 +153,21 @@ def edit_application(request, application_id):
 def cancel_application(request, application_id):
     """View to cancel an application."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Check if user can cancel this application
     if application.student != request.user and not request.user.is_staff:
         messages.error(request, "You don't have permission to cancel this application.")
         return redirect('applications:application_detail', application_id=application.application_id)
-    
+
     # Don't allow cancelling of already processed applications
     if application.status in [Application.ACCEPTED, Application.ENROLLMENT_CONFIRMED]:
         messages.error(request, "You cannot cancel an accepted or confirmed application.")
         return redirect('applications:application_detail', application_id=application.application_id)
-    
+
     if request.method == 'POST':
         application.status = Application.CANCELED
         application.save()
-        
+
         # Create status history entry
         ApplicationStatus.objects.create(
             application=application,
@@ -175,10 +175,10 @@ def cancel_application(request, application_id):
             changed_by=request.user,
             notes=request.POST.get('cancel_reason', 'Application canceled')
         )
-        
+
         messages.success(request, "Application has been canceled successfully.")
         return redirect('applications:application_list')
-    
+
     context = {
         'application': application,
         'page_title': 'Cancel Application'
@@ -190,19 +190,19 @@ def cancel_application(request, application_id):
 def create_application_from_search(request, program_id):
     """View to create a new application from the search results page."""
     program = get_object_or_404(Program, id=program_id)
-    
+
     if request.user.role != 'student':
         messages.error(request, "Only students can submit applications.")
         # Redirect back to search or program detail? Let's go back to search for now.
-        return redirect('dashboard:university_search') 
-    
+        return redirect('dashboard:university_search')
+
     # Check if user already has an application for this program
     existing_application = Application.objects.filter(
         student=request.user,
         program=program,
         status__in=[s[0] for s in Application.STATUS_CHOICES if s[0] != Application.CANCELED]
     ).first()
-    
+
     if existing_application:
         messages.warning(request, f"You already have an application for this program ({existing_application.get_status_display()}).")
         return redirect('applications:application_detail', application_id=existing_application.application_id)
@@ -214,7 +214,7 @@ def create_application_from_search(request, program_id):
             application.student = request.user
             application.program = program
             # Set status to Submitted directly? Or Draft? Let's assume Submitted.
-            application.status = Application.SUBMITTED 
+            application.status = Application.SUBMITTED
             application.save()
 
             # Create initial status history
@@ -231,7 +231,22 @@ def create_application_from_search(request, program_id):
                 Document.DIPLOMA: form.cleaned_data.get('certificate_file'),
                 Document.PASSPORT: form.cleaned_data.get('passport_file'),
                 Document.LANGUAGE_TEST: form.cleaned_data.get('language_test_file'),
+                # Add the new document fields from the form
+                Document.CV: form.cleaned_data.get('cv_file'),
+                Document.RECOMMENDATION_LETTER: form.cleaned_data.get('recommendation_letter_file'),
+                Document.STATEMENT_OF_PURPOSE: form.cleaned_data.get('statement_of_purpose_file'),
             }
+
+            # Define which document types are considered required for this form submission
+            # (This might differ from general program requirements)
+            form_required_docs = [
+                Document.TRANSCRIPT,
+                Document.DIPLOMA,
+                Document.PASSPORT,
+                Document.CV, # Added
+                Document.RECOMMENDATION_LETTER, # Added
+                Document.STATEMENT_OF_PURPOSE, # Added
+            ]
 
             for doc_type, file in doc_fields.items():
                 if file and isinstance(file, UploadedFile):
@@ -241,22 +256,27 @@ def create_application_from_search(request, program_id):
                         file=file,
                         name=file.name,
                         status=Document.PENDING_REVIEW, # Assume pending review upon upload
-                        required=(doc_type in [Document.TRANSCRIPT, Document.DIPLOMA, Document.PASSPORT]) # Adjust required logic if needed
+                        required=(doc_type in form_required_docs) # Set required based on our list
                     )
-            
-            # Create placeholders for other potentially required docs if needed
-            # (e.g., CV, Recommendation Letter, SOP)
-            required_types = [Document.CV, Document.RECOMMENDATION_LETTER, Document.STATEMENT_OF_PURPOSE]
-            for doc_type in required_types:
+
+            # Create placeholders for any required docs that *weren't* uploaded via the form
+            # This ensures the student sees them in the document list later
+            all_possible_required = [
+                Document.TRANSCRIPT, Document.DIPLOMA, Document.CV,
+                Document.RECOMMENDATION_LETTER, Document.PASSPORT,
+                Document.STATEMENT_OF_PURPOSE
+                # Add others if they can be universally required
+            ]
+            for doc_type in all_possible_required:
+                 # Check if a document of this type was already created (either uploaded or placeholder)
                  if not application.documents.filter(document_type=doc_type).exists():
                      Document.objects.create(
                          application=application,
                          document_type=doc_type,
                          name=dict(Document.DOCUMENT_TYPES)[doc_type],
-                         required=True, # Assuming these are generally required
+                         required=(doc_type in form_required_docs), # Mark as required if it was in the form list
                          status=Document.NOT_UPLOADED
                      )
-
 
             messages.success(request, "Application submitted successfully!")
             # Redirect to application detail page
@@ -265,7 +285,7 @@ def create_application_from_search(request, program_id):
              messages.error(request, "Please correct the errors below.")
     else:
         # Pre-fill intake date if available from program
-        initial_data = {'intake_date': program.start_date} 
+        initial_data = {'intake_date': program.start_date}
         form = ApplicationCreateFromSearchForm(initial=initial_data)
 
     context = {
@@ -282,14 +302,14 @@ def create_application_from_search(request, program_id):
 def manage_documents(request, application_id):
     """View to manage documents for an application."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Check permission
     if application.student != request.user and not request.user.is_staff and application.consultant != request.user:
         messages.error(request, "You don't have permission to manage documents for this application.")
         return redirect('applications:application_list')
-    
+
     documents = application.documents.all()
-    
+
     context = {
         'application': application,
         'documents': documents,
@@ -302,40 +322,40 @@ def manage_documents(request, application_id):
 def upload_document(request, application_id, document_type):
     """View to upload a specific document."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Only student can upload documents
     if application.student != request.user:
         messages.error(request, "Only the applicant can upload documents.")
         return redirect('applications:manage_documents', application_id=application.application_id)
-    
+
     # Get or create document
     document, created = Document.objects.get_or_create(
         application=application,
         document_type=document_type,
         defaults={'name': dict(Document.DOCUMENT_TYPES)[document_type]}
     )
-    
+
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES, instance=document)
         if form.is_valid():
             doc = form.save(commit=False)
             doc.status = Document.PENDING_REVIEW
             doc.save()
-            
+
             messages.success(request, "Document uploaded successfully.")
-            
+
             # Check if application is in draft status and all required documents are uploaded
             if application.status == Application.DRAFT:
                 required_docs = application.documents.filter(required=True)
                 all_uploaded = all(doc.file for doc in required_docs)
-                
+
                 if all_uploaded:
                     messages.info(request, "All required documents uploaded. You can now submit your application.")
-            
+
             return redirect('applications:manage_documents', application_id=application.application_id)
     else:
         form = DocumentForm(instance=document)
-    
+
     context = {
         'form': form,
         'application': application,
@@ -350,24 +370,24 @@ def delete_document(request, application_id, document_id):
     """View to delete a document."""
     application = get_object_or_404(Application, application_id=application_id)
     document = get_object_or_404(Document, id=document_id, application=application)
-    
+
     # Only student can delete documents, and only if application is not submitted yet
     if application.student != request.user:
         messages.error(request, "Only the applicant can delete documents.")
         return redirect('applications:manage_documents', application_id=application.application_id)
-    
+
     if application.status != Application.DRAFT:
         messages.error(request, "Cannot delete documents after application has been submitted.")
         return redirect('applications:manage_documents', application_id=application.application_id)
-    
+
     if request.method == 'POST':
         document.file.delete(save=False)
         document.status = Document.NOT_UPLOADED
         document.save()
-        
+
         messages.success(request, "Document has been deleted.")
         return redirect('applications:manage_documents', application_id=application.application_id)
-    
+
     context = {
         'application': application,
         'document': document,
@@ -379,21 +399,21 @@ def delete_document(request, application_id, document_id):
 def update_status(request, application_id):
     """View to update application status."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Only staff and consultants can update status
     if not request.user.is_staff and application.consultant != request.user:
         messages.error(request, "You don't have permission to update the status of this application.")
         return redirect('applications:application_detail', application_id=application.application_id)
-    
+
     if request.method == 'POST':
         new_status = request.POST.get('status')
         notes = request.POST.get('notes', '')
-        
+
         if new_status in [status[0] for status in Application.STATUS_CHOICES]:
             old_status = application.status
             application.status = new_status
             application.save()
-            
+
             # Create status history entry
             ApplicationStatus.objects.create(
                 application=application,
@@ -401,24 +421,26 @@ def update_status(request, application_id):
                 changed_by=request.user,
                 notes=notes
             )
-            
+
             # Create application note about status change
             ApplicationNote.objects.create(
                 application=application,
                 user=request.user,
                 note=f"Status changed from {dict(Application.STATUS_CHOICES)[old_status]} to {dict(Application.STATUS_CHOICES)[new_status]}. {notes}"
             )
-            
+
             messages.success(request, f"Application status updated to {dict(Application.STATUS_CHOICES)[new_status]}.")
-            
-            if request.is_ajax():
+
+            # Check if the request is AJAX using headers
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
             return redirect('applications:application_detail', application_id=application.application_id)
         else:
             messages.error(request, "Invalid status.")
-            if request.is_ajax():
+            # Check if the request is AJAX using headers
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'error': 'Invalid status'})
-    
+
     context = {
         'application': application,
         'status_choices': Application.STATUS_CHOICES,
@@ -430,12 +452,12 @@ def update_status(request, application_id):
 def add_note(request, application_id):
     """View to add a note to an application."""
     application = get_object_or_404(Application, application_id=application_id)
-    
+
     # Check permission
     if not can_view_application(request.user, application):
         messages.error(request, "You don't have permission to add notes to this application.")
         return redirect('applications:application_list')
-    
+
     if request.method == 'POST':
         form = ApplicationNoteForm(request.POST)
         if form.is_valid():
@@ -443,23 +465,25 @@ def add_note(request, application_id):
             note.application = application
             note.user = request.user
             note.save()
-            
+
             messages.success(request, "Note added successfully.")
-            
-            if request.is_ajax():
+
+            # Check if the request is AJAX using headers
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
-                    'success': True, 
+                    'success': True,
                     'note': note.note,
                     'user': note.user.get_full_name() or note.user.username,
                     'created_at': note.created_at.strftime('%Y-%m-%d %H:%M')
                 })
             return redirect('applications:application_detail', application_id=application.application_id)
         else:
-            if request.is_ajax():
+            # Check if the request is AJAX using headers
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors})
     else:
         form = ApplicationNoteForm()
-    
+
     context = {
         'form': form,
         'application': application,
@@ -586,7 +610,7 @@ def create_application_for_university(request, uni_id):
 def can_view_application(user, application):
     """Check if user can view the application."""
     return (
-        user == application.student or 
-        user == application.consultant or 
+        user == application.student or
+        user == application.consultant or
         user.is_staff
     )

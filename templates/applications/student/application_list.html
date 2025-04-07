@@ -35,7 +35,22 @@
                                 <tr>
                                     <td>{{ app.program.name }}</td>
                                     <td>{{ app.program.university.name }}</td>
-                                    <td><span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span></td>
+                                    <td>
+                                        {% comment %} Map status to Bootstrap badge class {% endcomment %}
+                                        {% if app.status == 'draft' or app.status == 'canceled' %}
+                                            <span class="badge bg-secondary">{{ app.get_status_display }}</span>
+                                        {% elif app.status == 'submitted' or app.status == 'processing' or app.status == 'under_review' or app.status == 'visa_applied' %}
+                                            <span class="badge bg-primary">{{ app.get_status_display }}</span>
+                                        {% elif app.status == 'documents_required' or app.status == 'deferred' or app.status == 'waitlisted' %}
+                                            <span class="badge bg-warning text-dark">{{ app.get_status_display }}</span>
+                                        {% elif app.status == 'conditionally_accepted' or app.status == 'accepted' or app.status == 'visa_approved' or app.status == 'enrollment_confirmed' %}
+                                            <span class="badge bg-success">{{ app.get_status_display }}</span>
+                                        {% elif app.status == 'rejected' or app.status == 'visa_rejected' %}
+                                            <span class="badge bg-danger">{{ app.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark">{{ app.get_status_display }}</span> {# Fallback #}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ app.application_date|date:"Y-m-d" }}</td>
                                     <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
                                     <td>

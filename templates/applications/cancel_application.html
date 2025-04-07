@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ page_title }}</h1>
+    <hr>
+
+    <div class="alert alert-warning" role="alert">
+        <strong>Warning!</strong> You are about to cancel your application for the program:
+        <strong>{{ application.program.name }}</strong> at <strong>{{ application.program.university.name }}</strong>.
+        This action cannot be undone.
+    </div>
+
+    <p>Application ID: {{ application.application_id }}</p>
+    <p>Current Status: {{ application.get_status_display }}</p>
+    <p>Application Date: {{ application.application_date|date:"Y-m-d" }}</p>
+
+    <form method="post" action="{% url 'applications:cancel_application' application.application_id %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="cancel_reason" class="form-label">Reason for Cancellation (Optional):</label>
+            <textarea class="form-control" id="cancel_reason" name="cancel_reason" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+        <a href="{% url 'applications:application_detail' application.application_id %}" class="btn btn-secondary">Go Back</a>
+    </form>
+</div>
+{% endblock %}

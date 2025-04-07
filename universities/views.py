@@ -1,9 +1,9 @@
-from django.shortcuts import render, get_object_or_404, redirect # Add redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required, user_passes_test # Add decorators
-from django.urls import reverse_lazy # Add reverse_lazy
-from django.contrib import messages # Add messages
-from django.core.paginator import Paginator # Add Paginator
+from django.contrib.auth.decorators import user_passes_test # Removed login_required
+from django.urls import reverse_lazy, reverse # Added reverse
+from django.contrib import messages
+from django.core.paginator import Paginator
 
 from .models import University, Program, Faculty, Country
 # Assuming UniversityForm exists or will be created in universities/forms.py
@@ -17,16 +17,54 @@ def is_consultant(user):
 # --- Existing Views ---
 
 def university_list(request):
-    """View to list all universities."""
-    universities = University.objects.all().order_by('name')
-    featured_universities = University.objects.filter(is_featured=True)[:6]
-    countries = Country.objects.all()
+    """
+    View to list all universities, potentially filtered by search parameters.
+    Handles GET parameters: 'q', 'degree_type', 'country'.
+    """
+    universities_qs = University.objects.all().order_by('name') # Start with base queryset
+
+    # Get filter parameters from GET request
+    query = request.GET.get('q', '')
+    degree_type = request.GET.get('degree_type', '')
+    country_id = request.GET.get('country', '') # Assuming country is passed as ID
+
+    # Apply filters
+    if query:
+        universities_qs = universities_qs.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(city__name__icontains=query) # Added city search
+        ).distinct()
+
+    if degree_type:
+         universities_qs = universities_qs.filter(programs__degree_type=degree_type).distinct()
+
+    if country_id:
+        # Ensure country_id is a valid integer before filtering
+        try:
+            country_id_int = int(country_id)
+            universities_qs = universities_qs.filter(country_id=country_id_int)
+        except (ValueError, TypeError):
+            pass # Ignore invalid country ID
+
+    # Pagination (Optional but good practice)
+    paginator = Paginator(universities_qs, 12) # Show 12 universities per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Data for context
+    featured_universities = University.objects.filter(is_featured=True)[:6] # Keep featured separate
+    countries = Country.objects.all() # For potential filter dropdowns
 
     context = {
-        'universities': universities,
-        'featured_universities': featured_universities,
+        'universities': page_obj, # Pass paginated object
+        'featured_universities': featured_universities, # Still needed? Maybe remove if list is filtered
         'countries': countries,
-        'page_title': 'Explore Universities'
+        'page_title': 'Explore Universities',
+        # Pass filter values back to template for display/sticky forms
+        'query': query,
+        'selected_degree_type': degree_type,
+        'selected_country': country_id,
     }
     return render(request, 'universities/university_list.html', context)
 
@@ -102,26 +140,56 @@ def program_detail(request, uni_slug, prog_slug):
     }
     return render(request, 'universities/program_detail.html', context)
 
-@login_required # Add this decorator
+# Removed @login_required
 def search_universities(request):
-    """View to search for universities by name, country, or program."""
+    """
+    View to search for universities.
+    - If user is authenticated, performs search and renders results page.
+    - If user is not authenticated, redirects to the main university list
+      page with search parameters appended.
+    """
+    if not request.user.is_authenticated:
+        # Redirect unauthenticated users to the main list view with search params
+        base_url = reverse('universities:university_list')
+        query_params = request.GET.urlencode() # Get q, degree_type, country etc.
+        redirect_url = f'{base_url}?{query_params}'
+        return redirect(redirect_url)
+
+    # --- Authenticated user logic ---
+    # (Keep existing logic for now, but consider redirecting to university_list too)
     query = request.GET.get('q', '')
+    degree_type = request.GET.get('degree_type', '')
+    country_id = request.GET.get('country', '')
+
     universities = University.objects.all()
 
     if query:
         universities = universities.filter(
             Q(name__icontains=query) |
-            Q(country__name__icontains=query) |
-            Q(city__name__icontains=query) |
-            Q(programs__name__icontains=query)
+            Q(description__icontains=query) # Added description search
+            # Q(country__name__icontains=query) | # Country handled separately
+            # Q(city__name__icontains=query) | # Maybe add later if needed
+            # Q(programs__name__icontains=query) # Program search might be complex here
         ).distinct()
+
+    if degree_type:
+         universities = universities.filter(programs__degree_type=degree_type).distinct()
+
+    if country_id:
+        universities = universities.filter(country_id=country_id)
+
 
     context = {
         'universities': universities,
         'query': query,
+        'selected_degree_type': degree_type,
+        'selected_country': country_id, # Pass country ID for potential display
         'page_title': 'Search Results'
     }
+    # Consider changing this to redirect to university_list as well for consistency
+    # For now, renders a separate search results page for logged-in users
     return render(request, 'universities/search_results.html', context)
+
 
 def filter_universities(request):
     """View to filter universities by various criteria."""

@@ -59,7 +59,7 @@
     </div>
 
     <!-- Search Results -->
-    <div class="card mb-4">
+    <div class="card mb-4" id="search-results-section"> {# Added ID here #}
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
             Search Results
@@ -131,4 +131,21 @@
         </div>
     </div>
 </div>
+{% endblock dashboard_content %} {# Explicitly close dashboard_content #}
+
+{% block extra_js %} {# Start extra_js block AFTER dashboard_content #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if there are any GET parameters indicating a search was performed
+        const urlParams = new URLSearchParams(window.location.search);
+        // A simple check if any search-related parameter exists
+        if (urlParams.has('uni_name') || urlParams.has('country_name') || urlParams.has('program_name') || urlParams.has('degree_type') || urlParams.has('max_fee_usd') || urlParams.has('intake_after')) {
+            const resultsSection = document.getElementById('search-results-section');
+            if (resultsSection) {
+                // Scroll smoothly to the results section
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    });
+</script>
 {% endblock %}

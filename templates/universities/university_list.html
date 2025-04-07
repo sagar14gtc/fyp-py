@@ -4,28 +4,47 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Universities</h1>
-    <hr>
+    <h1 class="mb-4">Universities</h1>
+    {# Removed <hr> #}
 
-    {% if universities %}
-        <ul class="list-group">
-            {% for university in universities %}
-                <li class="list-group-item">
-                    {% if university.website %}
-                        <a href="{{ university.website }}" target="_blank" rel="noopener noreferrer">{{ university.name }}</a>
+    <div class="row"> {# Added row for card layout #}
+        {% for university in universities %}
+            <div class="col-md-6 col-lg-4 mb-4"> {# Added column and margin bottom #}
+                <div class="card university-card h-100">
+                    {% if university.logo %}
+                        <img src="{{ university.logo.url }}" class="card-img-top" alt="{{ university.name }}">
                     {% else %}
-                        {{ university.name }} <!-- Display name as text if no website URL -->
+                        {# Provide a default placeholder image if no logo exists #}
+                        <img src="https://via.placeholder.com/300x180?text=University+Logo" class="card-img-top" alt="{{ university.name }}">
                     {% endif %}
-                    <p class="mb-1"><small>{{ university.city.name }}, {{ university.country.name }}</small></p> <!-- Assuming city and country are available -->
-                    <!-- Add more university details as needed -->
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No universities found.</p>
-    {% endif %}
+                    <div class="card-body d-flex flex-column"> {# Added flex classes for footer alignment #}
+                        <h5 class="card-title">{{ university.name }}</h5>
+                        <p class="card-text text-muted small mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i> {# Assuming FontAwesome is available #}
+                            {% if university.city %}{{ university.city.name }}, {% endif %}
+                            {% if university.country %}{{ university.country.name }}{% endif %}
+                        </p>
+                        {% if university.description %}
+                            <p class="card-text flex-grow-1">{{ university.description|truncatewords:25 }}</p> {# Display description, slightly longer truncation #}
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-white border-top-0 pt-0"> {# Adjusted footer style #}
+                        {% if university.website %}
+                            <a href="{{ university.website }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">Visit Website</a> {# Link to external site #}
+                        {% else %}
+                            <span class="text-muted small">Website not available</span> {# Indicate if no website #}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No universities found matching your criteria.</div>
+            </div>
+        {% endfor %}
+    </div>
 
-    <!-- Add pagination controls if needed -->
+    <!-- TODO: Add pagination controls if needed -->
 
 </div>
 {% endblock %}

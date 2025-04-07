@@ -19,23 +19,38 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('application_id', 'student', 'program', 'status', 'application_date', 'consultant', 'last_updated') # Added consultant
     list_filter = ('status', 'application_date', 'program__university__country', 'consultant') # Added country and consultant filters
     search_fields = ('application_id', 'student__email', 'student__username', 'program__name', 'program__university__name') # Added university name
-    readonly_fields = ('application_id', 'application_date', 'last_updated') # Added last_updated
+    list_display = ('application_id', 'student', 'program', 'status', 'application_date', 'consultant', 'last_updated', 'email_address', 'country') # Added email, country
+    list_filter = ('status', 'application_date', 'program__university__country', 'consultant', 'country') # Added country filter
+    search_fields = ('application_id', 'student__email', 'student__username', 'program__name', 'program__university__name', 'email_address') # Added email_address search
+    readonly_fields = ('application_id', 'application_date', 'last_updated')
     date_hierarchy = 'application_date'
     
     fieldsets = (
         (None, {
             'fields': ('application_id', 'student', 'program', 'consultant', 'status', 'intake_date')
         }),
+        ('Personal Information', {
+            'classes': ('collapse',), # Optional: Make it collapsible
+            'fields': (
+                'email_address', 'birthdate', 'country', 'street_address', 
+                'city', 'postal_code', 'mailing_address', 
+                'telephone_primary', 'telephone_secondary'
+            ),
+        }),
         ('Student Provided Info', {
+            'classes': ('collapse',),
             'fields': ('gpa_or_percentage', 'study_gap_years', 'ielts_score', 'duolingo_score'),
         }),
          ('Emergency Contact', {
+            'classes': ('collapse',),
             'fields': ('emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'),
         }),
         ('Timestamps', {
+            'classes': ('collapse',),
             'fields': ('application_date', 'last_updated'),
         }),
          ('Admin Notes', {
+             'classes': ('collapse',),
             'fields': ('notes',),
         }),
     )

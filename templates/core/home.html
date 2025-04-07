@@ -1,242 +1,348 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-{% block title %}Global Universities - Your Gateway to International Education{% endblock %}
+{% block title %}Global Universities | Your Study Abroad Partner{% endblock %}
 
 {% block extra_css %}
-{# Styles moved to static/css/styles.css #}
-{% endblock %}
+<style>
+    /* Styles specific to homepage elements */
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80') center center / cover no-repeat;
+        /* Replace with a relevant, high-quality background image */
+        color: var(--bs-white);
+        min-height: 60vh; /* Adjust height as needed */
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .search-box-wrapper {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: var(--bs-border-radius);
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        backdrop-filter: blur(5px); /* Subtle blur effect */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    @media (max-width: 991.98px) {
+        .search-box-wrapper { padding: 1.5rem; }
+    }
+
+    .university-card .card-img-overlay {
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        transition: background 0.3s ease;
+    }
+    .university-card:hover .card-img-overlay {
+         background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 70%);
+    }
+    .university-card .card-title {
+        color: var(--bs-white);
+        font-weight: 600;
+    }
+    .university-card .card-text-location {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+    }
+    .university-card .img-cover {
+        height: 250px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .service-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 0; /* Remove default card border */
+    }
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--bs-box-shadow-lg) !important;
+    }
+    .service-icon {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(var(--bs-primary-rgb), 0.1);
+        color: var(--bs-primary);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem; /* Icon size */
+    }
+
+    .testimonial-card {
+        background-color: var(--background-white);
+        border: 1px solid var(--border-color);
+        border-radius: var(--bs-border-radius);
+        padding: 1.5rem;
+    }
+    .testimonial-card .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    .testimonial-card blockquote {
+        font-style: normal; /* Remove italic */
+        color: var(--text-medium);
+        margin-bottom: 1rem;
+        padding-left: 1rem;
+        border-left: 3px solid var(--primary-color);
+        font-size: 0.95rem;
+    }
+    .testimonial-card .author { font-weight: 600; color: var(--text-dark); font-size: 0.9rem;}
+    .testimonial-card .role { font-size: 0.8rem; color: var(--text-light); }
+    .testimonial-card .rating i { font-size: 0.9rem; }
+
+
+    .cta-section {
+        background-color: var(--primary-color);
+        color: var(--bs-white);
+    }
+     .cta-section h2 { color: var(--bs-white); }
+     .cta-section p { color: rgba(255, 255, 255, 0.85); }
+     .cta-section .btn-light { background-color: var(--background-white); color: var(--primary-color); border-color: var(--background-white); font-weight: 600;}
+     .cta-section .btn-light:hover { background-color: #f8f9fa; color: var(--primary-hover); }
+     .cta-section .btn-outline-light { color: var(--bs-white); border-color: rgba(255, 255, 255, 0.7); font-weight: 600;}
+     .cta-section .btn-outline-light:hover { background-color: rgba(255, 255, 255, 0.1); border-color: var(--bs-white); color: var(--bs-white);}
+
+    /* Simple Fade-in Animation */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; /* Start hidden */ }
+
+</style>
+{% endblock extra_css %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section"> {# Removed py-5 padding here #}
-    <div class="container py-5"> {# Added py-5 padding here #}
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Find Your Perfect University</h1>
-                <p class="lead mb-4">Explore top universities worldwide, apply with ease, and get expert guidance every step of the way.</p>
-                <a href="{% url 'universities:university_list' %}" class="btn btn-primary btn-lg">Explore Universities</a>
+
+{# Hero Section with Integrated Search #}
+<section class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-7 col-md-10 text-center text-lg-start mb-5 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-3 animate-fade-in-up">Your Global Education Starts Here</h1>
+                <p class="lead mb-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    Explore top universities, manage applications seamlessly, and get expert guidance for your study abroad journey.
+                </p>
+                <a href="#featured-universities" class="btn btn-outline-light btn-lg animate-fade-in-up" style="animation-delay: 0.2s;">Discover Universities</a>
             </div>
-            <div class="col-lg-5 offset-lg-1 mt-4 mt-lg-0">
-                <div class="search-box">
-                    <h4 class="text-dark mb-3">Quick Search</h4>
-                    <form action="{% url 'universities:search_universities' %}" method="get">
+            <div class="col-lg-5 col-md-10">
+                <div class="search-box-wrapper animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <h4 class="text-dark fw-semibold mb-3 text-center">Find Your Program</h4>
+                    <form action="{% url 'universities:university_list' %}" method="get" id="hero-search-form">
                         <div class="mb-3">
-                            <input type="text" class="form-control" name="q" placeholder="University name or keyword">
+                            <label for="hero-search-keyword" class="form-label visually-hidden">Keyword</label>
+                            <input type="text" class="form-control form-control-lg" id="hero-search-keyword" name="q" placeholder="Keyword (e.g., Engineering, London)">
                         </div>
                         <div class="mb-3">
-                            <select class="form-select" name="degree_type">
-                                <option value="">Select Degree Type</option>
-                                <option value="bachelor">Bachelor's Degree</option>
-                                <option value="master">Master's Degree</option>
+                            <label for="hero-search-degree" class="form-label visually-hidden">Degree Type</label>
+                            <select class="form-select form-select-lg" id="hero-search-degree" name="degree_type">
+                                <option value="">Any Degree Level</option>
+                                <option value="bachelor">Bachelor's</option>
+                                <option value="master">Master's</option>
                                 <option value="phd">PhD/Doctorate</option>
-                                <option value="diploma">Diploma</option>
-                                <option value="certificate">Certificate</option>
+                                <option value="diploma">Diploma/Certificate</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <select class="form-select" name="country">
-                                <option value="">Select Country</option>
+                             <label for="hero-search-country" class="form-label visually-hidden">Country</label>
+                            <select class="form-select form-select-lg" id="hero-search-country" name="country">
+                                <option value="">Any Country</option>
                                 {% for country in countries %}
                                     <option value="{{ country.id }}">{{ country.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        {% if user.is_authenticated %}
-                            <button type="submit" class="btn btn-primary w-100">Search</button>
-                        {% else %}
-                            <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100">Login to Search</a>
-                        {% endif %}
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
-        <!-- Decorative shapes -->
-        <div class="hero-shape-1 d-none d-lg-block"></div>
-        <div class="hero-shape-2 d-none d-lg-block"></div>
     </div>
 </section>
 
-<!-- Stats Counter -->
-<section class="stats-counter py-5"> {# Added py-5 for spacing #}
+{# Stats Counter - Subtle divider #}
+<section class="stats-counter py-4 border-bottom">
     <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="counter-number">{{ university_count }}</div>
-                <p class="lead">Universities</p>
+        <div class="row text-center gy-3">
+            <div class="col-6 col-md-4">
+                <span class="h2 fw-bold text-primary">{{ university_count|default:"1k+" }}</span>
+                <p class="text-muted small mb-0">Universities</p>
             </div>
-            <div class="col-md-4">
-                <div class="counter-number">{{ program_count }}</div>
-                <p class="lead">Programs</p>
+            <div class="col-6 col-md-4">
+                <span class="h2 fw-bold text-primary">{{ program_count|default:"5k+" }}</span>
+                <p class="text-muted small mb-0">Programs</p>
             </div>
-            <div class="col-md-4">
-                <div class="counter-number">{{ university_countries }}</div>
-                <p class="lead">Countries</p>
+            <div class="col-12 col-md-4"> {# Full width on small, 1/3 on md+ #}
+                <span class="h2 fw-bold text-primary">{{ university_countries|default:"50+" }}</span>
+                <p class="text-muted small mb-0">Countries</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Featured Universities -->
-<section class="container py-5"> {# Added py-5 for spacing #}
-    <h2 class="text-center mb-4">Featured Universities</h2>
-    <div class="row">
-        {% for university in featured_universities %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card university-card h-100">
-                    {% if university.logo %}
-                        <img src="{{ university.logo.url }}" class="card-img-top" alt="{{ university.name }}">
-                    {% else %}
-                        <img src="https://via.placeholder.com/300x180?text=University+Logo" class="card-img-top" alt="{{ university.name }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ university.name }}</h5>
-                        <p class="card-text text-muted">
-                            <i class="fas fa-map-marker-alt me-2"></i>
-                            {% if university.city %}{{ university.city.name }}, {% endif %}
-                            {% if university.country %}{{ university.country.name }}{% endif %}
-                        </p>
-                        <p class="card-text">{{ university.description|truncatewords:20 }}</p>
-                    </div>
-                    <div class="card-footer bg-white">
-                        <a href="{% url 'universities:university_detail' university.slug %}" class="btn btn-outline-primary">View Details</a>
-                    </div>
+{# Featured Universities - Card Overlay Design #}
+<section id="featured-universities" class="featured-universities-section pt-5"> {# Removed bottom padding #}
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">Explore Top Destinations</h2>
+        <div class="row g-4">
+            {% for university in featured_universities|slice:":3" %} {# Show only 3 featured #}
+                <div class="col-md-6 col-lg-4">
+                    <a href="#" class="card text-decoration-none text-dark university-card overflow-hidden shadow-sm h-100"> {# Link card if possible #}
+                        {% if university.logo %} {# Assume logo can be used as background #}
+                            <img src="{{ university.logo.url }}" class="img-cover" alt="{{ university.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1472173148041-00294f0814a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080" class="img-cover" alt="Placeholder University Image">
+                        {% endif %}
+                        <div class="card-img-overlay p-4">
+                            <h5 class="card-title">{{ university.name }}</h5>
+                            <p class="card-text-location mb-0">
+                                <i class="fas fa-map-marker-alt fa-xs me-1"></i>
+                                {% if university.city %}{{ university.city.name }}, {% endif %}
+                                {% if university.country %}{{ university.country.name }}{% endif %}
+                            </p>
+                        </div>
+                    </a>
                 </div>
-            </div>
-        {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">No featured universities available at the moment.</div>
-            </div>
-        {% endfor %}
-    </div>
-    <div class="text-center mt-4">
-        <a href="{% url 'universities:university_list' %}" class="btn btn-primary">View All Universities</a>
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-center text-muted">Featured universities coming soon.</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'universities:university_list' %}" class="btn btn-outline-primary btn-lg">View All Universities</a>
+        </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section text-center"> {# Moved text-center here #}
-    <div class="container"> {# Removed text-center from here #}
-        <h2 class="mb-4">Ready to Begin Your International Education Journey?</h2>
-        <p class="lead mb-4">Get personalized guidance from our experienced consultants and find the perfect university for your academic goals.</p>
-        <div class="d-flex justify-content-center gap-3">
+{# Services Section - Clean Icons & Text #}
+<section id="services" class="services-section py-5 bg-white border-top">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">How We Help You Succeed</h2>
+        <div class="row g-4 text-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100 p-3 shadow-sm">
+                    <div class="card-body">
+                        <div class="service-icon mb-3"><i class="fas fa-search"></i></div>
+                        <h5 class="fw-semibold mb-2">Comprehensive Search</h5>
+                        <p class="small text-muted">Find the perfect university and program based on your preferences and qualifications.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100 p-3 shadow-sm">
+                     <div class="card-body">
+                        <div class="service-icon mb-3"><i class="fas fa-file-signature"></i></div>
+                        <h5 class="fw-semibold mb-2">Streamlined Applications</h5>
+                        <p class="small text-muted">Manage all your applications, documents, and track progress in one easy-to-use platform.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100 p-3 shadow-sm">
+                     <div class="card-body">
+                        <div class="service-icon mb-3"><i class="fas fa-user-tie"></i></div>
+                        <h5 class="fw-semibold mb-2">Expert Consultations</h5>
+                        <p class="small text-muted">Connect with experienced advisors for personalized guidance and support.</p>
+                    </div>
+                </div>
+            </div>
+             <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100 p-3 shadow-sm">
+                     <div class="card-body">
+                        <div class="service-icon mb-3"><i class="fas fa-comments"></i></div>
+                        <h5 class="fw-semibold mb-2">Direct Communication</h5>
+                        <p class="small text-muted">Message consultants directly, schedule appointments, and get timely responses.</p>
+                    </div>
+                </div>
+            </div>
+             <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100 p-3 shadow-sm">
+                     <div class="card-body">
+                        <div class="service-icon mb-3"><i class="fas fa-robot"></i></div>
+                        <h5 class="fw-semibold mb-2">AI-Powered Tools</h5>
+                        <p class="small text-muted">Leverage AI for university recommendations and quick answers via our chatbot.</p>
+                    </div>
+                </div>
+            </div>
+             <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100 p-3 shadow-sm">
+                     <div class="card-body">
+                        <div class="service-icon mb-3"><i class="fas fa-check-circle"></i></div>
+                        <h5 class="fw-semibold mb-2">Visa & Preparation</h5>
+                        <p class="small text-muted">Guidance through the visa application process and pre-departure preparations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Testimonials Section - Clean Card Layout #}
+<section class="testimonials-section py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">Success Stories</h2>
+        <div class="row g-4">
+             {% for testimonial in testimonials|slice:":3" %} {# Show only 3 testimonials #}
+                <div class="col-lg-4 d-flex align-items-stretch"> {# Use d-flex for equal height #}
+                    <div class="card testimonial-card w-100">
+                        <div class="card-body d-flex flex-column">
+                            <blockquote class="mb-3 flex-grow-1">"{{ testimonial.content|truncatewords:40 }}"</blockquote>
+                            <div class="d-flex align-items-center mt-auto">
+                                {% if testimonial.avatar %}
+                                    <img src="{{ testimonial.avatar.url }}" class="avatar" alt="{{ testimonial.name }}">
+                                {% else %}
+                                    <span class="avatar bg-secondary text-white d-inline-flex align-items-center justify-content-center me-3">{{ testimonial.name|first|upper }}</span> {# Placeholder with initial #}
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <div class="author mb-0">{{ testimonial.name }}</div>
+                                    <div class="role">{{ testimonial.role|default:"Student" }}</div>
+                                </div>
+                                <div class="rating text-warning ms-3">
+                                    {% with rating_int=testimonial.rating|default:0|floatformat:0 %} {# Ensure integer #}
+                                    {% for i in "12345" %}
+                                        {% if i|add:0 <= rating_int|add:0 %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-muted"></i> {# Muted empty stars #}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                     <p class="text-center text-muted">See what our students will say soon!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{# Final CTA Section #}
+<section class="cta-section pb-5 text-center"> {# Removed top padding #}
+    <div class="container py-4">
+        <h2 class="h1 fw-bold mb-3">Ready to Find Your Future University?</h2>
+        <p class="lead mb-4 col-lg-8 mx-auto">Create your free account or log in to access personalized recommendations and start applying today.</p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
             {% if user.is_authenticated %}
-                <a href="{% url 'messaging:appointment_list' %}" class="btn btn-light btn-lg">Book Consultation</a>
+                 <a href="{% url 'dashboard:dashboard' %}" class="btn btn-light btn-lg px-5">Go to Dashboard</a>
             {% else %}
-                <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">Register Now</a>
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">Login</a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-5">Register for Free</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-5">Login</a>
             {% endif %}
         </div>
     </div>
 </section>
 
-<!-- Testimonials -->
-<section class="container py-5"> {# Added py-5 for spacing #}
-    <h2 class="text-center mb-4">What Our Students Say</h2>
-    <div class="row">
-        {% for testimonial in testimonials %}
-            <div class="col-md-4">
-                <div class="testimonial-card h-100">
-                    <div class="d-flex align-items-center mb-3">
-                        {% if testimonial.avatar %}
-                            <img src="{{ testimonial.avatar.url }}" class="avatar" alt="{{ testimonial.name }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/70x70" class="avatar" alt="{{ testimonial.name }}">
-                        {% endif %}
-                        <div>
-                            <h5 class="mb-0">{{ testimonial.name }}</h5>
-                            <p class="text-muted mb-0">{{ testimonial.role }}</p>
-                        </div>
-                    </div>
-                    <p class="mb-3">{{ testimonial.content|truncatewords:30 }}</p>
-                    <div class="text-warning">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= testimonial.rating %}
-                                <i class="fas fa-star"></i>
-                            {% else %}
-                                <i class="far fa-star"></i>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">No testimonials available at the moment.</div>
-            </div>
-        {% endfor %}
-    </div>
-</section>
-
-<!-- Services Section -->
-<section class="container py-5"> {# Added py-5 for spacing #}
-    <h2 class="text-center mb-4">Our Services</h2>
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <h5 class="card-title">University Search</h5>
-                    <p class="card-text">Discover universities and programs that match your academic goals, budget, and preferences.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <h5 class="card-title">Application Management</h5>
-                    <p class="card-text">Streamlined application process with tracking, document management, and status updates.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <h5 class="card-title">Expert Consultation</h5>
-                    <p class="card-text">Get personalized guidance from experienced education consultants every step of the way.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h5 class="card-title">Real-time Communication</h5>
-                    <p class="card-text">Stay connected with consultants through messaging and get your questions answered.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h5 class="card-title">AI Chatbot Assistance</h5>
-                    <p class="card-text">Get instant answers to common questions with our intelligent chatbot.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 text-primary mb-3">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h5 class="card-title">Appointment Scheduling</h5>
-                    <p class="card-text">Book appointments with consultants at your convenience using our calendar system.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-{% endblock %}
+{% endblock content %}
