@@ -1,69 +1,163 @@
 {% extends "dashboard/base_dashboard.html" %}
-    {% load static %}
+{% load static %}
 
-    {% block dashboard_title %}{{ page_title|default:"Conversation" }}{% endblock %}
+{% block dashboard_title %}{{ page_title|default:"Conversation" }}{% endblock %}
 
-    {% block dashboard_content %}
-    <div class="container-fluid px-4">
-        <h1 class="mt-4">{{ conversation.title|default:"Conversation" }}</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'messaging:conversation_list' %}">Messages</a></li>
-            <li class="breadcrumb-item active">{{ conversation.title|default:"Conversation" }}</li>
-        </ol>
+{% block dashboard_content %}
+<div class="container-fluid px-4">
+    {# --- Page Title and Breadcrumbs (Same as before) --- #}
+    <h1 class="mt-4">{{ conversation.title|default:"Conversation" }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'messaging:conversation_list' %}">Messages</a></li>
+        <li class="breadcrumb-item active">{{ conversation.title|default:"Conversation Details" }}</li>
+    </ol>
 
-        <div class="card mb-4">
-            <div class="card-header">
+    <div class="card mb-4">
+        {# --- Card Header (Same as before) --- #}
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
                 <i class="fas fa-comments me-1"></i>
                 Chat History
                 {% if other_participants %}
-                    <span class="small text-muted">with {% for p in other_participants %}{{ p.get_full_name|default:p.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+                    <span class="small text-muted ms-2">
+                        with {% for p in other_participants %}{{ p.get_full_name|default:p.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    </span>
                 {% endif %}
             </div>
-            <div class="card-body" style="max-height: 500px; overflow-y: auto;" id="chat-log">
-                {% for message in messages %}
-                    <div class="d-flex flex-row {% if message.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %} mb-3">
-                        <div>
-                            <p class="small p-2 {% if message.sender == request.user %}me-3 text-white bg-primary rounded-3{% else %}ms-3 bg-light rounded-3{% endif %}">
-                                {{ message.content }}
-                            </p>
+        </div>
+
+        {# --- Chat Log Area (Same refined style as before) --- #}
+        <div class="card-body bg-light" style="max-height: 500px; overflow-y: auto;" id="chat-log">
+            {% for message in messages %}
+                {% if message.sender == request.user %}
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="mw-75">
+                            <div class="p-2 px-3 rounded-3 bg-primary text-white mb-1">
+                                {{ message.content|linebreaksbr }}
+                            </div>
                             {% for attachment in message.attachments.all %}
-                                <p class="small {% if message.sender == request.user %}me-3{% else %}ms-3{% endif %}">
-                                    <a href="{{ attachment.file.url }}" target="_blank"><i class="fas fa-paperclip"></i> {{ attachment.name }}</a>
-                                </p>
+                                <div class="text-end mt-1 me-1">
+                                    <a href="{{ attachment.file.url }}" target="_blank" class="d-inline-block bg-white p-1 rounded border small text-decoration-none">
+                                        <i class="fas fa-paperclip me-1"></i> {{ attachment.name }}
+                                    </a>
+                                </div>
                             {% endfor %}
-                            <p class="small {% if message.sender == request.user %}me-3 text-muted text-end{% else %}ms-3 text-muted{% endif %}">
-                                {% if message.sender != request.user %}{{ message.sender.get_full_name|default:message.sender.username }} - {% endif %}
+                            <div class="small text-muted text-end mt-1 me-1">
                                 {{ message.created_at|date:"M d, Y H:i" }}
-                            </p>
+                            </div>
                         </div>
                     </div>
-                {% empty %}
-                    <p class="text-center text-muted">No messages yet.</p>
-                {% endfor %}
-            </div>
-            <div class="card-footer">
-                <form method="post" action="{% url 'messaging:send_message' conversation.id %}" enctype="multipart/form-data" id="message-form">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        {{ message_form.content }}
-                        {{ attachment_form.attachments }}
-                        <button class="btn btn-primary" type="submit" id="button-send">Send</button>
+                {% else %}
+                    <div class="d-flex justify-content-start mb-3">
+                        <div class="mw-75">
+                             <div class="small text-muted ms-1 mb-1">
+                                {{ message.sender.get_full_name|default:message.sender.username }}
+                            </div>
+                            <div class="p-2 px-3 rounded-3 bg-white border mb-1">
+                                {{ message.content|linebreaksbr }}
+                            </div>
+                            {% for attachment in message.attachments.all %}
+                                <div class="mt-1 ms-1">
+                                     <a href="{{ attachment.file.url }}" target="_blank" class="d-inline-block bg-white p-1 rounded border small text-decoration-none">
+                                        <i class="fas fa-paperclip me-1"></i> {{ attachment.name }}
+                                    </a>
+                                </div>
+                            {% endfor %}
+                            <div class="small text-muted mt-1 ms-1">
+                                {{ message.created_at|date:"M d, Y H:i" }}
+                            </div>
+                        </div>
                     </div>
-                    {% if message_form.content.errors %}
-                        <div class="text-danger small mt-1">{{ message_form.content.errors }}</div>
-                    {% endif %}
-                     {% if attachment_form.attachments.errors %}
-                        <div class="text-danger small mt-1">{{ attachment_form.attachments.errors }}</div>
-                    {% endif %}
-                </form>
-            </div>
+                {% endif %}
+            {% empty %}
+                <div class="text-center text-muted p-4">
+                     <i class="far fa-comment-dots fa-2x mb-2"></i>
+                    <p>No messages in this conversation yet. <br> Send the first message below!</p>
+                </div>
+            {% endfor %}
         </div>
-    </div>
 
-    {# Basic script to scroll to bottom - enhance as needed #}
-    <script>
+        {# --- Message Input Form Area (Layout Adjusted) --- #}
+        <div class="card-footer bg-white py-3">
+            {# Use d-flex on the form itself for layout #}
+            <form method="post" action="{% url 'messaging:send_message' conversation.id %}" enctype="multipart/form-data" id="message-form" class="d-flex align-items-center">
+                {% csrf_token %}
+
+                {# Text Input Area (Takes up most space) #}
+                <div class="flex-grow-1 me-2">
+                     {# Render the text input field. Bootstrap might apply some basic styling. #}
+                     {# For better control add placeholder/rows via JS if needed, or ideally via forms.py widget attrs #}
+                    {{ message_form.content }}
+                </div>
+
+                {# Attachment and Send Button Area (Right Aligned) #}
+                {# Use a div to group these buttons #}
+                <div class="d-flex align-items-center">
+                    {# File Input - basic rendering assumed #}
+                    <div class="me-2"> {# Spacing between file input and send button #}
+                        {{ attachment_form.attachments }}
+                    </div>
+
+                    {# Send Button #}
+                    <button class="btn btn-primary flex-shrink-0" type="submit" id="button-send" title="Send Message">
+                        <i class="fas fa-paper-plane"></i>
+                        <span class="d-none d-sm-inline ms-1">Send</span>
+                    </button>
+                </div>
+            </form>
+
+            {# Form Errors (Display below the form row) #}
+            {% if message_form.content.errors or attachment_form.attachments.errors %}
+            <div class="mt-2"> {# Add margin-top to separate errors from the input row #}
+                {% if message_form.content.errors %}
+                    <div class="text-danger small">{{ message_form.content.errors }}</div>
+                {% endif %}
+                 {% if attachment_form.attachments.errors %}
+                     {# Display file input errors #}
+                    <div class="text-danger small">{{ attachment_form.attachments.errors }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div> {# End Card Footer #}
+
+    </div> {# End Card #}
+</div> {# End Container Fluid #}
+
+{# --- Script to scroll chat log (Same as before) --- #}
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
         const chatLog = document.getElementById('chat-log');
-        chatLog.scrollTop = chatLog.scrollHeight;
-    </script>
-    {% endblock %}
+        if (chatLog) {
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        // NOTE: Since we cannot modify forms.py, applying 'form-control' or
+        // extensive styling/behavior like auto-resize to the raw {{ message_form.content }}
+        // or {{ attachment_form.attachments }} from here using JS is possible,
+        // but can be brittle if the underlying form rendering changes.
+        // The layout above relies purely on Bootstrap flexbox wrappers.
+
+        // Example: Add placeholder via JS if needed (less ideal than forms.py)
+        const messageInput = document.querySelector('#message-form textarea'); // Adjust selector if it's not a textarea
+        if (messageInput && !messageInput.placeholder) {
+            messageInput.placeholder = 'Type your message...';
+            // Basic styling attempt if form-control isn't applied by default
+            messageInput.style.width = '100%'; // Ensure it fills its container
+            messageInput.style.padding = '0.375rem 0.75rem'; // Mimic form-control padding
+            messageInput.style.border = '1px solid #ced4da'; // Mimic form-control border
+            messageInput.style.borderRadius = '0.25rem'; // Mimic form-control border-radius
+        }
+         const fileInput = document.querySelector('#message-form input[type="file"]');
+         if (fileInput) {
+             // Basic styling attempt if form-control isn't applied by default
+             fileInput.style.padding = '0.375rem 0.75rem';
+             fileInput.style.border = '1px solid #ced4da';
+             fileInput.style.borderRadius = '0.25rem';
+             // Note: Full styling of file inputs is complex
+         }
+
+
+    });
+</script>
+{% endblock %}

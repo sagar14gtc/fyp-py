@@ -1,136 +1,112 @@
 {% extends 'base.html' %}
+{% load static %} {# Good practice to load static #}
 
 {% block title %}About Us - Global Universities{% endblock %}
 
 {% block extra_css %}
+{# Suggestion: Move these styles to a dedicated CSS file for better organization #}
 <style>
+    /* --- Hero Section --- */
     .about-hero {
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        /* Keeping custom background gradient and image */
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
         background-size: cover;
-        background-position: center;
-        color: white;
-        padding: 5rem 0;
-        margin-bottom: 3rem;
+        /* Using Bootstrap text color utility */
+        /* padding adjusted via utility class py-5 or style attribute */
     }
-    
-    .mission-section {
-        background-color: #f8f9fa;
-        padding: 4rem 0;
-        margin-bottom: 3rem;
+
+    /* --- Value Card Hover (Optional Enhancement) --- */
+    .value-card-hover {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
-    
-    .value-card {
-        border-radius: 10px;
-        padding: 2rem;
-        height: 100%;
-        transition: transform 0.3s ease;
+    .value-card-hover:hover {
+        transform: translateY(-5px); /* More subtle lift */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Slightly enhance shadow on hover */
     }
-    
-    .value-card:hover {
-        transform: translateY(-10px);
-    }
-    
-    .value-card .icon {
-        font-size: 2.5rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .team-card {
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        margin-bottom: 2rem;
-    }
-    
-    .team-card img {
-        height: 300px;
+
+    /* --- Team Card Image --- */
+    .team-card-img {
+        height: 280px; /* Slightly adjusted height */
         object-fit: cover;
         width: 100%;
     }
-    
-    .testimonial-section {
-        background-color: #f8f9fa;
-        padding: 4rem 0;
-        margin: 3rem 0;
-    }
-    
-    .testimonial-card {
-        background-color: white;
-        border-radius: 10px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-    
-    .testimonial-card .avatar {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
+
+    /* --- Testimonial Avatar --- */
+    .testimonial-avatar {
+        width: 60px; /* Slightly smaller avatar */
+        height: 60px;
         object-fit: cover;
-        margin-right: 1rem;
+        /* Bootstrap class 'rounded-circle' handles the shape */
+        /* Bootstrap class 'me-3' handles margin */
+    }
+
+    /* Ensure FontAwesome icons are aligned if needed */
+    .fas, .fab {
+        vertical-align: middle; /* Helps align icons with text */
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="about-hero">
-    <div class="container text-center">
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <h1 class="display-4 fw-bold mb-4">About Global Universities</h1>
-                <p class="lead mb-4">Empowering students to pursue international education and achieve their academic dreams since 2015.</p>
+<section class="about-hero text-light py-5 text-center"> {# Added text-light, py-5, text-center #}
+    <div class="container">
+        <div class="row justify-content-center"> {# Use justify-content-center for centering col #}
+            <div class="col-lg-8 col-md-10"> {# Slightly wider on large screens #}
+                <h1 class="display-4 fw-bold mb-4 text-white">About Global Universities</h1>
+                <p class="lead mb-0">Empowering students to pursue international education and achieve their academic dreams since 2015.</p> {# Removed mb-4 as section has py-5 #}
             </div>
         </div>
     </div>
 </section>
 
-<!-- About Us Section -->
-<section class="container mb-5">
-    <div class="row align-items-center">
-        <div class="col-lg-6 mb-4 mb-lg-0">
-            <h2 class="mb-4">Our Story</h2>
+<!-- About Us (Story) Section -->
+<section class="container py-5"> {# Added py-5 for vertical padding #}
+    <div class="row align-items-center g-5"> {# Added g-5 for larger gutter spacing #}
+        <div class="col-lg-6">
+            <h2 class="fw-bold mb-4">Our Story</h2> {# Added fw-bold #}
             <p class="mb-3">Global Universities was founded with a clear vision: to make international education accessible to students from around the world. Our journey began in 2015 when a group of education consultants identified the need for a comprehensive platform that could guide students through the complex process of studying abroad.</p>
             <p class="mb-3">Over the years, we've grown from a small team of passionate educators to a global network of experts dedicated to helping students find their perfect educational path. We've facilitated thousands of successful applications and watched with pride as our students have gone on to achieve remarkable success in universities across the globe.</p>
-            <p>Today, Global Universities stands as a trusted partner for students, universities, and educational consultants, connecting talent with opportunity and turning academic dreams into reality.</p>
+            <p class="mb-0">Today, Global Universities stands as a trusted partner for students, universities, and educational consultants, connecting talent with opportunity and turning academic dreams into reality.</p>
         </div>
         <div class="col-lg-6">
-            <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="About Global Universities" class="img-fluid rounded shadow">
+            {# Use consistent image styling #}
+            <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Group of diverse students collaborating" class="img-fluid rounded shadow-sm"> {# Added shadow-sm #}
         </div>
     </div>
 </section>
 
 <!-- Mission & Vision Section -->
-<section class="mission-section">
+<section class="bg-light py-5"> {# Use Bootstrap bg-light and py-5 #}
     <div class="container">
         <div class="row text-center mb-5">
             <div class="col-lg-8 mx-auto">
-                <h2 class="mb-4">Our Mission & Vision</h2>
-                <p class="lead">We're dedicated to democratizing access to quality education worldwide and creating a global community of learners.</p>
+                <h2 class="fw-bold mb-3">Our Mission & Vision</h2> {# Added fw-bold #}
+                <p class="lead text-muted">We're dedicated to democratizing access to quality education worldwide and creating a global community of learners.</p>
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4 text-center">
-                        <div class="display-4 text-primary mb-3">
+
+        <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center"> {# Added row-cols and g-4 #}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm text-center"> {# Added border-0, shadow-sm, text-center #}
+                    <div class="card-body p-4 p-lg-5"> {# Responsive padding #}
+                        <div class="fs-1 text-primary mb-4"> {# Use fs-* for icon size #}
                             <i class="fas fa-bullseye"></i>
                         </div>
-                        <h3 class="card-title">Our Mission</h3>
-                        <p class="card-text">To empower students with the information, tools, and support they need to access international education opportunities that align with their academic goals, career aspirations, and personal circumstances.</p>
+                        <h3 class="card-title h4 mb-3">Our Mission</h3> {# Use h4 for card title #}
+                        <p class="card-text text-muted">To empower students with the information, tools, and support they need to access international education opportunities that align with their academic goals, career aspirations, and personal circumstances.</p>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4 text-center">
-                        <div class="display-4 text-primary mb-3">
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm text-center"> {# Added border-0, shadow-sm, text-center #}
+                    <div class="card-body p-4 p-lg-5"> {# Responsive padding #}
+                        <div class="fs-1 text-primary mb-4"> {# Use fs-* for icon size #}
                             <i class="fas fa-eye"></i>
                         </div>
-                        <h3 class="card-title">Our Vision</h3>
-                        <p class="card-text">To create a world where geographical, financial, and informational barriers no longer limit a student's access to quality education, and where every qualified student can find their perfect academic match.</p>
+                        <h3 class="card-title h4 mb-3">Our Vision</h3> {# Use h4 for card title #}
+                        <p class="card-text text-muted">To create a world where geographical, financial, and informational barriers no longer limit a student's access to quality education, and where every qualified student can find their perfect academic match.</p>
                     </div>
                 </div>
             </div>
@@ -139,83 +115,74 @@
 </section>
 
 <!-- Our Values Section -->
-<section class="container mb-5">
+<section class="container py-5"> {# Added py-5 #}
     <div class="row text-center mb-5">
         <div class="col-lg-8 mx-auto">
-            <h2 class="mb-4">Our Values</h2>
-            <p class="lead">These core principles guide our approach and define how we work with students, universities, and partners.</p>
+            <h2 class="fw-bold mb-3">Our Core Values</h2> {# Added fw-bold #}
+            <p class="lead text-muted">These principles guide our approach and define how we work with students, universities, and partners.</p>
         </div>
     </div>
-    
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card value-card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="icon text-primary">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4"> {# Responsive columns with gutters #}
+        {# Value Card Example (Repeat for others) #}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center value-card-hover"> {# Added border-0, shadow-sm, text-center, optional hover class #}
+                <div class="card-body p-4">
+                    <div class="fs-2 text-primary mb-3"> {# Use fs-* for icon size #}
                         <i class="fas fa-hand-holding-heart"></i>
                     </div>
-                    <h4 class="card-title">Student-Centered</h4>
-                    <p class="card-text">We put students' needs, goals, and well-being at the center of everything we do, ensuring personalized support throughout their journey.</p>
+                    <h4 class="card-title h5 mb-3">Student-Centered</h4> {# Use h5 for card title #}
+                    <p class="card-text text-muted small">We put students' needs, goals, and well-being at the center of everything we do, ensuring personalized support.</p> {# Added small class #}
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card value-card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="icon text-primary">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h4 class="card-title">Integrity</h4>
-                    <p class="card-text">We operate with honesty, transparency, and ethical standards, providing accurate information and trustworthy guidance.</p>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center value-card-hover">
+                <div class="card-body p-4">
+                    <div class="fs-2 text-primary mb-3"><i class="fas fa-check-circle"></i></div>
+                    <h4 class="card-title h5 mb-3">Integrity</h4>
+                    <p class="card-text text-muted small">We operate with honesty, transparency, and ethical standards, providing accurate information and trustworthy guidance.</p>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card value-card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="icon text-primary">
-                        <i class="fas fa-globe-americas"></i>
-                    </div>
-                    <h4 class="card-title">Diversity</h4>
-                    <p class="card-text">We celebrate diversity in all its forms and strive to create inclusive environments where all students feel welcome and supported.</p>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center value-card-hover">
+                <div class="card-body p-4">
+                    <div class="fs-2 text-primary mb-3"><i class="fas fa-globe-americas"></i></div>
+                    <h4 class="card-title h5 mb-3">Diversity & Inclusion</h4> {# Refined title #}
+                    <p class="card-text text-muted small">We celebrate diversity and strive to create inclusive environments where all students feel welcome and supported.</p>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card value-card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="icon text-primary">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h4 class="card-title">Innovation</h4>
-                    <p class="card-text">We continuously seek new ways to improve our services and leverage technology to enhance the student experience.</p>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center value-card-hover">
+                <div class="card-body p-4">
+                    <div class="fs-2 text-primary mb-3"><i class="fas fa-lightbulb"></i></div>
+                    <h4 class="card-title h5 mb-3">Innovation</h4>
+                    <p class="card-text text-muted small">We continuously seek new ways to improve our services and leverage technology to enhance the student experience.</p>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card value-card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="icon text-primary">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h4 class="card-title">Excellence</h4>
-                    <p class="card-text">We strive for excellence in all aspects of our service, setting high standards and continuously working to exceed expectations.</p>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center value-card-hover">
+                <div class="card-body p-4">
+                    <div class="fs-2 text-primary mb-3"><i class="fas fa-star"></i></div>
+                    <h4 class="card-title h5 mb-3">Excellence</h4>
+                    <p class="card-text text-muted small">We strive for excellence in all aspects of our service, setting high standards and working to exceed expectations.</p>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card value-card h-100 border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="icon text-primary">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h4 class="card-title">Partnership</h4>
-                    <p class="card-text">We build strong, collaborative relationships with universities, consultants, and partners to create a supportive ecosystem for students.</p>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center value-card-hover">
+                <div class="card-body p-4">
+                    <div class="fs-2 text-primary mb-3"><i class="fas fa-handshake"></i></div>
+                    <h4 class="card-title h5 mb-3">Partnership</h4>
+                    <p class="card-text text-muted small">We build strong, collaborative relationships with universities and partners to create a supportive ecosystem.</p>
                 </div>
             </div>
         </div>
@@ -223,58 +190,59 @@
 </section>
 
 <!-- Our Team Section -->
-<section class="container mb-5">
+<section class="container py-5"> {# Added py-5 #}
     <div class="row text-center mb-5">
         <div class="col-lg-8 mx-auto">
-            <h2 class="mb-4">Our Leadership Team</h2>
-            <p class="lead">Meet the passionate individuals who lead Global Universities and drive our mission forward.</p>
+            <h2 class="fw-bold mb-3">Our Leadership Team</h2> {# Added fw-bold #}
+            <p class="lead text-muted">Meet the passionate individuals who lead Global Universities and drive our mission forward.</p>
         </div>
     </div>
-    
-    <div class="row">
-        <div class="col-md-4">
-            <div class="team-card">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="CEO" class="card-img-top">
-                <div class="card-body text-center p-4">
-                    <h4 class="card-title mb-1">John Doe</h4>
-                    <p class="text-muted mb-3">CEO & Founder</p>
-                    <p class="card-text">John has over 15 years of experience in international education and has helped thousands of students achieve their academic dreams.</p>
-                    <div class="social-icons mt-3">
-                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-primary"><i class="fas fa-envelope"></i></a>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center"> {# Added justify-content-center if less than 3 items #}
+        {# Team Member Card Example (Repeat for others) #}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center overflow-hidden"> {# Added border-0, shadow-sm, text-center, overflow-hidden #}
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="John Doe, CEO" class="team-card-img"> {# Use specific class for image dimensions #}
+                <div class="card-body p-4">
+                    <h4 class="card-title h5 mb-1">John Doe</h4>
+                    <p class="text-muted small mb-3">CEO & Founder</p>
+                    <p class="card-text small mb-3">John has over 15 years of experience in international education and has helped thousands of students.</p> {# Slightly shorter text #}
+                    <div class="social-icons">
+                        <a href="#" class="text-primary text-decoration-none me-2" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                        <a href="#" class="text-primary text-decoration-none me-2" aria-label="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="mailto:john.doe@example.com" class="text-primary text-decoration-none" aria-label="Email"><i class="fas fa-envelope fa-lg"></i></a> {# Example mailto link #}
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4">
-            <div class="team-card">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="COO" class="card-img-top">
-                <div class="card-body text-center p-4">
-                    <h4 class="card-title mb-1">Jane Smith</h4>
-                    <p class="text-muted mb-3">Chief Operations Officer</p>
-                    <p class="card-text">With a background in university administration, Jane brings invaluable insights into the operations of our global platform.</p>
-                    <div class="social-icons mt-3">
-                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-primary"><i class="fas fa-envelope"></i></a>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Jane Smith, COO" class="team-card-img">
+                <div class="card-body p-4">
+                    <h4 class="card-title h5 mb-1">Jane Smith</h4>
+                    <p class="text-muted small mb-3">Chief Operations Officer</p>
+                    <p class="card-text small mb-3">Jane brings invaluable insights into the operations of our global platform from her background in university admin.</p>
+                    <div class="social-icons">
+                        <a href="#" class="text-primary text-decoration-none me-2" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                        <a href="#" class="text-primary text-decoration-none me-2" aria-label="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="mailto:jane.smith@example.com" class="text-primary text-decoration-none" aria-label="Email"><i class="fas fa-envelope fa-lg"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-4">
-            <div class="team-card">
-                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="CTO" class="card-img-top">
-                <div class="card-body text-center p-4">
-                    <h4 class="card-title mb-1">Michael Johnson</h4>
-                    <p class="text-muted mb-3">Chief Technology Officer</p>
-                    <p class="card-text">Michael leads our tech team in developing innovative solutions that make the application process seamless and efficient.</p>
-                    <div class="social-icons mt-3">
-                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="text-primary me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-primary"><i class="fas fa-envelope"></i></a>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center overflow-hidden">
+                 <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Michael Johnson, CTO" class="team-card-img">
+                <div class="card-body p-4">
+                    <h4 class="card-title h5 mb-1">Michael Johnson</h4>
+                    <p class="text-muted small mb-3">Chief Technology Officer</p>
+                    <p class="card-text small mb-3">Michael leads our tech team in developing innovative solutions that make the application process seamless.</p>
+                    <div class="social-icons">
+                        <a href="#" class="text-primary text-decoration-none me-2" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                        <a href="#" class="text-primary text-decoration-none me-2" aria-label="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="mailto:michael.johnson@example.com" class="text-primary text-decoration-none" aria-label="Email"><i class="fas fa-envelope fa-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -283,45 +251,48 @@
 </section>
 
 <!-- Testimonials Section -->
-<section class="testimonial-section">
+<section class="bg-light py-5"> {# Use Bootstrap bg-light and py-5 #}
     <div class="container">
         <div class="row text-center mb-5">
             <div class="col-lg-8 mx-auto">
-                <h2 class="mb-4">What Our Students Say</h2>
-                <p class="lead">Don't just take our word for it. Hear from students who've successfully navigated their international education journey with us.</p>
+                <h2 class="fw-bold mb-3">What Our Students Say</h2> {# Added fw-bold #}
+                <p class="lead text-muted">Hear from students who've successfully navigated their international education journey with us.</p>
             </div>
         </div>
-        
-        <div class="row">
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> {# Responsive columns with gutters #}
             {% for testimonial in testimonials %}
-                <div class="col-md-4 mb-4">
-                    <div class="testimonial-card h-100">
-                        <div class="d-flex align-items-center mb-3">
-                            {% if testimonial.avatar %}
-                                <img src="{{ testimonial.avatar.url }}" class="avatar" alt="{{ testimonial.name }}">
-                            {% else %}
-                                <img src="https://via.placeholder.com/70x70" class="avatar" alt="{{ testimonial.name }}">
-                            {% endif %}
-                            <div>
-                                <h5 class="mb-0">{{ testimonial.name }}</h5>
-                                <p class="text-muted mb-0">{{ testimonial.role }}</p>
-                            </div>
-                        </div>
-                        <p class="mb-3">{{ testimonial.content }}</p>
-                        <div class="text-warning">
-                            {% for i in "12345" %}
-                                {% if forloop.counter <= testimonial.rating %}
-                                    <i class="fas fa-star"></i>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm"> {# Use card, h-100, border-0, shadow-sm #}
+                        <div class="card-body p-4 d-flex flex-column"> {# Added d-flex flex-column for footer alignment #}
+                            <div class="d-flex align-items-center mb-3">
+                                {% if testimonial.avatar %}
+                                    <img src="{{ testimonial.avatar.url }}" class="testimonial-avatar rounded-circle me-3" alt="{{ testimonial.name }}"> {# Use class for styling, add rounded-circle, me-3 #}
                                 {% else %}
-                                    <i class="far fa-star"></i>
+                                     {# Consistent placeholder styling #}
+                                     <img src="https://via.placeholder.com/60/ced4da/6c757d?text={{ testimonial.name|first|upper }}" class="testimonial-avatar rounded-circle me-3 bg-secondary" alt="{{ testimonial.name }}">
                                 {% endif %}
-                            {% endfor %}
+                                <div>
+                                    <h5 class="mb-0 h6">{{ testimonial.name }}</h5>
+                                    <p class="text-muted small mb-0">{{ testimonial.role }}</p>
+                                </div>
+                            </div>
+                            <blockquote class="mb-3 flex-grow-1 fst-italic text-muted"> {# Italic quote, flex-grow pushes rating down #}
+                                "{{ testimonial.content }}"
+                            </blockquote>
+                            <div class="text-warning mt-auto"> {# mt-auto pushes rating to bottom #}
+                                {% for i in "12345" %}
+                                    <i class="{% if forloop.counter <= testimonial.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
             {% empty %}
                 <div class="col-12">
-                    <div class="alert alert-info">No testimonials available at the moment.</div>
+                    <div class="alert alert-secondary text-center" role="alert"> {# Use secondary alert #}
+                       <i class="fas fa-info-circle me-2"></i> No testimonials available at the moment.
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -329,22 +300,26 @@
 </section>
 
 <!-- CTA Section -->
-<section class="container mb-5">
+<section class="container py-5"> {# Added py-5 #}
     <div class="row">
-        <div class="col-md-10 mx-auto">
-            <div class="card bg-primary text-white p-5 text-center">
-                <h2 class="mb-4">Ready to Begin Your International Education Journey?</h2>
-                <p class="lead mb-4">Join thousands of students who have found their perfect university match with Global Universities.</p>
-                <div class="d-flex justify-content-center gap-3">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'universities:university_list' %}" class="btn btn-light btn-lg">Explore Universities</a>
-                    {% else %}
-                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">Register Now</a>
-                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">Login</a>
-                    {% endif %}
+        <div class="col-md-10 col-lg-8 mx-auto"> {# Adjusted width #}
+            <div class="card bg-primary text-white p-4 p-md-5 text-center rounded-3 shadow"> {# Added rounded-3, shadow for emphasis #}
+                <div class="card-body">
+                    <h2 class="h1 mb-3">Ready to Begin Your Journey?</h2> {# Larger heading #}
+                    <p class="lead mb-4">Join thousands of students who have found their perfect university match with Global Universities.</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> {# Improved button layout for mobile #}
+                        {% if user.is_authenticated %}
+                             <a href="{% url 'universities:university_list' %}" class="btn btn-light btn-lg px-4 gap-3">Explore Universities</a>
+                             {# Maybe add a link to user dashboard? #}
+                             {# <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-lg px-4">My Dashboard</a> #}
+                        {% else %}
+                            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 gap-3">Register Now</a>
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4">Login</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-{% endblock %} 
+{% endblock %}

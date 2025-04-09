@@ -30,9 +30,11 @@
                         <label for="status" class="form-label">Status</label>
                         <select class="form-select" id="status" name="status">
                             <option value="">All Statuses</option>
-                            {% for value, display in status_choices %}
-                                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ display }}</option>
-                            {% endfor %}
+                            {% if status_choices %} {# Added check #}
+                                {% for value, display in status_choices %}
+                                    <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ display }}</option>
+                                {% endfor %}
+                            {% endif %}
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -94,7 +96,7 @@
                                     <td>
                                         <a href="{% url 'messaging:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-info">Details</a>
                                         {% if appt.status != 'completed' and appt.status != 'cancelled' %}
-                                            <a href="{% url 'messaging:update_appointment' appt.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                            {# Edit button removed as requested #}
                                             <a href="{% url 'messaging:cancel_appointment' appt.id %}" class="btn btn-sm btn-outline-danger">Cancel</a>
                                         {% endif %}
                                     </td>

@@ -100,3 +100,14 @@ class AppointmentForm(forms.ModelForm):
             raise ValidationError("Cannot schedule appointments in the past.")
         
         return cleaned_data
+
+class AdminReplyForm(forms.Form):
+    """Form for admin replies within the Django admin interface."""
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': 4,
+            'placeholder': 'Type your reply here...',
+            'class': 'vLargeTextField' # Use standard Django admin class
+        }),
+        label="Admin Reply"
+    )

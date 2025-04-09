@@ -1,141 +1,154 @@
 {% extends "dashboard/base_dashboard.html" %}
+{% load static %} {# Ensure static is loaded if base template doesn't handle it #}
 
 {% block title %}Consultant Dashboard - Overview{% endblock %}
 
-{% block dashboard_title %}Consultant Overview{% endblock %} {# Use the title block from base_dashboard #}
+{% block dashboard_title %}Consultant Overview{% endblock %}
 
-{% block dashboard_content %} {# Use the correct block #}
+{% block dashboard_content %}
     {# Display Overview Stats #}
-    <div class="row mb-4">
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Assigned Students</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assigned_students_count }}</div>
+    {# Use Bootstrap 5 gutters for consistent spacing between columns #}
+    <div class="row g-4 mb-4">
+        {# Assigned Students Card #}
+        <div class="col-xl-4 col-md-6">
+             {# Using standard card, h-100 for equal height, shadow-sm for subtle shadow #}
+             {# Replicating border effect with BS5 utilities #}
+            <div class="card h-100 shadow-sm border-start border-primary border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-primary text-uppercase small mb-1 fw-bold"> {# Adjusted classes for BS5 #}
+                            Assigned Students
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
-                        </div>
+                        {# Use standard heading size, ensure variable is correct #}
+                        <div class="h4 mb-0 fw-bold">{{ assigned_students_count }}</div>
+                    </div>
+                    <div class="text-muted"> {# Use text-muted for standard secondary color #}
+                        <i class="fas fa-user-graduate fa-2x"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Pending Applications</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pending_applications_count }}</div>
+
+        {# Pending Applications Card #}
+        <div class="col-xl-4 col-md-6">
+            <div class="card h-100 shadow-sm border-start border-warning border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-warning text-uppercase small mb-1 fw-bold">
+                            Pending Applications
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-file-signature fa-2x text-gray-300"></i>
-                        </div>
+                        <div class="h4 mb-0 fw-bold">{{ pending_applications_count }}</div>
+                    </div>
+                    <div class="text-muted">
+                        <i class="fas fa-file-signature fa-2x"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Upcoming Appointments</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ upcoming_appointments_count }}</div>
+
+        {# Upcoming Appointments Card #}
+        <div class="col-xl-4 col-md-6">
+            <div class="card h-100 shadow-sm border-start border-info border-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-info text-uppercase small mb-1 fw-bold">
+                            Upcoming Appointments
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
-                        </div>
+                        <div class="h4 mb-0 fw-bold">{{ upcoming_appointments_count }}</div>
+                    </div>
+                     <div class="text-muted">
+                        <i class="fas fa-calendar-alt fa-2x"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {# Quick Action Links (Existing Cards) #}
-    <h2 class="h4 mb-3">Quick Actions</h2>
-    <div class="row">
-        <!-- Student Management -->
-        <div class="col-xl-4 col-md-6 mb-4"> {# Added mb-4 for spacing #}
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body">
-                    <i class="fas fa-users fa-2x mb-2"></i><br>
-                    Manage Students
-                    <p class="small">View and manage student details.</p>
-                </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'dashboard:student_list' %}">View Details</a> {# Existing view, might need refinement for consultant context #}
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
+    {# Quick Action Links #}
+    <h4 class="mb-3">Quick Actions</h4> {# Use a standard heading level #}
+    {# Use Bootstrap 5 gutters for spacing #}
+    <div class="row g-4">
 
-        <!-- Application Management -->
+        <!-- Student Management Card -->
         <div class="col-xl-4 col-md-6">
-            <div class="card bg-warning text-white mb-4">
+            {# h-100 ensures cards in the same row have equal height #}
+            <div class="card bg-primary text-white h-100">
                 <div class="card-body">
-                    <i class="fas fa-file-alt fa-2x mb-2"></i><br>
-                    Review Applications
-                    <p class="small">View applications submitted by your students.</p>
+                    <i class="fas fa-users fa-2x mb-3"></i> {# Added margin-bottom to icon #}
+                    <h6 class="card-title">Manage Students</h6> {# Use h6 for card title #}
+                    <p class="small text-white-50 mb-0">View and manage student details.</p> {# Use text-white-50 for subtlety #}
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'dashboard:consultant_application_list' %}">View Applications</a> {# New URL needed #}
+                {# Footer structure remains the same - it's good Bootstrap practice #}
+                <div class="card-footer d-flex align-items-center justify-content-between bg-primary bg-opacity-75 border-0"> {# Slightly transparent footer #}
+                    <a class="small text-white stretched-link text-decoration-none" href="{% url 'dashboard:student_list' %}">View Details</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
 
-        <!-- Appointments -->
+        <!-- Application Management Card -->
         <div class="col-xl-4 col-md-6">
-            <div class="card bg-info text-white mb-4">
+            <div class="card bg-warning text-white h-100">
                 <div class="card-body">
-                    <i class="fas fa-calendar-check fa-2x mb-2"></i><br>
-                    Appointments
-                    <p class="small">View your scheduled appointments.</p>
+                    <i class="fas fa-file-alt fa-2x mb-3"></i>
+                    <h6 class="card-title">Review Applications</h6>
+                    <p class="small text-white-50 mb-0">View applications submitted by your students.</p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'messaging:appointment_list' %}">View Appointments</a> {# Existing URL #}
+                <div class="card-footer d-flex align-items-center justify-content-between bg-warning bg-opacity-75 border-0">
+                    <a class="small text-white stretched-link text-decoration-none" href="{% url 'dashboard:consultant_application_list' %}">View Applications</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
 
-        <!-- Messages -->
+        <!-- Appointments Card -->
         <div class="col-xl-4 col-md-6">
-            <div class="card bg-secondary text-white mb-4">
+            <div class="card bg-info text-white h-100">
                 <div class="card-body">
-                    <i class="fas fa-comments fa-2x mb-2"></i><br>
-                    Messages
-                    <p class="small">Read and reply to messages.</p>
+                    <i class="fas fa-calendar-check fa-2x mb-3"></i>
+                    <h6 class="card-title">Appointments</h6>
+                    <p class="small text-white-50 mb-0">View your scheduled appointments.</p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{% url 'messaging:conversation_list' %}">View Messages</a> {# Existing URL #}
+                <div class="card-footer d-flex align-items-center justify-content-between bg-info bg-opacity-75 border-0">
+                    <a class="small text-white stretched-link text-decoration-none" href="{% url 'messaging:appointment_list' %}">View Appointments</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
 
-        <!-- Send Notifications (Feature not yet implemented) -->
+        <!-- Messages Card -->
+        <div class="col-xl-4 col-md-6">
+             {# Adjusted background for variety, could be bg-success, bg-secondary etc. #}
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <i class="fas fa-comments fa-2x mb-3"></i>
+                    <h6 class="card-title">Messages</h6>
+                    <p class="small text-white-50 mb-0">Read and reply to messages.</p>
+                </div>
+                 <div class="card-footer d-flex align-items-center justify-content-between bg-success bg-opacity-75 border-0">
+                    <a class="small text-white stretched-link text-decoration-none" href="{% url 'messaging:conversation_list' %}">View Messages</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Send Notifications Card (Commented out - Logic Unchanged) -->
         <!--
         <div class="col-xl-4 col-md-6">
-            <div class="card bg-danger text-white mb-4">
+            <div class="card bg-danger text-white h-100">
                 <div class="card-body">
-                    <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
-                    Send Notifications
-                    <p class="small">Notify students about updates or news.</p>
+                    <i class="fas fa-bullhorn fa-2x mb-3"></i>
+                    <h6 class="card-title">Send Notifications</h6>
+                    <p class="small text-white-50 mb-0">Notify students about updates or news.</p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">Send Notification</a> {# {% url 'dashboard:consultant_send_notification' %} - New URL needed #}
+                <div class="card-footer d-flex align-items-center justify-content-between bg-danger bg-opacity-75 border-0">
+                    {# {% url 'dashboard:consultant_send_notification' %} - Still commented #}
+                    <a class="small text-white stretched-link text-decoration-none" href="#">Send Notification</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
         </div>
          -->
-     </div>
- 
+     </div> {# End Quick Actions Row #}
+
  {% endblock dashboard_content %}

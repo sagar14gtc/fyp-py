@@ -57,7 +57,7 @@
 </style>
 {% endblock %}
 
-{% block main_container %} {# Override the container from base.html #}
+{% block content %} {# Override the content block from base.html #}
 <div class="row g-0"> {# Use g-0 to remove gutters and make it full width #}
     <div class="col-md-3 col-lg-2 dashboard-sidebar">
         <h5 class="text-muted px-3 mb-3">Dashboard</h5>
@@ -81,20 +81,8 @@
                   </a>
               </li>
              {% endif %}
-             {% if user.is_staff %} {# Show Manage Universities only to Staff/Admin #}
-             <li class="nav-item">
-                 <a class="nav-link {% if request.resolver_match.app_name == 'universities' and 'consultant' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'universities:consultant_university_list' %}">
-                     <i class="fas fa-university"></i> Manage Universities
-                 </a>
-             </li>
-             {% endif %}
-             {% if user.role == 'admin' %}
-             <li class="nav-item">
-                 <a class="nav-link {% if request.resolver_match.url_name == 'consultant_list' %}active{% endif %}" href="{% url 'dashboard:consultant_list' %}">
-                    <i class="fas fa-user-tie"></i> Consultants
-                </a>
-            </li>
-            {% endif %}
+             {# Removed Manage Universities link for staff/admin as requested #}
+             {# Removed Consultants link for admin as requested #}
             <li class="nav-item">
                 {# Link to the user-specific application list in the applications app #}
                 <a class="nav-link {% if request.resolver_match.app_name == 'applications' and request.resolver_match.url_name == 'application_list' %}active{% endif %}" href="{% url 'applications:application_list' %}">
@@ -111,13 +99,7 @@
                     <i class="fas fa-comments"></i> Messages
                 </a>
             </li>
-            {% if user.role == 'admin' %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}" href="{% url 'dashboard:analytics' %}">
-                    <i class="fas fa-chart-bar"></i> Analytics
-                </a>
-            </li>
-            {% endif %}
+            {# Analytics link removed as requested #}
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}" href="{% url 'dashboard:notifications' %}">
                     <i class="fas fa-bell"></i> Notifications
@@ -143,8 +125,4 @@
         {% block dashboard_content %}{% endblock %}
     </div>
 </div>
-{% endblock main_container %}
-
-{% block content %}
-{# Content block is now empty as the structure moved to main_container #}
-{% endblock %}
+{% endblock content %}

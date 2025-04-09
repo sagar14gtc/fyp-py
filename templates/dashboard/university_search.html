@@ -4,54 +4,56 @@
 {% block dashboard_title %}University & Program Search{% endblock %}
 
 {% block dashboard_content %}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Search Universities & Programs</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
-        <li class="breadcrumb-item active">University Search</li>
-    </ol>
+<div class="container-fluid px-lg-4 py-4"> {# Added py-4 for vertical padding, adjusted horizontal on large screens #}
+    <h1 class="mt-0 mb-3 h2">Search Universities & Programs</h1> {# Adjusted heading size and margins #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small bg-light p-2 rounded-3"> {# Styled breadcrumb #}
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">University Search</li>
+        </ol>
+    </nav>
 
     <!-- Search Form -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-search me-1"></i>
+    <div class="card border-0 shadow-sm rounded-3 mb-4"> {# Added border-0, shadow-sm, rounded-3 #}
+        <div class="card-header bg-light border-bottom"> {# Added bg-light and border #}
+            <i class="fas fa-search me-1 text-muted"></i>
             Filter Universities & Programs
         </div>
-        <div class="card-body">
+        <div class="card-body p-3 p-md-4"> {# Adjusted padding #}
             <form method="get" action="{% url 'dashboard:university_search' %}">
-                <div class="row g-3 align-items-end">
-                     <div class="col-md-6 col-lg-3">
-                        <label for="uni_name" class="form-label">University Name</label>
-                        <input type="text" class="form-control" id="uni_name" name="uni_name" value="{{ uni_name|default:'' }}">
+                <div class="row g-3"> {# Consistent gutters #}
+                     <div class="col-md-6 col-lg-4"> {# Adjusted grid for potentially better fit #}
+                        <label for="uni_name" class="form-label form-label-sm">University Name</label> {# Added form-label-sm #}
+                        <input type="text" class="form-control form-control-sm" id="uni_name" name="uni_name" value="{{ uni_name|default:'' }}"> {# Added form-control-sm #}
                     </div>
-                    <div class="col-md-6 col-lg-3">
-                        <label for="country_name" class="form-label">Country Name</label>
-                        <input type="text" class="form-control" id="country_name" name="country_name" value="{{ country_name|default:'' }}">
+                    <div class="col-md-6 col-lg-4">
+                        <label for="country_name" class="form-label form-label-sm">Country Name</label>
+                        <input type="text" class="form-control form-control-sm" id="country_name" name="country_name" value="{{ country_name|default:'' }}">
                     </div>
-                    <div class="col-md-6 col-lg-3">
-                        <label for="program_name" class="form-label">Subject / Program Name</label>
-                        <input type="text" class="form-control" id="program_name" name="program_name" value="{{ program_name|default:'' }}">
+                    <div class="col-md-6 col-lg-4">
+                        <label for="program_name" class="form-label form-label-sm">Subject / Program Name</label>
+                        <input type="text" class="form-control form-control-sm" id="program_name" name="program_name" value="{{ program_name|default:'' }}">
                     </div>
-                    <div class="col-md-6 col-lg-3">
-                        <label for="degree_type" class="form-label">Program Level</label>
-                        <select class="form-select" id="degree_type" name="degree_type">
+                    <div class="col-md-6 col-lg-4">
+                        <label for="degree_type" class="form-label form-label-sm">Program Level</label>
+                        <select class="form-select form-select-sm" id="degree_type" name="degree_type"> {# Added form-select-sm #}
                             <option value="">Any Level</option>
                             {% for value, display in degree_types %}
                                 <option value="{{ value }}" {% if degree_type == value %}selected{% endif %}>{{ display }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-6 col-lg-3">
-                        <label for="max_fee_usd" class="form-label">Max Annual Fee (USD)</label>
-                        <input type="number" class="form-control" id="max_fee_usd" name="max_fee_usd" min="0" step="any" value="{{ max_fee_usd|default:'' }}">
+                    <div class="col-md-6 col-lg-4">
+                        <label for="max_fee_usd" class="form-label form-label-sm">Max Annual Fee (USD)</label>
+                        <input type="number" class="form-control form-control-sm" id="max_fee_usd" name="max_fee_usd" min="0" step="any" value="{{ max_fee_usd|default:'' }}" placeholder="e.g., 20000">
                     </div>
-                    <div class="col-md-6 col-lg-3">
-                        <label for="intake_after" class="form-label">Intake After</label>
-                        <input type="date" class="form-control" id="intake_after" name="intake_after" value="{{ intake_after|default:'' }}">
+                    <div class="col-md-6 col-lg-4">
+                        <label for="intake_after" class="form-label form-label-sm">Intake After</label>
+                        <input type="date" class="form-control form-control-sm" id="intake_after" name="intake_after" value="{{ intake_after|default:'' }}">
                     </div>
-                    <div class="col-md-12 text-end mt-2">
-                        <button type="submit" class="btn btn-primary px-4">Search</button>
-                        <a href="{% url 'dashboard:university_search' %}" class="btn btn-secondary px-4">Clear</a>
+                    <div class="col-12 text-end mt-3"> {# Changed to col-12, added mt-3 #}
+                        <button type="submit" class="btn btn-primary btn-sm px-4 me-1"><i class="fas fa-search me-1"></i>Search</button> {# Added icon, btn-sm #}
+                        <a href="{% url 'dashboard:university_search' %}" class="btn btn-outline-secondary btn-sm px-4"><i class="fas fa-times me-1"></i>Clear</a> {# Changed style, added icon, btn-sm #}
                     </div>
                 </div>
             </form>
@@ -59,87 +61,105 @@
     </div>
 
     <!-- Search Results -->
-    <div class="card mb-4" id="search-results-section"> {# Added ID here #}
-        <div class="card-header">
-            <i class="fas fa-table me-1"></i>
+    <div class="card border-0 shadow-sm rounded-3 mb-4" id="search-results-section"> {# Added border-0, shadow-sm, rounded-3, Kept ID #}
+        <div class="card-header bg-light border-bottom"> {# Added bg-light and border #}
+            <i class="fas fa-list me-1 text-muted"></i>
             Search Results
         </div>
-        <div class="card-body">
-             <div class="row">
+        <div class="card-body p-3 p-md-4"> {# Adjusted padding #}
             {% if universities %}
-                {% for uni in universities %}
-                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm university-card">
-                         {% if uni.logo %}
-                            <img src="{{ uni.logo.url }}" class="card-img-top" alt="{{ uni.name }}" style="max-height: 180px; object-fit: contain; padding: 10px; background-color: #f8f9fa;">
-                        {% else %}
-                            <div class="text-center py-5 bg-light card-img-top"><i class="fas fa-university fa-3x text-muted"></i></div>
-                        {% endif %}
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ uni.name }}</h5>
-                            <p class="card-text text-muted small mb-2">
-                                <i class="fas fa-map-marker-alt me-1"></i>{{ uni.city.name }}, {{ uni.country.name }}
-                            </p>
-                            <p class="card-text small mb-3">{{ uni.description|truncatewords:15 }}</p>
-                            
-                            {% if uni.filtered_programs %}
-                                <h6 class="text-muted small mb-2">Matching Programs:</h6>
-                                <ul class="list-unstyled small mb-3">
-                                    {% for program in uni.filtered_programs|slice:":3" %} {# Show first 3 matching programs #}
-                                    <li>
-                                        <i class="fas fa-graduation-cap fa-fw me-1"></i> {{ program.name }} ({{ program.get_degree_type_display }})
-                                        {% if program.start_date %}- Starts {{ program.start_date|date:"M Y" }}{% endif %}
-                                    </li>
-                                    {% endfor %}
-                                    {% if uni.filtered_programs|length > 3 %}
-                                    <li><small>... and {{ uni.filtered_programs|length|add:"-3" }} more.</small></li>
-                                    {% endif %}
-                                </ul>
-                            {% else %}
-                                 <p class="text-muted small mb-3">No programs found matching the specific program filters.</p>
-                            {% endif %}
-                            
-                            {# Decide where the button goes - maybe one button linking to a page showing all matching programs for this uni? #}
-                            {# For now, let's link to the first matching program if available #}
-                            <div class="mt-auto text-center">
-                                {% if uni.filtered_programs %}
-                                    {# Link to the first program found by the filter #}
-                                     <a href="{% url 'applications:create_application_from_search' uni.filtered_programs.0.id %}" class="btn btn-primary">
-                                        Apply to {{ uni.filtered_programs.0.name|truncatechars:20 }}...
-                                     </a>
-                                     {# Or maybe a details link first? #}
-                                     {# <a href="#" class="btn btn-outline-secondary">View Programs</a> #}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"> {# Responsive cols & gutters #}
+                    {% for uni in universities %}
+                     <div class="col">
+                        <div class="card h-100 border shadow-sm university-card overflow-hidden"> {# Added border, kept shadow-sm, added overflow-hidden #}
+                             <div class="card-img-top bg-light border-bottom text-center" style="height: 150px; display: flex; align-items: center; justify-content: center;"> {# Fixed height container #}
+                                {% if uni.logo %}
+                                    <img src="{{ uni.logo.url }}" alt="Logo for {{ uni.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain; padding: 10px;">
                                 {% else %}
-                                     {# If no programs match filters, allow applying to the university directly #}
-                                     <a href="{% url 'applications:create_application_for_university' uni.id %}" class="btn btn-success">
-                                        <i class="fas fa-plus me-1"></i> Create Application for {{ uni.name|truncatechars:20 }}...
-                                     </a>
+                                    {# Improved placeholder styling #}
+                                    <i class="fas fa-university fa-3x text-secondary opacity-50"></i>
                                 {% endif %}
                             </div>
-                        </div>
-                    </div>
-                 </div>
-                {% endfor %}
-             </div> <!-- End row -->
+                            <div class="card-body d-flex flex-column p-3"> {# Adjusted padding #}
+                                <h5 class="h6 card-title fw-bold mb-1">{{ uni.name }}</h5> {# Use h6, fw-bold #}
+                                <p class="card-text text-muted small mb-2">
+                                    <i class="fas fa-map-marker-alt fa-fw me-1"></i>{{ uni.city.name }}, {{ uni.country.name }}
+                                </p>
+                                {% if uni.description %}
+                                <p class="card-text small text-muted mb-3">{{ uni.description|truncatewords:15 }}</p>
+                                {% endif %}
+
+                                {% if uni.filtered_programs %}
+                                    <h6 class="small text-muted fw-bold mb-2"><i class="fas fa-check-circle text-success me-1"></i>Matching Programs:</h6>
+                                    <ul class="list-unstyled small mb-3 flex-grow-1"> {# Added flex-grow-1 to push button down #}
+                                        {% for program in uni.filtered_programs|slice:":3" %}
+                                        <li class="mb-1">
+                                            <i class="fas fa-graduation-cap fa-fw me-1 text-primary opacity-75"></i>
+                                            <span class="fw-medium">{{ program.name }}</span> ({{ program.get_degree_type_display }})
+                                            {% if program.start_date %}<br><span class="ms-4 text-muted">Starts {{ program.start_date|date:"M Y" }}</span>{% endif %}
+                                        </li>
+                                        {% endfor %}
+                                        {% if uni.filtered_programs|length > 3 %}
+                                        <li class="mt-1"><small class="text-muted ms-4">... and {{ uni.filtered_programs|length|add:"-3" }} more matching.</small></li>
+                                        {% endif %}
+                                    </ul>
+                                {% else %}
+                                    {# Provide space even if no programs found, pushes button down #}
+                                     <div class="small text-muted mb-3 flex-grow-1">
+                                        <i class="fas fa-times-circle text-danger me-1"></i> No programs found matching the specific program filters for this university.
+                                     </div>
+                                {% endif %}
+
+                                {# Action Button(s) at the bottom #}
+                                <div class="mt-auto d-grid"> {# mt-auto pushes to bottom, d-grid makes button full width #}
+                                    {% if uni.filtered_programs %}
+                                         {# Link to create app for first matching program #}
+                                         <a href="{% url 'applications:create_application_from_search' uni.filtered_programs.0.id %}" class="btn btn-primary btn-sm">
+                                             <i class="fas fa-file-signature me-1"></i> Apply to {{ uni.filtered_programs.0.name|truncatechars:20 }}
+                                         </a>
+                                         {# Optional: Add a secondary button to view all programs #}
+                                         {# <a href="#" class="btn btn-outline-secondary btn-sm mt-2">View All Programs</a> #}
+                                    {% else %}
+                                         {# If no specific programs match, allow creating general uni app #}
+                                         <a href="{% url 'applications:create_application_for_university' uni.id %}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-plus me-1"></i> Create Application for {{ uni.name|truncatechars:20 }}
+                                         </a>
+                                    {% endif %}
+                                </div>
+                            </div> {# End card-body #}
+                        </div> {# End card #}
+                     </div> {# End col #}
+                    {% endfor %}
+                 </div> <!-- End row -->
 
                 <!-- Pagination -->
-                {% include 'includes/pagination.html' with page_obj=universities %}
+                {% if universities.has_other_pages %} {# Only show pagination if needed #}
+                <div class="mt-4 pt-3 d-flex justify-content-center border-top"> {# Spacing and centering for pagination #}
+                    {% include 'includes/pagination.html' with page_obj=universities %}
+                </div>
+                {% endif %}
 
             {% else %}
-                <p class="text-center text-muted">No universities found matching your criteria.</p>
+                 {# Improved empty state message #}
+                <div class="alert alert-secondary text-center border-0" role="alert">
+                   <i class="fas fa-info-circle me-2"></i> No universities or programs found matching your criteria. Try broadening your search.
+                </div>
             {% endif %}
-        </div>
-    </div>
-</div>
-{% endblock dashboard_content %} {# Explicitly close dashboard_content #}
+        </div> {# End card-body #}
+    </div> {# End results card #}
+</div> {# End container-fluid #}
+{% endblock dashboard_content %}
 
-{% block extra_js %} {# Start extra_js block AFTER dashboard_content #}
+{% block extra_js %}
+{# This JavaScript block is kept exactly as provided #}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Check if there are any GET parameters indicating a search was performed
         const urlParams = new URLSearchParams(window.location.search);
         // A simple check if any search-related parameter exists
         if (urlParams.has('uni_name') || urlParams.has('country_name') || urlParams.has('program_name') || urlParams.has('degree_type') || urlParams.has('max_fee_usd') || urlParams.has('intake_after')) {
+            // Check if the query string is not empty (alternative way)
+        // if (window.location.search.length > 1) { // Exclude '?'
             const resultsSection = document.getElementById('search-results-section');
             if (resultsSection) {
                 // Scroll smoothly to the results section

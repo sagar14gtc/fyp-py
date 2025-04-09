@@ -3,9 +3,12 @@
 
 {% block dashboard_title %}Notifications{% endblock %}
 
+{# Note: No {% block dashboard_actions %} was in the original, so none added #}
+
 {% block dashboard_content %}
 <div class="container-fluid px-4">
     <h1 class="mt-4">Notifications</h1>
+    {# --- Breadcrumbs (Logic Unchanged) --- #}
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
         <li class="breadcrumb-item active">Notifications</li>
@@ -19,23 +22,44 @@
                     <i class="fas fa-bell me-1"></i>
                     Unread Notifications
                 </div>
-                <div class="card-body p-0">
+                {# Remove p-0, padding added to list items or empty state #}
+                <div class="card-body">
                     {% if unread_notifications %}
                         <div class="list-group list-group-flush">
                             {% for notification in unread_notifications %}
-                                <div class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <p class="mb-1">{{ notification.verb }}</p>
-                                        <small class="text-muted">{{ notification.timestamp|timesince }} ago</small>
+                                {# Use d-flex for better structure within the item #}
+                                {# Added py-3 px-3 for consistent padding #}
+                                <div class="list-group-item list-group-item-action py-3 px-3">
+                                    <div class="d-flex w-100 align-items-start"> {# align-items-start keeps icon aligned with first line #}
+                                        {# Icon Column #}
+                                        <div class="me-3 pt-1"> {# pt-1 to slightly align icon better with text #}
+                                            <i class="fas fa-bell text-primary fa-fw"></i>
+                                        </div>
+                                        {# Main Content Column (Verb & Description) #}
+                                        <div class="flex-grow-1">
+                                            {# Original Verb display #}
+                                            <p class="mb-1 fw-bold">{{ notification.verb }}</p>
+                                            {# Original Description display #}
+                                            <small class="text-muted d-block">{{ notification.description }}</small>
+                                        </div>
+                                        {# Timestamp Column (Right aligned) #}
+                                        <div class="text-end text-nowrap ps-2">
+                                            {# Original Timestamp display #}
+                                            <small class="text-muted">{{ notification.timestamp|timesince }} ago</small>
+                                            {# Original commented-out action placeholder - Kept commented #}
+                                            {# Example: <a href="{% url 'dashboard:mark_notification_read' notification.id %}" class="btn btn-sm btn-outline-secondary float-end">Mark Read</a> #}
+                                            {# NOTE: To make the above placeholder align better if uncommented, remove float-end and potentially wrap in a div or add display block/margin #}
+                                        </div>
                                     </div>
-                                    <small class="text-muted">{{ notification.description }}</small>
-                                    {# Add a button/link to mark as read if needed, potentially using AJAX #}
-                                    {# Example: <a href="{% url 'dashboard:mark_notification_read' notification.id %}" class="btn btn-sm btn-outline-secondary float-end">Mark Read</a> #}
                                 </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-center text-muted p-4">No unread notifications.</p>
+                        {# Refined Empty State #}
+                        <div class="text-center p-4">
+                            <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No unread notifications.</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -48,21 +72,42 @@
                     <i class="fas fa-history me-1"></i>
                     Recent Read Notifications
                 </div>
-                <div class="card-body p-0">
+                 {# Remove p-0, padding added to list items or empty state #}
+                <div class="card-body">
                      {% if read_notifications %}
                         <div class="list-group list-group-flush">
                             {% for notification in read_notifications %}
-                                <div class="list-group-item list-group-item-action list-group-item-light">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <p class="mb-1">{{ notification.verb }}</p>
-                                        <small class="text-muted">{{ notification.timestamp|timesince }} ago</small>
+                                {# Use d-flex for better structure within the item #}
+                                {# Added py-3 px-3 for consistent padding #}
+                                {# Kept original list-group-item-light class #}
+                                <div class="list-group-item list-group-item-action list-group-item-light py-3 px-3">
+                                     <div class="d-flex w-100 align-items-start">
+                                        {# Icon Column #}
+                                        <div class="me-3 pt-1">
+                                            <i class="fas fa-check-circle text-muted fa-fw"></i> {# Icon for read items #}
+                                        </div>
+                                        {# Main Content Column (Verb & Description) #}
+                                        <div class="flex-grow-1">
+                                             {# Original Verb display #}
+                                            <p class="mb-1 fw-bold">{{ notification.verb }}</p>
+                                             {# Original Description display #}
+                                            <small class="text-muted d-block">{{ notification.description }}</small>
+                                        </div>
+                                        {# Timestamp Column (Right aligned) #}
+                                        <div class="text-end text-nowrap ps-2">
+                                             {# Original Timestamp display #}
+                                            <small class="text-muted">{{ notification.timestamp|timesince }} ago</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">{{ notification.description }}</small>
                                 </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-center text-muted p-4">No recently read notifications.</p>
+                        {# Refined Empty State #}
+                        <div class="text-center p-4">
+                             <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                            <p class="text-center text-muted mb-0">No recently read notifications found.</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>

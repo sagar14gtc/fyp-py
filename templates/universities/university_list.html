@@ -1,50 +1,176 @@
 {% extends 'base.html' %}
+{% load static %} {# Assuming you might need static files later, good practice to include #}
 
 {% block title %}Universities List{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">Universities</h1>
-    {# Removed <hr> #}
+{% block head %}
+{# Add any specific CSS links or custom styles here #}
+<style>
+    /* Basic styles for a more refined look - move to your main CSS file ideally */
+    body {
+        background-color: #f8f9fa; /* Lighter grey background */
+    }
 
-    <div class="row"> {# Added row for card layout #}
-        {% for university in universities %}
-            <div class="col-md-6 col-lg-4 mb-4"> {# Added column and margin bottom #}
-                <div class="card university-card h-100">
-                    {% if university.logo %}
-                        <img src="{{ university.logo.url }}" class="card-img-top" alt="{{ university.name }}">
-                    {% else %}
-                        {# Provide a default placeholder image if no logo exists #}
-                        <img src="https://via.placeholder.com/300x180?text=University+Logo" class="card-img-top" alt="{{ university.name }}">
-                    {% endif %}
-                    <div class="card-body d-flex flex-column"> {# Added flex classes for footer alignment #}
-                        <h5 class="card-title">{{ university.name }}</h5>
-                        <p class="card-text text-muted small mb-2">
-                            <i class="fas fa-map-marker-alt me-1"></i> {# Assuming FontAwesome is available #}
-                            {% if university.city %}{{ university.city.name }}, {% endif %}
-                            {% if university.country %}{{ university.country.name }}{% endif %}
-                        </p>
-                        {% if university.description %}
-                            <p class="card-text flex-grow-1">{{ university.description|truncatewords:25 }}</p> {# Display description, slightly longer truncation #}
-                        {% endif %}
-                    </div>
-                    <div class="card-footer bg-white border-top-0 pt-0"> {# Adjusted footer style #}
-                        {% if university.website %}
-                            <a href="{{ university.website }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">Visit Website</a> {# Link to external site #}
-                        {% else %}
-                            <span class="text-muted small">Website not available</span> {# Indicate if no website #}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info">No universities found matching your criteria.</div>
-            </div>
-        {% endfor %}
+    .page-header {
+        /* Example: Add a subtle border below the title */
+        /* border-bottom: 1px solid #dee2e6; */
+        /* padding-bottom: 1rem; */
+    }
+
+    .university-card {
+        border: 0; /* Remove default border */
+        transition: all 0.2s ease-in-out;
+        background-color: #ffffff; /* Ensure card background is white */
+    }
+
+    .university-card:hover {
+        /* Subtle lift effect on hover */
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Slightly stronger shadow on hover */
+    }
+
+    .university-card .card-img-top {
+        /* --- CSS CHANGE HERE --- */
+        width: 100%; /* Make image take full width of container */
+        height: 180px; /* Fixed height for consistency */
+        object-fit: cover; /* Scale the image while preserving aspect ratio, cropping if necessary */
+        /* --- END OF CHANGE --- */
+        border-top-left-radius: 0.375rem; /* Match Bootstrap's default card radius if needed */
+        border-top-right-radius: 0.375rem;
+    }
+
+    .university-card .card-title {
+        font-weight: 600; /* Slightly bolder title */
+        color: #343a40;
+    }
+
+    .university-card .card-text.text-muted {
+        font-size: 0.85em; /* Slightly smaller location text */
+    }
+
+    .university-card .btn {
+        /* Slightly customize button if desired */
+        /* padding: 0.3rem 0.8rem; */
+    }
+
+    /* Ensure FontAwesome icons are vertically aligned */
+    .fas {
+        vertical-align: middle;
+    }
+
+    /* Ensure placeholder text is centered if needed */
+    .placeholder-img {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #e9ecef; /* Lighter placeholder background */
+        color: #6c757d; /* Muted text color */
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5"> {# Added vertical padding for overall spacing #}
+
+    <div class="page-header mb-5"> {# Wrapper for title, increased margin-bottom #}
+        <h1 class="display-5">Universities</h1> {# Using display class for larger heading #}
     </div>
 
-    <!-- TODO: Add pagination controls if needed -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> {# Bootstrap 5 grid classes with gutter spacing (g-4) #}
+        {% for university in universities %}
+            <div class="col"> {# Let Bootstrap handle column sizing based on row-cols-* #}
+                <div class="card university-card h-100 shadow-sm"> {# Added shadow-sm, border-0 implicitly via CSS/Bootstrap reset, kept h-100 #}
 
-</div>
+                    {% if university.logo %}
+                        <img src="{{ university.logo.url }}" class="card-img-top" alt="Logo for {{ university.name }}">
+                    {% else %}
+                        {# Using a div for placeholder allows better control if image is missing #}
+                        {# Apply the same card-img-top class for dimensions, plus placeholder specific styling #}
+                        <div class="card-img-top placeholder-img">
+                             <span>University Logo</span> {# Simple text placeholder #}
+                        </div>
+                        {# --- OR Keep using the placeholder service if preferred ---
+                           Note: The CSS above should apply to this img tag as well.
+                        <img src="https://via.placeholder.com/400x180/e9ecef/6c757d?text=University+Logo" class="card-img-top" alt="Placeholder logo for {{ university.name }}">
+                         --- Adjust dimensions in URL (e.g., 400x180) or rely purely on CSS --- #}
+                    {% endif %}
+
+                    <div class="card-body d-flex flex-column pb-3"> {# Flex column, added bottom padding #}
+                        <h5 class="card-title mb-2">{{ university.name }}</h5>
+
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {% if university.city %}{{ university.city.name }}{% endif %}
+                            {% if university.city and university.country %}, {% endif %}
+                            {% if university.country %}{{ university.country.name }}{% endif %}
+                            {% if not university.city and not university.country %}Location not specified{% endif %}
+                        </p>
+
+                        {% if university.description %}
+                            {# flex-grow-1 makes this description take up available space #}
+                            <p class="card-text flex-grow-1 mb-3">{{ university.description|truncatewords:20 }}</p>
+                        {% else %}
+                            {# Add a placeholder or spacer if description is missing but you want consistent alignment #}
+                             <div class="flex-grow-1"></div>
+                        {% endif %}
+
+                        {# Website link section pushed to the bottom using mt-auto #}
+                        <div class="mt-auto">
+                            {% if university.website %}
+                                <a href="{{ university.website }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
+                                    <i class="fas fa-external-link-alt me-1"></i> Visit Website
+                                </a>
+                            {% else %}
+                                <span class="text-muted small d-block">
+                                    <i class="fas fa-globe me-1"></i> Website not available
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div> {# End card-body #}
+
+                </div> {# End card #}
+            </div> {# End col #}
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-secondary text-center" role="alert"> {# Changed alert style, centered text #}
+                   <i class="fas fa-info-circle me-2"></i> No universities found matching your criteria.
+                </div>
+            </div>
+        {% endfor %}
+    </div> {# End row #}
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                {% endif %}
+
+                {% for i in paginator.page_range %}
+                     {# Add logic for ellipsis if many pages #}
+                     {% if i == page_obj.number %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+                    {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %} {# Show pages around current page #}
+                         <li class="page-item"><a class="page-link" href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a></li>
+                     {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %} {# Ellipsis #}
+                         <li class="page-item disabled"><span class="page-link">...</span></li>
+                     {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    <!-- End Pagination -->
+
+</div> {# End container #}
 {% endblock %}

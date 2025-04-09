@@ -4,6 +4,7 @@
 {% block dashboard_title %}Messages{% endblock %}
 
 {% block dashboard_actions %}
+    {# Action button remains the same #}
     <a href="{% url 'messaging:new_conversation' %}" class="btn btn-primary">
         <i class="fas fa-plus me-1"></i> New Message
     </a>
@@ -11,6 +12,7 @@
 
 {% block dashboard_content %}
 <div class="container-fluid px-4">
+    {# Page Title and Breadcrumbs remain the same #}
     <h1 class="mt-4">Messages</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
@@ -22,35 +24,59 @@
             <i class="fas fa-comments me-1"></i>
             Conversations
         </div>
-        <div class="card-body p-0">
+        {# Removed p-0, padding will be handled by list items or the empty state message #}
+        <div class="card-body">
             {% if conversations %}
+                {# Use list-group-flush to remove outer borders and rounded corners within the card #}
                 <div class="list-group list-group-flush">
                     {% for conv in conversations %}
-                        <a href="{% url 'messaging:conversation_detail' conv.id %}" class="list-group-item list-group-item-action {% if conv.unread_count > 0 %}list-group-item-primary{% endif %}">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">
-                                    {{ conv.title|default:"Conversation" }}
-                                    {% with other_participants=conv.participants.exclude %}{% endwith %} {# Simplified participant display #}
-                                    <small class="text-muted">
-                                        with
+                        {# Use flexbox for better alignment within the list item link #}
+                        {# Added py-3 for vertical padding, px-3 for horizontal padding #}
+                        <a href="{% url 'messaging:conversation_detail' conv.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if conv.unread_count > 0 %}list-group-item-primary{% endif %} py-3 px-3">
+
+                            {# Left section: Icon, Title, Participants #}
+                            <div class="d-flex align-items-center flex-grow-1 me-3">
+                                {# Subtle icon for visual consistency #}
+                                <i class="fas fa-envelope fa-fw me-3 text-secondary"></i>
+                                <div class="flex-grow-1">
+                                    {# Slightly bolder title, maybe h6 is more appropriate in a list #}
+                                    <h6 class="mb-1 fw-bold">
+                                        {{ conv.title|default:"Conversation" }}
+                                    </h6>
+                                    {# Participant list slightly less prominent #}
+                                    <small class="text-muted d-block">
+                                        {% comment %} Removed unused {% with %} tag {% endcomment %}
+                                        With:
                                         {% for p in conv.participants.all %}
                                             {% if p != request.user %}
-                                                {{ p.get_full_name|default:p.username }}{% if not forloop.last %}, {% endif %}
+                                                {{ p.get_full_name|default:p.username }}{% if not forloop.last and conv.participants.count > 2 %}, {% endif %} {# Improved comma logic slightly for >2 participants #}
                                             {% endif %}
+                                        {% empty %}
+                                            No other participants
                                         {% endfor %}
                                     </small>
-                                </h5>
-                                <small class="text-muted">{{ conv.latest_message_time|timesince }} ago</small>
+                                </div>
                             </div>
-                            {# Optionally display latest message snippet here #}
-                            {% if conv.unread_count > 0 %}
-                                <span class="badge bg-danger rounded-pill float-end">{{ conv.unread_count }}</span>
-                            {% endif %}
+
+                            {# Right section: Timestamp and Unread Badge #}
+                            {# text-end aligns content, text-nowrap prevents wrapping #}
+                            <div class="text-end text-nowrap">
+                                <small class="d-block text-muted mb-1">{{ conv.latest_message_time|timesince }} ago</small>
+                                {% if conv.unread_count > 0 %}
+                                    {# Badge aligned below the timestamp #}
+                                    <span class="badge bg-danger rounded-pill">{{ conv.unread_count }}</span>
+                                {% endif %}
+                            </div>
                         </a>
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="text-center text-muted p-4">You have no conversations yet.</p>
+                {# Enhanced empty state message #}
+                <div class="text-center p-5">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">You don't have any conversations yet.</p>
+                    <p class="mt-2"><small>Click "New Message" to start one.</small></p>
+                </div>
             {% endif %}
         </div>
     </div>

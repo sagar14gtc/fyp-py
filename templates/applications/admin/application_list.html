@@ -27,7 +27,7 @@
                                 <th>Student</th>
                                 <th>Program</th>
                                 <th>University</th>
-                                <th>Status</th>
+                                <th style="color: #000;">Status</th> {# Added inline style for visibility #}
                                 <th>Applied Date</th>
                                 <th>Consultant</th>
                                 <th>Action</th>
@@ -43,7 +43,7 @@
                                     <td>{{ app.application_date|date:"Y-m-d" }}</td>
                                     <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
                                     <td>
-                                        <a href="{% url 'applications:application_detail' app.application_id %}" class="btn btn-sm btn-outline-info">View Details</a>
+                                        <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View Details</a> {# Changed app.application_id to app.pk #}
                                         {# Add admin-specific actions if needed #}
                                     </td>
                                 </tr>

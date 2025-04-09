@@ -39,7 +39,7 @@
                                     <td><span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span></td>
                                     <td>{{ app.application_date|date:"Y-m-d" }}</td>
                                     <td>
-                                        <a href="{% url 'applications:application_detail' app.application_id %}" class="btn btn-sm btn-outline-info">View Details</a>
+                                        <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View Details</a> {# Changed app.application_id to app.pk #}
                                         {# Add consultant-specific actions if needed #}
                                     </td>
                                 </tr>

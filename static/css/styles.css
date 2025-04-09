@@ -86,7 +86,7 @@ a:hover { color: var(--primary-hover); }
 .lead { font-size: 1.15rem; font-weight: 400; } /* Slightly refined lead */
 
 /* --- Layout & Utilities --- */
-main { padding-bottom: 4rem; }
+main { /* padding-bottom: 4rem; */ } /* Removed padding causing footer gap */
 .bg-primary-soft { background-color: var(--primary-soft-bg); }
 
 /* --- Navbar --- */

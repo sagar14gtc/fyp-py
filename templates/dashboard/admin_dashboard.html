@@ -1,0 +1,211 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Admin Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-4 py-4">
+    {# Page Header #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Admin Dashboard</h1>
+    </div>
+
+    {# Statistics Cards #}
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-primary shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Students</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ total_students }}</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-user-graduate fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-success shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-success text-uppercase mb-1">Total Consultants</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ total_consultants }}</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-user-tie fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-info shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-info text-uppercase mb-1">Total Applications</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ total_applications }}</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-file-alt fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-left-warning shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-warning text-uppercase mb-1">Total Universities</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ total_universities }}</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-university fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-left-secondary shadow-sm h-100 py-2"> {# Changed color #}
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-secondary text-uppercase mb-1">New Applications (This Month)</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ new_applications_this_month }}</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-calendar-plus fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-left-dark shadow-sm h-100 py-2"> {# Changed color #}
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-dark text-uppercase mb-1">New Users (This Month)</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ new_users_this_month }}</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-user-plus fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Recent Activity Section #}
+    <div class="row g-4 mb-4">
+        {# Recent Applications #}
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header py-3 bg-white border-bottom">
+                    <h6 class="m-0 fw-bold text-primary"><i class="fas fa-history me-2"></i>Recent Applications</h6>
+                </div>
+                <div class="card-body">
+                    {% if recent_applications %}
+                        <ul class="list-group list-group-flush">
+                            {% for app in recent_applications %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+                                    <div>
+                                        {# Using pk now for URL generation to match view/URL config #}
+                                        <a href="{% url 'applications:application_detail' app.pk %}" class="text-decoration-none fw-semibold">{{ app.program.name }}</a>
+                                        <span class="d-block text-muted small">by {{ app.student.get_full_name|default:app.student.username }}</span>
+                                        <small class="d-block text-muted fst-italic">Applied: {{ app.application_date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <span class="badge rounded-pill bg-info-light text-info">{{ app.get_status_display }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No recent applications.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Recent Users #}
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header py-3 bg-white border-bottom">
+                    <h6 class="m-0 fw-bold text-primary"><i class="fas fa-users me-2"></i>Recent User Registrations</h6>
+                </div>
+                <div class="card-body">
+                    {% if recent_users %}
+                        <ul class="list-group list-group-flush">
+                            {% for u in recent_users %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+                                    <div>
+                                        <span class="fw-semibold">{{ u.get_full_name|default:u.username }}</span>
+                                        <small class="d-block text-muted">Joined: {{ u.date_joined|date:"M d, Y" }}</small>
+                                    </div>
+                                    <span class="badge rounded-pill {% if u.role == 'student' %}bg-primary-light text-primary{% elif u.role == 'consultant' %}bg-success-light text-success{% else %}bg-secondary-light text-secondary{% endif %}">{{ u.get_role_display }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No recent user registrations.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Application Status Overview #}
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 bg-white border-bottom">
+                    <h6 class="m-0 fw-bold text-primary"><i class="fas fa-chart-pie me-2"></i>Application Status Overview</h6>
+                </div>
+                <div class="card-body">
+                    {% if application_status_stats %}
+                        <ul class="list-group list-group-horizontal-md flex-wrap"> {# Horizontal list on medium screens+ #}
+                            {% for stat in application_status_stats %} {# Use the processed list #}
+                                <li class="list-group-item flex-fill text-center border-0 border-end"> {# Flex fill for equal width #}
+                                    <span class="fw-bold d-block fs-4">{{ stat.count }}</span>
+                                    <span class="text-muted text-uppercase small">{{ stat.name }}</span> {# Use the pre-formatted name #}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No application data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{# Include the common dashboard styles #}
+<style>
+    /* Refined Stat Cards */
+    .border-left-primary { border-left: .25rem solid var(--bs-primary) !important; }
+    .border-left-success { border-left: .25rem solid var(--bs-success) !important; }
+    .border-left-info    { border-left: .25rem solid var(--bs-info) !important;    }
+    .border-left-warning { border-left: .25rem solid var(--bs-warning) !important; }
+    .border-left-danger  { border-left: .25rem solid var(--bs-danger) !important;  }
+    .border-left-secondary { border-left: .25rem solid var(--bs-secondary) !important; }
+    .border-left-dark    { border-left: .25rem solid var(--bs-dark) !important; }
+    .text-xs { font-size: .7rem; }
+    .text-gray-300 { color: #dddfeb !important; }
+    .text-gray-800 { color: #5a5c69 !important; }
+
+    /* Softer Badge Backgrounds */
+    .bg-primary-light { background-color: rgba(var(--bs-primary-rgb), 0.15) !important; }
+    .bg-success-light { background-color: rgba(var(--bs-success-rgb), 0.15) !important; }
+    .bg-info-light    { background-color: rgba(var(--bs-info-rgb),    0.15) !important; }
+    .bg-warning-light { background-color: rgba(var(--bs-warning-rgb), 0.15) !important; }
+    .bg-danger-light  { background-color: rgba(var(--bs-danger-rgb),  0.15) !important; }
+    .bg-secondary-light{ background-color: rgba(var(--bs-secondary-rgb),0.15) !important; }
+
+    /* Card header refinement */
+    .card-header.bg-white { background-color: #fff !important; }
+
+    /* Ensure list group items don't have side padding if inside cards */
+    .card-body .list-group-flush .list-group-item {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .card { border: 1px solid #e3e6f0; }
+</style>
+{% endblock %}

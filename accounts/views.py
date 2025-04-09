@@ -22,8 +22,13 @@ class CustomLoginView(LoginView):
         if user.is_authenticated:
             if user.role == CustomUser.ADMIN:
                 return reverse_lazy('admin:index') # Redirect admins to /admin/
-            # Redirect other authenticated users (students, consultants) to their profile
-            return reverse_lazy('accounts:profile') 
+            elif user.role == CustomUser.STUDENT:
+                return reverse_lazy('dashboard:dashboard') # Redirect students to /dashboard/
+            elif user.role == CustomUser.CONSULTANT:
+                 return reverse_lazy('dashboard:dashboard') # Redirect consultants to /dashboard/
+            else:
+                # Fallback for any other authenticated roles (if any)
+                return reverse_lazy('accounts:profile')
         # Fallback if somehow user is not authenticated (shouldn't happen here)
         return super().get_success_url()
 

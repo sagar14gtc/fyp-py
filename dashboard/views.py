@@ -12,6 +12,7 @@ from applications.models import Application, Document, ApplicationStatus
 from universities.models import University, Program
 from messaging.models import Appointment, Conversation, Message
 from notifications.models import Notification # Import Notification model
+from .models import DashboardNotification # Import DashboardNotification
 from django.db.models.functions import TruncMonth, TruncDay
 from django.utils.dateparse import parse_date # For parsing date input
 # Import forms (will create these later)
@@ -77,11 +78,22 @@ def student_dashboard(request):
         is_read=False
     ).exclude(sender=user).count()
 
+    # Get unread dashboard notifications and their count
+    unread_dashboard_notifications = DashboardNotification.objects.filter(
+        user=user,
+        is_read=False
+    )
+    unread_notifications_count = unread_dashboard_notifications.count()
+    # Limit the displayed notifications
+    dashboard_notifications_display = unread_dashboard_notifications.order_by('-created_at')[:5]
+
     # Get featured universities
     featured_universities = University.objects.filter(is_featured=True) # Removed slice [:4]
 
     context = {
         'applications': recent_applications, # Pass the sliced list for display
+        'dashboard_notifications': dashboard_notifications_display, # Pass the limited list for display
+        'unread_notifications_count': unread_notifications_count, # Pass the count
         'application_stats': application_stats,
         'appointments': appointments,
         'unread_messages_count': unread_messages_count,
@@ -122,8 +134,19 @@ def admin_dashboard(request):
     total_applications = Application.objects.count()
     total_universities = University.objects.count()
 
-    # Application statistics
-    application_status_stats = Application.objects.values('status').annotate(count=Count('id'))
+    # Application statistics - Get raw data
+    raw_status_stats = Application.objects.values('status').annotate(count=Count('id'))
+
+    # Process stats for better display in template
+    application_status_stats_display = []
+    status_display_map = dict(Application.STATUS_CHOICES) # Get display names from model choices
+    for stat in raw_status_stats:
+        status_code = stat['status']
+        display_name = status_display_map.get(status_code, status_code.replace('_', ' ').title()) # Use display name or format the code
+        application_status_stats_display.append({
+            'name': display_name,
+            'count': stat['count']
+        })
 
     # Get new applications this month
     this_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -132,8 +155,11 @@ def admin_dashboard(request):
     # Get new users this month
     new_users_this_month = CustomUser.objects.filter(date_joined__gte=this_month).count()
 
-    # Recent activity
-    recent_applications = Application.objects.order_by('-application_date')[:5]
+    # Recent activity - Fetch full Application objects
+    recent_applications = Application.objects.select_related(
+        'program', 'student', 'program__university' # Ensure related objects are fetched
+    ).order_by('-application_date')[:5]
+
     recent_users = CustomUser.objects.order_by('-date_joined')[:5]
 
     context = {
@@ -141,10 +167,10 @@ def admin_dashboard(request):
         'total_consultants': total_consultants,
         'total_applications': total_applications,
         'total_universities': total_universities,
-        'application_status_stats': application_status_stats,
+        'application_status_stats': application_status_stats_display, # Pass the processed list
         'new_applications_this_month': new_applications_this_month,
         'new_users_this_month': new_users_this_month,
-        'recent_applications': recent_applications,
+        'recent_applications': recent_applications, # Pass the queryset of objects
         'recent_users': recent_users,
         'page_title': 'Admin Dashboard'
     }

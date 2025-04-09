@@ -54,13 +54,13 @@
                                     <td>{{ app.application_date|date:"Y-m-d" }}</td>
                                     <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
                                     <td>
-                                        <a href="{% url 'applications:application_detail' app.application_id %}" class="btn btn-sm btn-outline-info">View Details</a>
+                                        <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View Details</a> {# Changed app.application_id to app.pk #}
                                         {% if app.status == 'draft' %}
-                                            <a href="{% url 'applications:edit_application' app.application_id %}" class="btn btn-sm btn-outline-warning">Edit</a>
-                                            <a href="{% url 'applications:manage_documents' app.application_id %}" class="btn btn-sm btn-outline-secondary">Manage Docs</a>
+                                            <a href="{% url 'applications:edit_application' app.pk %}" class="btn btn-sm btn-outline-warning">Edit</a> {# Changed app.application_id to app.pk #}
+                                            <a href="{% url 'applications:manage_documents' app.pk %}" class="btn btn-sm btn-outline-secondary">Manage Docs</a> {# Changed app.application_id to app.pk #}
                                         {% endif %}
                                         {% if app.status != 'accepted' and app.status != 'cancelled' and app.status != 'enrollment_confirmed' %}
-                                             <a href="{% url 'applications:cancel_application' app.application_id %}" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                             <a href="{% url 'applications:cancel_application' app.pk %}" class="btn btn-sm btn-outline-danger">Cancel</a> {# Changed app.application_id to app.pk #}
                                         {% endif %}
                                     </td>
                                 </tr>

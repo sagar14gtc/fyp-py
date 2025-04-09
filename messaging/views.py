@@ -143,8 +143,8 @@ def send_message(request, conversation_id):
     user = request.user
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
-    # Check if user is a participant in this conversation
-    if user not in conversation.participants.all():
+    # Check if user is a participant OR an admin
+    if user not in conversation.participants.all() and not user.is_staff:
         raise PermissionDenied("You don't have permission to send messages in this conversation.")
 
     if request.method == 'POST':

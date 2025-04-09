@@ -53,7 +53,8 @@ def create_application(request, program_id):
 
     if existing_application:
         messages.warning(request, f"You already have an application for this program ({existing_application.get_status_display()}).")
-        return redirect('applications:application_detail', application_id=existing_application.application_id)
+        # Redirect using pk now
+        return redirect('applications:application_detail', pk=existing_application.pk)
 
     if request.method == 'POST':
         form = ApplicationForm(request.POST)
@@ -78,10 +79,11 @@ def create_application(request, program_id):
                     document_type=doc_type,
                     name=f"{doc_name} for {program.name}",
                     required=(doc_type in [Document.TRANSCRIPT, Document.CV, Document.PASSPORT])
-                )
+            )
 
             messages.success(request, "Application created successfully. You can now upload your documents.")
-            return redirect('applications:application_detail', application_id=application.application_id)
+            # Redirect using pk now
+            return redirect('applications:application_detail', pk=application.pk)
     else:
         form = ApplicationForm(initial={'intake_date': program.start_date})
 
@@ -94,9 +96,10 @@ def create_application(request, program_id):
     return render(request, 'applications/create_application.html', context)
 
 @login_required
-def application_detail(request, application_id):
+def application_detail(request, pk): # Changed argument name
     """View to see details of a specific application."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Check permission
     if not can_view_application(request.user, application):
@@ -122,21 +125,24 @@ def application_detail(request, application_id):
     return render(request, template, context)
 
 @login_required
-def edit_application(request, application_id):
+def edit_application(request, pk): # Changed argument name
     """View to edit an application."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Only allow editing if application is in draft state and user is the student
     if application.status != Application.DRAFT or application.student != request.user:
         messages.error(request, "You cannot edit this application.")
-        return redirect('applications:application_detail', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:application_detail', pk=application.pk)
 
     if request.method == 'POST':
         form = ApplicationForm(request.POST, instance=application)
         if form.is_valid():
             form.save()
             messages.success(request, "Application updated successfully.")
-            return redirect('applications:application_detail', application_id=application.application_id)
+            # Redirect using pk now
+            return redirect('applications:application_detail', pk=application.pk)
     else:
         form = ApplicationForm(instance=application)
 
@@ -150,19 +156,22 @@ def edit_application(request, application_id):
     return render(request, 'applications/edit_application.html', context)
 
 @login_required
-def cancel_application(request, application_id):
+def cancel_application(request, pk): # Changed argument name
     """View to cancel an application."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Check if user can cancel this application
     if application.student != request.user and not request.user.is_staff:
         messages.error(request, "You don't have permission to cancel this application.")
-        return redirect('applications:application_detail', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:application_detail', pk=application.pk)
 
     # Don't allow cancelling of already processed applications
     if application.status in [Application.ACCEPTED, Application.ENROLLMENT_CONFIRMED]:
         messages.error(request, "You cannot cancel an accepted or confirmed application.")
-        return redirect('applications:application_detail', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:application_detail', pk=application.pk)
 
     if request.method == 'POST':
         application.status = Application.CANCELED
@@ -205,7 +214,8 @@ def create_application_from_search(request, program_id):
 
     if existing_application:
         messages.warning(request, f"You already have an application for this program ({existing_application.get_status_display()}).")
-        return redirect('applications:application_detail', application_id=existing_application.application_id)
+        # Redirect using pk now
+        return redirect('applications:application_detail', pk=existing_application.pk)
 
     if request.method == 'POST':
         form = ApplicationCreateFromSearchForm(request.POST, request.FILES)
@@ -279,8 +289,8 @@ def create_application_from_search(request, program_id):
                      )
 
             messages.success(request, "Application submitted successfully!")
-            # Redirect to application detail page
-            return redirect('applications:application_detail', application_id=application.application_id)
+            # Redirect to application detail page using pk now
+            return redirect('applications:application_detail', pk=application.pk)
         else:
              messages.error(request, "Please correct the errors below.")
     else:
@@ -299,9 +309,10 @@ def create_application_from_search(request, program_id):
 
 
 @login_required
-def manage_documents(request, application_id):
+def manage_documents(request, pk): # Changed argument name
     """View to manage documents for an application."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Check permission
     if application.student != request.user and not request.user.is_staff and application.consultant != request.user:
@@ -319,14 +330,16 @@ def manage_documents(request, application_id):
     return render(request, 'applications/application_detail.html', context)
 
 @login_required
-def upload_document(request, application_id, document_type):
+def upload_document(request, pk, document_type): # Changed argument name
     """View to upload a specific document."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Only student can upload documents
     if application.student != request.user:
         messages.error(request, "Only the applicant can upload documents.")
-        return redirect('applications:manage_documents', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:manage_documents', pk=application.pk)
 
     # Get or create document
     document, created = Document.objects.get_or_create(
@@ -352,7 +365,8 @@ def upload_document(request, application_id, document_type):
                 if all_uploaded:
                     messages.info(request, "All required documents uploaded. You can now submit your application.")
 
-            return redirect('applications:manage_documents', application_id=application.application_id)
+            # Redirect using pk now
+            return redirect('applications:manage_documents', pk=application.pk)
     else:
         form = DocumentForm(instance=document)
 
@@ -366,19 +380,22 @@ def upload_document(request, application_id, document_type):
     return render(request, 'applications/upload_document.html', context)
 
 @login_required
-def delete_document(request, application_id, document_id):
+def delete_document(request, pk, document_id): # Changed argument name
     """View to delete a document."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
     document = get_object_or_404(Document, id=document_id, application=application)
 
     # Only student can delete documents, and only if application is not submitted yet
     if application.student != request.user:
         messages.error(request, "Only the applicant can delete documents.")
-        return redirect('applications:manage_documents', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:manage_documents', pk=application.pk)
 
     if application.status != Application.DRAFT:
         messages.error(request, "Cannot delete documents after application has been submitted.")
-        return redirect('applications:manage_documents', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:manage_documents', pk=application.pk)
 
     if request.method == 'POST':
         document.file.delete(save=False)
@@ -386,7 +403,8 @@ def delete_document(request, application_id, document_id):
         document.save()
 
         messages.success(request, "Document has been deleted.")
-        return redirect('applications:manage_documents', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:manage_documents', pk=application.pk)
 
     context = {
         'application': application,
@@ -396,14 +414,16 @@ def delete_document(request, application_id, document_id):
     return render(request, 'applications/delete_document.html', context)
 
 @login_required
-def update_status(request, application_id):
+def update_status(request, pk): # Changed argument name
     """View to update application status."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Only staff and consultants can update status
     if not request.user.is_staff and application.consultant != request.user:
         messages.error(request, "You don't have permission to update the status of this application.")
-        return redirect('applications:application_detail', application_id=application.application_id)
+        # Redirect using pk now
+        return redirect('applications:application_detail', pk=application.pk)
 
     if request.method == 'POST':
         new_status = request.POST.get('status')
@@ -434,7 +454,8 @@ def update_status(request, application_id):
             # Check if the request is AJAX using headers
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
-            return redirect('applications:application_detail', application_id=application.application_id)
+            # Redirect using pk now
+            return redirect('applications:application_detail', pk=application.pk)
         else:
             messages.error(request, "Invalid status.")
             # Check if the request is AJAX using headers
@@ -449,9 +470,10 @@ def update_status(request, application_id):
     return render(request, 'applications/update_status.html', context)
 
 @login_required
-def add_note(request, application_id):
+def add_note(request, pk): # Changed argument name
     """View to add a note to an application."""
-    application = get_object_or_404(Application, application_id=application_id)
+    # Lookup using pk now
+    application = get_object_or_404(Application, pk=pk)
 
     # Check permission
     if not can_view_application(request.user, application):
@@ -476,7 +498,8 @@ def add_note(request, application_id):
                     'user': note.user.get_full_name() or note.user.username,
                     'created_at': note.created_at.strftime('%Y-%m-%d %H:%M')
                 })
-            return redirect('applications:application_detail', application_id=application.application_id)
+            # Redirect using pk now
+            return redirect('applications:application_detail', pk=application.pk)
         else:
             # Check if the request is AJAX using headers
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -532,7 +555,8 @@ def create_application_for_university(request, uni_id):
 
         if existing_application:
             messages.warning(request, f"You already have an application for this program ({existing_application.get_status_display()}).")
-            return redirect('applications:application_detail', application_id=existing_application.application_id)
+            # Redirect using pk now
+            return redirect('applications:application_detail', pk=existing_application.pk)
 
         form = ApplicationCreateFromSearchForm(request.POST, request.FILES)
         if form.is_valid():
@@ -581,7 +605,8 @@ def create_application_for_university(request, uni_id):
                      )
 
             messages.success(request, "Application submitted successfully!")
-            return redirect('applications:application_detail', application_id=application.application_id)
+            # Redirect using pk now
+            return redirect('applications:application_detail', pk=application.pk)
         else:
              messages.error(request, "Please correct the errors below.")
              # Re-render form with errors, ensuring programs are passed back
