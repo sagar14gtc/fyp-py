@@ -65,8 +65,8 @@
                                     <td><span class="badge bg-secondary">{{ app.get_status_display }}</span></td>
                                      <td>{{ app.application_date|date:"Y-m-d" }}</td>
                                      <td>
-                                         {# Use the correct UUID field: application_id #}
-                                         <a href="{% url 'applications:application_detail' application_id=app.application_id %}" class="btn btn-sm btn-outline-info">View</a>
+                                         {# Corrected to use integer pk #}
+                                         <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View</a>
                                      </td>
                                  </tr>
                                 {% endfor %}

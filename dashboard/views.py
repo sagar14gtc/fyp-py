@@ -670,8 +670,8 @@ def consultant_application_list(request):
         'student_search': student_search,
         'page_title': 'My Assigned Applications'
     }
-    # Need to create this template: templates/dashboard/consultant/application_list.html
-    return render(request, 'dashboard/consultant/application_list.html', context)
+    # Corrected template path to point to the applications app template
+    return render(request, 'applications/consultant/application_list.html', context)
 
 # --- Recommendation System View ---
 # Load the model once when the app starts (more efficient)
