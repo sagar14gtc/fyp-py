@@ -171,6 +171,9 @@
     <!-- Optional: jQuery (if needed by other scripts/plugins) -->
     {# <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script> #}
 
+    {% comment %} Include the chatbot component {% endcomment %}
+    {% include "includes/chatbot.html" %}
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

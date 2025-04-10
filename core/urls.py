@@ -10,4 +10,7 @@ urlpatterns = [
     path('faqs/', views.faqs, name='faqs'),
     path('terms/', views.terms, name='terms'),
     path('privacy/', views.privacy, name='privacy'),
-] 
+
+    # Chatbot API endpoint
+    path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
+]
