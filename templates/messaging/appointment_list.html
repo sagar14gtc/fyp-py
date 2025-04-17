@@ -55,13 +55,13 @@
         <div class="card-header">
             <i class="fas fa-calendar-alt me-1"></i>
             Appointments
-        </div>
-        <div class="card-body">
-            {% if appointments %}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
+          </div>
+          <div class="card-body">
+              {% if appointments %}
+                  <div> {# Removing table-responsive class again to fix button clicks #}
+                      <table class="table table-bordered table-hover">
+                          <thead>
+                              <tr>
                                 <th>Title</th>
                                 {% if user.role != 'student' %}<th>Student</th>{% endif %}
                                 {% if user.role != 'consultant' %}<th>Consultant</th>{% endif %}
@@ -102,11 +102,11 @@
                                     </td>
                                 </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                 <!-- Pagination could be added here if needed -->
-            {% else %}
+                         </tbody>
+                     </table>
+                 </div>
+                  <!-- Pagination could be added here if needed -->
+             {% else %}
                 <p class="text-center text-muted">No appointments found.</p>
             {% endif %}
         </div>

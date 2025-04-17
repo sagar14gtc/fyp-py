@@ -15,13 +15,13 @@
         <div class="card-header">
             <i class="fas fa-file-alt me-1"></i>
             Your Applications
-        </div>
-        <div class="card-body">
-            {% if applications %}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
+          </div>
+          <div class="card-body">
+              {% if applications %}
+                  <div> {# Removing table-responsive class again to fix button clicks #}
+                      <table class="table table-bordered table-hover">
+                          <thead>
+                              <tr>
                                 <th>Program</th>
                                 <th>University</th>
                                 <th>Status</th>
@@ -52,24 +52,26 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ app.application_date|date:"Y-m-d" }}</td>
-                                    <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
-                                    <td>
-                                        <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View Details</a> {# Changed app.application_id to app.pk #}
-                                        {% if app.status == 'draft' %}
-                                            <a href="{% url 'applications:edit_application' app.pk %}" class="btn btn-sm btn-outline-warning">Edit</a> {# Changed app.application_id to app.pk #}
-                                            <a href="{% url 'applications:manage_documents' app.pk %}" class="btn btn-sm btn-outline-secondary">Manage Docs</a> {# Changed app.application_id to app.pk #}
-                                        {% endif %}
-                                        {% if app.status != 'accepted' and app.status != 'cancelled' and app.status != 'enrollment_confirmed' %}
-                                             <a href="{% url 'applications:cancel_application' app.pk %}" class="btn btn-sm btn-outline-danger">Cancel</a> {# Changed app.application_id to app.pk #}
-                                        {% endif %}
-                                    </td>
-                                </tr>
+                                     <td>{{ app.consultant.get_full_name|default:"N/A" }}</td>
+                                     <td>
+                                         <div class="action-buttons-wrapper"> {# Wrapper for buttons #}
+                                             <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View Details</a> {# Changed app.application_id to app.pk #}
+                                             {% if app.status == 'draft' %}
+                                                 <a href="{% url 'applications:edit_application' app.pk %}" class="btn btn-sm btn-outline-warning">Edit</a> {# Changed app.application_id to app.pk #}
+                                                 <a href="{% url 'applications:manage_documents' app.pk %}" class="btn btn-sm btn-outline-secondary">Manage Docs</a> {# Changed app.application_id to app.pk #}
+                                             {% endif %}
+                                             {% if app.status != 'accepted' and app.status != 'cancelled' and app.status != 'enrollment_confirmed' %}
+                                                  <a href="{% url 'applications:cancel_application' app.pk %}" class="btn btn-sm btn-outline-danger">Cancel</a> {# Changed app.application_id to app.pk #}
+                                             {% endif %}
+                                         </div>
+                                     </td>
+                                 </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                 <!-- Pagination could be added here if needed -->
-            {% else %}
+                         </tbody>
+                     </table>
+                 </div>
+                  <!-- Pagination could be added here if needed -->
+             {% else %}
                 <p class="text-center text-muted">You have not submitted any applications yet.</p>
                 <div class="text-center">
                      <a href="{% url 'dashboard:university_search' %}" class="btn btn-primary">Search for Programs</a>

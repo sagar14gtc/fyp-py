@@ -5,29 +5,126 @@
 
 {% block extra_css %}
 <style>
-    /* Styles specific to homepage elements */
-    .hero-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80') center center / cover no-repeat;
-        /* Replace with a relevant, high-quality background image */
-        color: var(--bs-white);
-        min-height: 60vh; /* Adjust height as needed */
+    /* --- Hero Section CSS --- */
+    .hero {
+        padding: 5rem 5% 6rem; /* Reduced top padding */
+        background: linear-gradient(135deg, #e6f0ff 0%, #d0e0ff 100%);
+        position: relative;
+        overflow: hidden; /* Contain shapes */
+        color: #333; /* Adjust text color for light background */
+    }
+
+    .hero-container {
+        max-width: 1200px; /* Adjusted max-width */
+        margin: 0 auto;
         display: flex;
         align-items: center;
+        gap: 4rem;
         position: relative;
+        z-index: 2; /* Above shapes and background */
     }
 
-    .search-box-wrapper {
-        background-color: rgba(255, 255, 255, 0.95);
-        border-radius: var(--bs-border-radius);
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        backdrop-filter: blur(5px); /* Subtle blur effect */
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    @media (max-width: 991.98px) {
-        .search-box-wrapper { padding: 1.5rem; }
+    .hero-content {
+        flex: 1; /* Take available space */
     }
 
+    .hero-title {
+        font-size: 3.5rem; /* Adjust size */
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        color: #1a2b4d; /* Darker blue for title */
+    }
+
+    .hero-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555; /* Slightly lighter text */
+        margin-bottom: 2rem;
+    }
+
+    .hero-cta {
+        display: flex;
+        gap: 1rem;
+    }
+
+     /* Adjust button styles if needed, assuming btn-primary and btn-outline exist */
+    .btn-large { /* Example if you need larger buttons */
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+    }
+
+    .hero-image-container {
+        flex-basis: 45%; /* Adjust image width */
+        text-align: center; /* Center image if needed */
+    }
+
+    .hero-img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px; /* Optional rounded corners */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    }
+
+    /* --- Floating Shapes CSS --- */
+    .shape {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.1; /* Make them subtle */
+        z-index: 1; /* Below hero content */
+        background: linear-gradient(45deg, rgba(0, 123, 255, 0.5), rgba(100, 180, 255, 0.5)); /* Example gradient */
+    }
+
+    .shape-1 {
+        width: 200px;
+        height: 200px;
+        top: 10%;
+        left: 5%;
+        animation: float 10s ease-in-out infinite alternate;
+    }
+
+    .shape-2 {
+        width: 150px;
+        height: 150px;
+        bottom: 15%;
+        right: 10%;
+        animation: float 12s ease-in-out infinite alternate-reverse;
+    }
+
+    .shape-3 {
+        width: 100px;
+        height: 100px;
+        top: 30%;
+        right: 25%;
+        animation: float 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+        100% { transform: translateY(-20px) translateX(15px) rotate(15deg); }
+    }
+
+    /* Responsive adjustments */
+     @media (max-width: 991.98px) {
+        .hero { padding: 5rem 5% 4rem; } /* Reduced responsive top padding */
+        .hero-container { flex-direction: column; text-align: center; gap: 3rem; }
+        .hero-image-container { flex-basis: auto; width: 80%; margin-top: 2rem; }
+        .hero-title { font-size: 2.8rem; }
+        .hero-cta { justify-content: center; }
+        .shape-1 { width: 150px; height: 150px; top: 5%; left: 2%; }
+        .shape-2 { width: 100px; height: 100px; bottom: 8%; right: 5%; }
+        .shape-3 { display: none; } /* Hide one shape on smaller screens */
+    }
+     @media (max-width: 767.98px) {
+        .hero { padding: 4rem 5% 3rem; } /* Reduced responsive top padding */
+        .hero-title { font-size: 2.2rem; }
+        .hero-text { font-size: 1rem; }
+        .hero-cta { flex-direction: column; align-items: center; }
+        .btn-large { width: 80%; }
+    }
+
+
+    /* Styles specific to other homepage elements */
     .university-card .card-img-overlay {
         background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
         display: flex;
@@ -119,47 +216,70 @@
 
 {% block content %}
 
-{# Hero Section with Integrated Search #}
-<section class="hero-section">
-    <div class="container">
-        <div class="row justify-content-center align-items-center">
-            <div class="col-lg-7 col-md-10 text-center text-lg-start mb-5 mb-lg-0">
-                <h1 class="display-3 fw-bold mb-3 animate-fade-in-up">Your Global Education Starts Here</h1>
-                <p class="lead mb-4 animate-fade-in-up" style="animation-delay: 0.1s;">
-                    Explore top universities, manage applications seamlessly, and get expert guidance for your study abroad journey.
-                </p>
-                <a href="#featured-universities" class="btn btn-outline-light btn-lg animate-fade-in-up" style="animation-delay: 0.2s;">Discover Universities</a>
+{# New Hero Section #}
+<section class="hero">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Your Global Education Starts Here</h1>
+            <p class="hero-text">
+                Global Universities simplifies the study abroad search, application, and acceptance process for students, educational institutions, and recruitment partners. Find your perfect program today.
+            </p>
+            <div class="hero-cta">
+                {# Update links as needed #}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-large">Get Started</a>
+                <a href="#services" class="btn btn-outline-primary btn-large">Learn More</a>
             </div>
-            <div class="col-lg-5 col-md-10">
-                <div class="search-box-wrapper animate-fade-in-up" style="animation-delay: 0.3s;">
-                    <h4 class="text-dark fw-semibold mb-3 text-center">Find Your Program</h4>
-                    <form action="{% url 'universities:university_list' %}" method="get" id="hero-search-form">
-                        <div class="mb-3">
-                            <label for="hero-search-keyword" class="form-label visually-hidden">Keyword</label>
-                            <input type="text" class="form-control form-control-lg" id="hero-search-keyword" name="q" placeholder="Keyword (e.g., Engineering, London)">
+        </div>
+        <div class="hero-image-container">
+            {# Ensure 'images/student-journey-start.jpg' exists in your static files #}
+            <img src="{% static 'images/student-journey-start3.png' %}" alt="Student beginning their university journey" class="hero-img">
+        </div>
+    </div>
+</section>
+
+{# Quick Search Section #}
+<section id="quick-search" class="py-5 bg-light"> {# Added bg-light for uniformity #}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                 <div class="search-box-wrapper p-4 p-md-5 shadow-sm border rounded"> {# Re-added wrapper with styling #}
+                    <h3 class="text-dark fw-semibold mb-4 text-center">Find Your Program Quickly</h3>
+                    <form action="{% url 'universities:university_list' %}" method="get" id="quick-search-form">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="quick-search-keyword" class="form-label visually-hidden">Keyword</label>
+                                <input type="text" class="form-control form-control-lg" id="quick-search-keyword" name="q" placeholder="Keyword (e.g., Engineering, London)">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="quick-search-degree" class="form-label visually-hidden">Degree Type</label>
+                                <select class="form-select form-select-lg" id="quick-search-degree" name="degree_type">
+                                    <option value="">Any Degree Level</option>
+                                    <option value="bachelor">Bachelor's</option>
+                                    <option value="master">Master's</option>
+                                    <option value="phd">PhD/Doctorate</option>
+                                    <option value="diploma">Diploma/Certificate</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                 <label for="quick-search-country" class="form-label visually-hidden">Country</label>
+                                <select class="form-select form-select-lg" id="quick-search-country" name="country">
+                                    <option value="">Any Country</option>
+                                    {# Assuming 'countries' context variable is available #}
+                                    {% for country in countries %}
+                                        <option value="{{ country.id }}">{{ country.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-search me-2"></i>Search Programs
+                                </button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="hero-search-degree" class="form-label visually-hidden">Degree Type</label>
-                            <select class="form-select form-select-lg" id="hero-search-degree" name="degree_type">
-                                <option value="">Any Degree Level</option>
-                                <option value="bachelor">Bachelor's</option>
-                                <option value="master">Master's</option>
-                                <option value="phd">PhD/Doctorate</option>
-                                <option value="diploma">Diploma/Certificate</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                             <label for="hero-search-country" class="form-label visually-hidden">Country</label>
-                            <select class="form-select form-select-lg" id="hero-search-country" name="country">
-                                <option value="">Any Country</option>
-                                {% for country in countries %}
-                                    <option value="{{ country.id }}">{{ country.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-search me-2"></i>Search
-                        </button>
                     </form>
                 </div>
             </div>
@@ -167,8 +287,9 @@
     </div>
 </section>
 
+
 {# Stats Counter - Subtle divider #}
-<section class="stats-counter py-4 border-bottom">
+<section class="stats-counter py-4 border-bottom"> {# Removed bg-light for alternating pattern #}
     <div class="container">
         <div class="row text-center gy-3">
             <div class="col-6 col-md-4">
@@ -188,7 +309,7 @@
 </section>
 
 {# Featured Universities - Card Overlay Design #}
-<section id="featured-universities" class="featured-universities-section pt-5"> {# Removed bottom padding #}
+<section id="featured-universities" class="featured-universities-section py-5 bg-light"> {# Added bg-light for uniformity #}
     <div class="container">
         <h2 class="text-center fw-bold mb-5">Explore Top Destinations</h2>
         <div class="row g-4">
@@ -223,7 +344,7 @@
 </section>
 
 {# Services Section - Clean Icons & Text #}
-<section id="services" class="services-section py-5 bg-white border-top">
+<section id="services" class="services-section py-5 bg-light border-top"> {# Added bg-light for uniformity #}
     <div class="container">
         <h2 class="text-center fw-bold mb-5">How We Help You Succeed</h2>
         <div class="row g-4 text-center">
@@ -286,7 +407,7 @@
 </section>
 
 {# Testimonials Section - Clean Card Layout #}
-<section class="testimonials-section py-5">
+<section class="testimonials-section py-5"> {# Removed bg-light for uniformity #}
     <div class="container">
         <h2 class="text-center fw-bold mb-5">Success Stories</h2>
         <div class="row g-4">

@@ -40,12 +40,24 @@
         margin-right: 0.5rem;
         width: 20px;
         text-align: center;
+     }
+     
+     .dashboard-content {
+         padding: 1.5rem;
+         position: relative; /* Establish stacking context */
+         z-index: 2; /* Ensure content area is above potential lower layers */
+     }
+
+     .notification-alert {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: red;
+        border-radius: 50%;
+        margin-left: 5px;
+        vertical-align: middle; /* Align dot nicely with text */
     }
-    
-    .dashboard-content {
-        padding: 1.5rem;
-    }
-    
+     
     @media (max-width: 767.98px) {
         .dashboard-sidebar {
             min-height: auto;
@@ -97,12 +109,18 @@
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.app_name == 'messaging' and request.resolver_match.url_name == 'conversation_list' %}active{% endif %}" href="{% url 'messaging:conversation_list' %}">
                     <i class="fas fa-comments"></i> Messages
+                    {% if unread_messages_count > 0 %}
+                        <span class="notification-alert"></span>
+                    {% endif %}
                 </a>
             </li>
             {# Analytics link removed as requested #}
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}" href="{% url 'dashboard:notifications' %}">
                     <i class="fas fa-bell"></i> Notifications
+                    {% if unread_notifications_count > 0 %}
+                        <span class="notification-alert"></span>
+                    {% endif %}
                 </a>
             </li>
             <li class="nav-item">

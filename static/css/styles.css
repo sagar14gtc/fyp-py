@@ -90,7 +90,11 @@ main { /* padding-bottom: 4rem; */ } /* Removed padding causing footer gap */
 .bg-primary-soft { background-color: var(--primary-soft-bg); }
 
 /* --- Navbar --- */
-.main-navbar { padding-top: 0.8rem; padding-bottom: 0.8rem; }
+.main-navbar {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    z-index: 1051; /* Ensure navbar is above chatbot (z-index 1050) */
+}
 .main-navbar .navbar-brand { color: var(--text-primary-contrast); font-family: 'Poppins', sans-serif; font-size: 1.4rem; }
 .main-navbar .navbar-brand:hover { color: rgba(255, 255, 255, 0.9); }
 .main-navbar .nav-link { color: rgba(255, 255, 255, 0.85); font-weight: 500; padding: 0.5rem 0.9rem; margin: 0 0.2rem; border-radius: var(--border-radius); transition: color 0.2s ease, background-color 0.2s ease; }
@@ -147,7 +151,9 @@ main { /* padding-bottom: 4rem; */ } /* Removed padding causing footer gap */
 .card { border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--bs-box-shadow-sm); background-color: var(--background-white); overflow: hidden; }
 /* Base card hover removed, apply specific hovers below */
 .card-header { background-color: var(--background-light); border-bottom: 1px solid var(--border-color); padding: 1rem 1.25rem; font-weight: 600; color: var(--text-dark); }
-.card-body { padding: 1.5rem; }
+.card-body {
+    padding: 1.5rem;
+}
 .card-title { margin-bottom: 0.75rem; color: var(--text-dark); font-weight: 600; } /* Bold card titles */
 .card-subtitle { color: var(--text-medium); }
 .card-text { color: var(--text-medium); font-size: 0.95rem; } /* Slightly smaller card text */
@@ -165,6 +171,16 @@ main { /* padding-bottom: 4rem; */ } /* Removed padding causing footer gap */
 .alert-danger { background-color: #fee2e2; border-color: #fecaca; color: #991b1b; }
 .alert-warning { background-color: #fffbeb; border-color: #fde68a; color: #92400e; }
 .alert-info { background-color: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+
+/* --- Tables --- */
+/* Base table styles (if any) would go here */
+
+/* Override table-responsive overflow on larger screens to potentially fix button clicks */
+@media (min-width: 768px) { /* Bootstrap md breakpoint */
+    .table-responsive {
+        overflow: visible;
+    }
+}
 
 /* --- Homepage Specific Styles --- */
 .hero-section {

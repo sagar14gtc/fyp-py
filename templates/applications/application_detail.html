@@ -19,7 +19,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-info-circle me-1"></i>
-                    Application Information (ID: {{ application.application_id }})
+                    Application Information (ID: {{ application.pk }}) {# Changed application_id to pk #}
                 </div>
                 <div class="card-body">
                     <dl class="row">
@@ -139,7 +139,7 @@
                         <h5>Add Note</h5>
                         <form method="post" action="{% url 'applications:add_note' application.pk %}"> {# Changed application_id to pk #}
                             {% csrf_token %}
-                            {{ note_form|crispy }} {# Assuming a note_form is passed or create one #}
+                            {# Removed {{ note_form|crispy }} as it's not passed in this view's context #}
                              <div class="mb-3">
                                 <label for="id_note" class="form-label">New Note</label>
                                 <textarea name="note" cols="40" rows="3" class="form-control" required id="id_note"></textarea>
