@@ -212,6 +212,8 @@
     .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; /* Start hidden */ }
 
 </style>
+{# Chatbot specific CSS #}
+<link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
@@ -467,3 +469,8 @@
 </section>
 
 {% endblock content %}
+
+{% block extra_js %}
+{# Chatbot specific JS - Load only on homepage #}
+<script src="{% static 'js/chatbot.js' %}"></script>
+{% endblock extra_js %}

@@ -36,7 +36,28 @@
                                     <td>{{ app.student.get_full_name|default:app.student.username }}</td>
                                     <td>{{ app.program.name }}</td>
                                     <td>{{ app.program.university.name }}</td>
-                                    <td><span class="badge bg-{{ app.get_status_display|lower|slugify }}">{{ app.get_status_display }}</span></td>
+                                    <td>
+                                        {% with status=app.status %}
+                                            <span class="badge
+                                                {% if status == 'draft' %}bg-secondary
+                                                {% elif status == 'submitted' %}bg-info
+                                                {% elif status == 'processing' %}bg-primary
+                                                {% elif status == 'documents_required' %}bg-warning text-dark
+                                                {% elif status == 'under_review' %}bg-primary
+                                                {% elif status == 'conditionally_accepted' %}bg-success
+                                                {% elif status == 'accepted' %}bg-success
+                                                {% elif status == 'rejected' %}bg-danger
+                                                {% elif status == 'deferred' %}bg-secondary
+                                                {% elif status == 'waitlisted' %}bg-warning text-dark
+                                                {% elif status == 'visa_applied' %}bg-info
+                                                {% elif status == 'visa_approved' %}bg-success
+                                                {% elif status == 'visa_rejected' %}bg-danger
+                                                {% elif status == 'enrollment_confirmed' %}bg-success
+                                                {% elif status == 'canceled' %}bg-dark
+                                                {% else %}bg-light text-dark{% endif %}
+                                            ">{{ app.get_status_display }}</span>
+                                        {% endwith %}
+                                    </td>
                                     <td>{{ app.application_date|date:"Y-m-d" }}</td>
                                     <td>
                                         <a href="{% url 'applications:application_detail' app.pk %}" class="btn btn-sm btn-outline-info">View Details</a> {# Changed app.application_id to app.pk #}

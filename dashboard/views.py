@@ -91,7 +91,7 @@ def student_dashboard(request):
     featured_universities = University.objects.filter(is_featured=True) # Removed slice [:4]
 
     context = {
-        'applications': recent_applications, # Pass the sliced list for display
+        'applications': all_applications.order_by('-application_date'), # Pass the full, ordered list for display
         'dashboard_notifications': dashboard_notifications_display, # Pass the limited list for display
         'unread_notifications_count': unread_notifications_count, # Pass the count
         'application_stats': application_stats,

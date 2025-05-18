@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'applications',
     'messaging',
     'dashboard',
+    'chatbot', # Added for Gemini chatbot functionality
 ]
 
 MIDDLEWARE = [
@@ -97,7 +98,7 @@ WSGI_APPLICATION = 'universidad.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'universidad',  # Your database name
+        'NAME': 'fyp_py_new',  # Your database name
         'USER': 'postgres',  # Your PostgreSQL username
         'PASSWORD': '12345',  # Your PostgreSQL password
         'HOST': 'localhost',  # Default PostgreSQL host

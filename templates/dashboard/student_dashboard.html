@@ -105,48 +105,61 @@
             </div>
         </div>
 
-        {# Recent Applications Card #}
+        {# Application Status Card (Shows All Applications) #}
         <div class="col-xl-4 col-lg-6">
-            <div class="card shadow-sm h-100"> {# Flex column for card structure #}
+            <div class="card shadow-sm h-100">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-white border-bottom">
-                    <h6 class="m-0 fw-bold text-primary"><i class="fas fa-history me-2"></i>Recent Applications</h6>
-                    <a href="{% url 'applications:application_list' %}" class="btn btn-outline-secondary btn-sm">View All</a> {# Corrected link name #}
+                    <h6 class="m-0 fw-bold text-primary"><i class="fas fa-tasks me-2"></i>Application Status</h6>
+                    {# Removed "View All" link as this card now shows all #}
                 </div>
-                <div class="card-body flex-grow-1 overflow-auto"> {# Allow body to grow and scroll if needed #}
-                    {% if applications %}
-                        <ul class="list-group list-group-flush">
-                            {% for app in applications %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2"> {# Reduced padding #}
-                                    <div>
-                                        <a href="#" class="text-decoration-none fw-semibold">{{ app.program.name }}</a>
-                                        <span class="d-block text-muted small">at {{ app.program.university.name }}</span>
-                                        <small class="d-block text-muted fst-italic">Applied: {{ app.application_date|date:"M d, Y" }}</small>
-                                    </div>
-                                    {# Refined Badges #}
-                                    {% with status=app.status %}
-                                        {% if status == 'accepted' or status == 'conditionally_accepted' or status == 'enrollment_confirmed' or status == 'visa_approved' %}
-                                            <span class="badge rounded-pill bg-success-light text-success">{{ app.get_status_display }}</span>
-                                        {% elif status == 'rejected' or status == 'cancelled' or status == 'visa_rejected' %}
-                                            <span class="badge rounded-pill bg-danger-light text-danger">{{ app.get_status_display }}</span>
-                                        {% elif status == 'submitted' or status == 'processing' or status == 'under_review' or status == 'documents_required' or status == 'visa_applied' %}
-                                            <span class="badge rounded-pill bg-info-light text-info">{{ app.get_status_display }}</span>
-                                        {% elif status == 'waitlisted' or status == 'deferred' %}
-                                            <span class="badge rounded-pill bg-warning-light text-warning">{{ app.get_status_display }}</span>
-                                        {% else %}
-                                            <span class="badge rounded-pill bg-secondary-light text-secondary">{{ app.get_status_display }}</span>
-                                        {% endif %}
-                                    {% endwith %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-folder-open fa-3x mb-3"></i>
-                            <p>No recent applications found.</p>
-                        </div>
-                    {% endif %}
+                <div class="card-body p-0"> {# Remove padding for full-width table #}
+                    <div class="table-responsive"> {# Make table scrollable on small screens #}
+                        <table class="table table-hover table-sm mb-0"> {# Use table-sm for tighter spacing #}
+                            <thead class="table-light"> {# Light header background #}
+                                <tr>
+                                    <th scope="col" class="small text-muted text-uppercase ps-3">Program</th> {# Added padding start #}
+                                    <th scope="col" class="small text-muted text-uppercase">University</th>
+                                    <th scope="col" class="small text-muted text-uppercase">Date</th>
+                                    <th scope="col" class="small text-muted text-uppercase pe-3">Status</th> {# Added padding end #}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                    <tr>
+                                        <td class="ps-3">
+                                            <a href="#" class="text-decoration-none fw-semibold">{{ app.program.name }}</a> {# Link to application detail later? #}
+                                        </td>
+                                        <td><span class="text-muted small">{{ app.program.university.name }}</span></td>
+                                        <td><span class="text-muted small">{{ app.application_date|date:"M d, Y" }}</span></td>
+                                        <td class="pe-3">
+                                            {# Status Badges #}
+                                            {% with status=app.status %}
+                                                {% if status == 'accepted' or status == 'conditionally_accepted' or status == 'enrollment_confirmed' or status == 'visa_approved' %}
+                                                    <span class="badge rounded-pill bg-success-light text-success">{{ app.get_status_display }}</span>
+                                                {% elif status == 'rejected' or status == 'cancelled' or status == 'visa_rejected' %}
+                                                    <span class="badge rounded-pill bg-danger-light text-danger">{{ app.get_status_display }}</span>
+                                                {% elif status == 'submitted' or status == 'processing' or status == 'under_review' or status == 'documents_required' or status == 'visa_applied' %}
+                                                    <span class="badge rounded-pill bg-info-light text-info">{{ app.get_status_display }}</span>
+                                                {% elif status == 'waitlisted' or status == 'deferred' %}
+                                                    <span class="badge rounded-pill bg-warning-light text-warning">{{ app.get_status_display }}</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill bg-secondary-light text-secondary">{{ app.get_status_display }}</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-muted">
+                                            <i class="fas fa-folder-open fa-2x mb-2 d-block"></i>
+                                            No applications found.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                {# Removed footer button as it's in header now #}
             </div>
         </div>
 

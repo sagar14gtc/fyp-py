@@ -29,6 +29,7 @@ urlpatterns = [
     path('applications/', include('applications.urls')),
     path('messaging/', include('messaging.urls')),
     path('dashboard/', include('dashboard.urls', namespace='dashboard')), # Added namespace
+    path('chatbot/', include('chatbot.urls')), # Added for Gemini chatbot
     path('notifications/', include(notifications.urls, namespace='notifications')),
 ]
 
